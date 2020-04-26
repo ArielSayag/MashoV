@@ -650,13 +650,13 @@ namespace mashovFinal.Models
                                                 result.Add("msg", " שגיאה בשורה" + errRow + " ועמודה " + errCol+" תעודת זהות אינה תקינה");
                                                 return result;
                                             }
-                                            int idnum = int.Parse(id);
-                                            bool isNumeric = int.TryParse(id, out idnum);
-                                            if (!isNumeric)
-                                            {
-                                                result.Add("msg", " שגיאה בשורה" + errRow + " ועמודה " + errCol + " תעודת זהות אינה תקינה");
-                                                return result;
-                                            }
+                                            //int idnum = int.Parse(id);
+                                            //bool isNumeric = int.TryParse(id, out idnum);
+                                            //if (!isNumeric)
+                                            //{
+                                            //    result.Add("msg", " שגיאה בשורה" + errRow + " ועמודה " + errCol + " תעודת זהות אינה תקינה");
+                                            //    return result;
+                                            //}
 
                                         }
                                         break;
