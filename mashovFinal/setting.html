@@ -1,0 +1,615 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="STEPS | Multipurpose Working Wizard with Branches">
+    <meta name="author" content="Ansonika">
+    <title>Feedback Systems</title>
+    <!-- Favicons-->
+    <link rel="shortcut icon" href="img/fav.png" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon" href="img/apple-touch-icon-57x57-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="img/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="img/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="img/apple-touch-icon-144x144-precomposed.png">
+    <!-- GOOGLE WEB FONT -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- BASE CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.rtlcss.com/bootstrap/v4.1.3/css/bootstrap.min.css" integrity="sha384-Jt6Tol1A2P9JBesGeCxNrxkmRFSjWCBW1Af7CSQSKsfMVQCqnUVWhZzG0puJMCK6"
+          crossorigin="anonymous">
+    <link href="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/build/css/bootstrap-datetimepicker.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/menu.css" rel="stylesheet">
+    <link href="css/vendors.min.css" rel="stylesheet">
+    <link href="css/icon_fonts/css/all_icons.min.css" rel="stylesheet">
+    <link href="css/skins/square/grey.css" rel="stylesheet">
+    <!-- YOUR CUSTOM CSS -->
+    <link href="css/custom.css" rel="stylesheet">
+    <script src="js/modernizr.js"></script>
+    <!-- Modernizr -->
+    <script src="Scripts/ajaxCalls.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
+    <script>
+
+        //-----------------------------------setting------------------------------------------//
+        function f1() {
+            return false;
+        }
+        var listAllGroupMeet = [];
+        function GETSuccessSetGroup(dataG) {
+            var arryGroups = "<option value=''>בחר קבוצה</option>";
+            listAllGroupMeet = dataG;
+            for (i in dataG) {
+
+                arryGroups += `<option value=${dataG[i].Group.NumGroup}>${dataG[i].Group.NameGroup},${dataG[i].Group.NameProject}</option>`;
+            }
+
+            $('#groupList').append(arryGroups);
+            $('#groupList1').append(arryGroups);
+        }
+        function GETErrorSetGroup(err) { console.log(err); }
+
+        function GETSuccessSetUser(dataU) {
+            var arryUsers = "<option value=''>בחר מרצה</option>";
+
+            for (i in dataU) {
+
+                arryUsers += `<option value=${dataU[i].Email}>${dataU[i].FirstName} ${dataU[i].LastName}   </option>`;
+            }
+            console.log(dataU);
+            $('#listType').append(arryUsers);
+            // $('#browsers1').append(arryUsers);
+        }
+        function GETErrorSetUser(err) { console.log(err); }
+
+        var listStudent = [];
+        function GETSuccessSetStudent(dataS) {
+            var arryStudents = "<option value=''>בחר סטודנט</option>";
+             listStudent = dataS;
+            for (i in dataS) {
+
+                arryStudents += `<option value=${dataS[i].Id}> ${dataS[i].FirstName}  ${dataS[i].LastName} , ${dataS[i].Id} </option>`;
+            }
+
+            $('#studentList').append(arryStudents);
+            // $('#browsers1').append(arryStudents);
+        }
+        function GETErrorSetStudent(err) { console.log(err); }
+
+        function GETSuccessSetType(dataT) {
+            var arryTypes = "<option value=''>בחר תפקיד</option>";
+
+            for (i in dataT) {
+
+                arryTypes += `<option value=${dataT[i].NumType}>${dataT[i].Type} </option>`;
+            }
+
+            $('#typeList').append(arryTypes);
+            // $('#listType').append(arryTypes);
+        }
+        function GETErrorSetType(err) { console.log(err); }
+
+        function GETSuccessSetMeet(dataM) {
+            var arryM = "<option value=''>בחר משוב</option>";
+
+            for (i in dataM) {
+
+                arryM += `<option value=${dataM[i].NumDoc}>${dataM[i].NameDoc} </option>`;
+            }
+
+            $('#doc').append(arryM);
+            // $('#listType').append(arryTypes);
+        }
+        function GETErrorSetMeet(err) { console.log(err); }
+
+        //----------------------------end-setting-----------------------------------------------//
+        $(document).ready(function () {
+
+            $("#third").hide();
+            $("#first").hide();
+            $("#second").hide();
+
+            $("#wrapped").submit(f1);
+            listDoc = JSON.parse(localStorage["AllDoc"]); 
+            GETSuccessSetMeet(listDoc);
+
+            ajaxCall("GET", "./api/Setting/User", "", GETSuccessSetUser, GETErrorSetUser); // show all User
+           
+            ajaxCall("GET", "./api/Setting/Type", "", GETSuccessSetType, GETErrorSetType); // show all Type
+
+            $("#doc").click(getGroups);
+
+
+            $("#showuser").click(function () {
+                $("#first").fadeIn();
+                $("#second").hide();
+                $("#third").hide();
+
+            });
+            $("#showdetails").click(function () {
+                $("#second").fadeIn();
+                $("#first").hide();
+                $("#third").hide();
+
+            });
+            $("#showDepC").click(function () {
+                $("#third").fadeIn();
+                $("#first").hide();
+                $("#second").hide();
+            
+                
+            }); 
+
+            $("#addJudgetoGroup").click(addJudgetoGroup);
+
+        });
+            
+        function getGroups() {
+            var name = $("#doc").val();
+            if (name != "") {
+                ajaxCall("GET", "./api/Setting/Group/" + name, "", GETSuccessSetGroup, GETErrorSetGroup); // show all Group
+                ajaxCall("GET", "./api/Setting/Student/"+name, "", GETSuccessSetStudent, GETErrorSetStudent); // show all Student
+            }
+            else return;
+        }
+
+        function saveUser() {
+            var name = $("#fname").val();
+            var lastname = $("#lname").val();
+            var email = $("#email").val();
+            var type = $("#typeList").val();
+
+            if (name == "" || lastname == "" || email == "" || type == "") {
+                swal("אחד הפריטים לא מלאים ,אנא מלא שוב");
+            }
+            else {
+                t = {
+                    "NumType": type,
+                    "Type":"",
+
+                }
+                newUser = {
+                    "FirstName": name,
+                    "LastName": lastname,
+                    "Email": email,
+                    "Type": t,
+                }
+
+                ajaxCall("POST", "./api/Setting/newUser", JSON.stringify(newUser),postNewUser,postNewUserErr)
+                
+            }
+
+        }
+        function postNewUser(data) {
+            console.log(data);
+            swal("משתמש חדש נוסף בהצלחה ");
+        }
+        function postNewUserErr(err) { console.log(err); }
+        function addJudgetoGroup() {
+            var idDoc = $("#doc").val();
+            var idGroup = $("#groupList").val();
+            var idEmail = $("#listType").val();
+            if (idDoc == "") {
+                swal("חייב לבחור משוב לפני");
+
+            }
+            else if (idGroup == "" || idEmail == "") {
+                swal("ושופט/אנא בחר קבוצה")
+            }
+            else {
+                t = {
+                    "NumType": 3,
+                    "Type": "",
+
+                }
+                userJ = {
+
+                    "Email": idEmail,
+                    "Type": t,
+                }
+                jg = {
+                    "Judge": userJ,
+                }
+
+                var listJ = [];
+                listJ.push(jg);
+                judgeInGroup = {};
+                for (i in listAllGroupMeet) {
+                    if (listAllGroupMeet[i].Group.NumGroup == idGroup) {
+                        judgeInGroup = {
+                            "Group": listAllGroupMeet[i].Group,
+                            "JudgesGroup": listJ,
+                            "NumMeeting": "",
+                            "StartTime": "",
+                            "EndTime":"",
+                        }
+                        break;
+                    }
+                }
+
+                ajaxCall("POST", "./api/Setting/judgeInGroup/", JSON.stringify(judgeInGroup), postjudgeInGroup, postjudgeInGroupErr)
+            }
+        }
+            function postjudgeInGroup(data) {
+                console.log(data);
+                swal("שופט נוסף בהצלחה ");
+            }
+        function postjudgeInGroupErr(err) { console.log(err); }
+
+        function addStudenttoGroup() {
+            var idDoc = $("#doc").val();
+            var idGroup = $("#groupList1").val();
+            var idstudent = $("#studentList").val();
+            if (idDoc == "") {
+                swal("חייב לבחור משוב לפני");
+
+            }
+            else if (idGroup == "" || idstudent == "") {
+                swal("וסטודנט/אנא בחר קבוצה")
+            }
+            else {
+                var selectStudent;
+                var listg = [];
+                var firstn = "";
+                var lastn = "";
+                var ids = "";
+                for (i in listStudent) {
+                    if (listStudent[i].Id == idstudent) {
+
+                        listg.push(listStudent[i].GroupS);
+                        firstn = listStudent[i].FirstName;
+                        lastn = listStudent[i].lastname;
+                        i = listStudent[i].Id;
+
+                    }
+                }
+                for (i in listAllGroupMeet) {
+                    if (listAllGroupMeet[i].Group.NumGroup == idGroup) {
+                        listg.push(listAllGroupMeet[i].Group);
+                        selectStudent = {
+                            "GroupS": listg,
+                            "FirstName": firstn,
+                            "LastName": lastn,
+                            "Id": ids,
+                        }
+                    }
+                       
+                }
+             
+                ajaxCall("PUT", "./api/Setting/Student", JSON.stringify(selectStudent), putselectStudent, putselectStudentErr)
+
+            }
+
+
+        }
+        function putselectStudent(data) {
+            console.log(data);
+            swal("סטודנט עודכן בהצלחה ב  "+data+ " משובים");
+        }
+        function putselectStudentErr(err) { console.log(err); }
+        function addCourse() {
+            var c = $("#course").val();
+            if (c == "") {
+                swal("אנא הכנס שם קורס");
+            }
+            else {
+                ajaxCall("POST", "./api/Setting/Course", JSON.stringify(c), postCourse, postCoursErr)
+            }
+        }
+        function postCourse(data) {
+            console.log(data);
+            swal("הקורס עודכן בהצלחה");
+        }
+        function postCoursErr(err) { console.log(err); }
+
+        function addDep() {
+          var d=  $("#dep").val();
+            if (d == "") {
+                swal("אנא הכנס שם מחלקה");
+            }
+            else {
+                ajaxCall("POST", "./api/Setting/Dep", JSON.stringify(d), postDep, postDepErr)
+            }
+        }
+        function postDep(data) {
+            console.log(data);
+            swal("המחלקה עודכן בהצלחה");
+        }
+        function postDepErr(err) { console.log(err); }
+    </script>
+</head>
+
+<body>
+
+    <div id="preloader">
+        <div data-loader="circle-side"></div>
+    </div>
+    <!-- /Preload -->
+
+    <div id="loader_form">
+        <div data-loader="circle-side-2"></div>
+    </div>
+    <!-- /loader_form -->
+
+    <header>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-3">
+                    <div id="logo_home">
+                        <h1><a href="index.html">&nbsp</a></h1>
+                    </div>
+                </div>
+                <div class="col-9">
+                    <div id="social" class="m-auto">
+                        <ul>
+                            <li><a href="index2.html">מנהל</a></li>
+                            <li><a href="index3.html">שופט</a></li>
+                            <li><a href="index4.html">מנחה</a></li>
+                            <!--<li><a href="index5.html">סטודנט</a></li>-->
+                        </ul>
+                    </div>
+                    <!-- /social -->
+                    <nav>
+                        <ul class="cd-primary-nav">
+                            <li><a href="javascript:void(0)" class="animated_link">Menu</a></li>
+                            <li><a href="javascript:void(0)" class="animated_link">Menu</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <!-- /container -->
+    </header>
+    <!-- /Header -->
+
+    <main>
+        <div class="container">
+            <div id="wizard_container">
+                <form name="example-1" id="wrapped" method="POST">
+
+                    <!-- Leave for security protection, read docs for details -->
+                    <div id="middle-wizard">
+
+                        <div class="row">
+                            <div class="col-md-12">
+
+                                <div id="tabsJustifiedContent" class="tab-content">
+
+                           <!-- 6st-slide start -->
+                                    <section id="sixth-slide" class="container py-4">
+                                        <div class="row py-5">
+                                            <div class="col-12 text-center">
+                                                <h3 class="font-weight-bold">הגדרות</h3>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-md-1"></div>
+                                            <div class="col-md-10">
+
+                                                <ul id="tabsJustified" class="nav nav-tabs nav-justified">
+                                                    <li id="showuser" class="nav-item"><a href="javascript:void(0)" data-target="#judge" data-toggle="tab" class="nav-link small text-uppercase">הוספת משתמש</a></li>
+                                                    <li id="showdetails" class="nav-item"><a href="javascript:void(0)" data-target="#admin" data-toggle="tab" class="nav-link small text-uppercase active">עדכון קבוצה</a></li>
+                                                    <li id="showDepC" class="nav-item"><a href="javascript:void(0)" data-target="#mentor" data-toggle="tab" class="nav-link small text-uppercase">הוספת מחלקה/קורס</a></li>
+                                                </ul>
+                                            </div>
+                                            <br/>
+                                            <br/>
+                                            <br/>
+                                            <br/>
+                                            <div class="col-md-1"></div>
+                                        </div>
+                             
+                                            <div class="row">
+                                                <div class="mx-auto">
+                                                    <div class="row" id="first">
+                                                        <h5 class="text-center py-2">הוסף משתמש חדש</h5>
+
+                                                        <div class="col-4">
+                                                            <div class="form-group">
+                                                                <input type="text" id="fname" name="firstname" class="form-control" placeholder="שם פרטי">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <div class="form-group">
+                                                                <input type="text" id="lname" name="lastname" class="form-control" placeholder="שם משפחה">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <div class="form-group">
+                                                                <select list="browsers"  typeof="text" class="form-control" id="typeList"></select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-8">
+                                                            <div class="form-group">
+                                                                <input type="email" id="email" name="email" class="form-control" placeholder="אימייל">
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-4">
+                                                            <a class="btn btn-defult px-5"  onclick="saveUser()" href="javascript:void(0)">שמור</a>
+                                                        </div>
+                                                    </div>
+                                                    <!--f-->
+                                                    <div class="box1" id="second" style="margin-right:200px">
+                                                        <div class="py-5">
+                                                            <div class="col-4 mx-auto">
+                                                                <div class="form-group">
+                                                                    <select class="form-control" id="doc"></select>
+                                                                </div>
+                                                            </div>
+                                                            <h5 class="text-center py-2">הוסף שופט לקבוצה</h5>
+                                                            <div class="row">
+                                                                <div class="col-4">
+                                                                    <div class="form-group">
+                                                                        <select class="form-control" id="listType"></select>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-4">
+                                                                    <div class="form-group">
+                                                                        <select class="form-control" id="groupList"></select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <a class="btn btn-defult px-5" id="addJudgetoGroup" href="javascript:void(0)">הוסף</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <h5 class="text-center py-2">שנה סטודנט לקבוצה</h5>
+                                                        <div class="row">
+                                                            <div class="col-4">
+                                                                <div class="form-group">
+                                                                    <select class="form-control" id="groupList1"></select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <div class="form-group">
+                                                                    <select class="form-control" id="studentList"></select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <a class="btn btn-defult px-5" onclick="addStudenttoGroup()" href="javascript:void(0)">הוסף</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <!--f-->
+                                                </div>
+                                                <div class="mx-auto">
+                                                    <div id="third">
+                                                        <br />
+                                                        <br />
+                                                        <h5 class="text-center py-2">הוסף קורס חדש</h5>
+                                                        <div class="row">
+                                                            <div class="col-8">
+                                                                <div class="form-group">
+                                                                    <input type="text"  id="course" name="coursename" class="form-control" placeholder="שם קורס">
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-4">
+                                                                <a class="btn btn-defult px-5" onclick="addCourse()" href="javascript:void(0)">שמור</a>
+                                                            </div>
+                                                        </div>
+                                                        <div class="py-5">
+                                                            <h5 class="text-center py-2">הוסף מחלקה חדשה</h5>
+                                                            <div class="row">
+                                                                <div class="col-8">
+                                                                    <div class="form-group">
+                                                                        <input type="text" id="dep"  name="department" class="form-control" placeholder="שם מחלקה">
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <a class="btn btn-defult px-5" onclick="addDep()" href="javascript:void(0)">שמור</a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!--<div class="">
+                        <h5 class="text-center py-2">שנה סטודנט לקבוצה</h5>
+                        <div class="row">
+
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <input type="text" name="fullname" class="form-control" placeholder="שם סטודנט">
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="form-group">
+                                    <select class="form-control" id="">
+                                        <option value="judge">Judge</option>
+                                        <option value="judge">Judge</option>
+                                        <option value="judge">Judge</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="col-4">
+                                <a class="btn btn-defult px-5" href="javascript:void(0)">Delete</a>
+                            </div>
+                        </div>
+
+                    </div>-->
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="bottom-wizard" class="text-center">
+
+                                                <a class="btn btn-primary btn prev" href="index2.html"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> חזור</a>
+                                            </div>
+                                    </section>
+                                    <!-- 6st-slide end -->
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- /middle-wizard -->
+                </form>
+            </div>
+            <!-- /Wizard container -->
+        </div>
+        <!-- /Container -->
+    </main>
+    <!-- /main -->
+
+    <footer>
+        <div class="container clearfix">
+
+            <p>© 2020 | Feedback System</p>
+        </div>
+    </footer>
+    <!-- /footer -->
+
+    <div class="cd-overlay-nav">
+        <span></span>
+    </div>
+    <!-- /cd-overlay-nav -->
+
+    <div class="cd-overlay-content">
+        <span></span>
+    </div>
+    <!-- /cd-overlay-content -->
+
+    <a href="#0" class="cd-nav-trigger">Menu<span class="cd-icon"></span></a>
+    <!-- /cd-nav-trigger -->
+
+    <!-- Modal terms -->
+    <div class="modal fade" id="terms-txt" tabindex="-1" role="dialog" aria-labelledby="termsLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="termsLabel">Terms and conditions</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Lorem ipsum dolor sit amet, in porro albucius qui, in <strong>nec quod novum accumsan</strong>, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
+                    <p>Lorem ipsum dolor sit amet, in porro albucius qui, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus. Lorem ipsum dolor sit amet, <strong>in porro albucius qui</strong>, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
+                    <p>Lorem ipsum dolor sit amet, in porro albucius qui, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Modal terms -->
+
+    <!-- COMMON SCRIPTS -->
+    <script src="js/jquery-2.2.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
+    <script src="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js"></script>
+    <script src="js/common_scripts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
+    
+    <script src="js/menu.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/wizard_func_single_branch.js"></script>
+  
+</body>
+
+</html>

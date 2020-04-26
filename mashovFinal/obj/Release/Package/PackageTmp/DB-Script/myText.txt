@@ -1,0 +1,201 @@
+﻿CREATE TABLE [Type](
+utID int IDENTITY (1,1) NOT NULL,
+TypeUser nvarchar(30) NOT NULL,
+
+PRIMARY KEY (utID),
+
+);
+INSERT INTO [Type] (TypeUser) VALUES ('Admin');
+INSERT INTO [Type] (TypeUser) VALUES ('Manager');
+INSERT INTO [Type] (TypeUser) VALUES ('Judge');
+INSERT INTO [Type] (TypeUser) VALUES ('Mentor');
+
+select * from UsersType
+
+CREATE TABLE UsersType(
+utID int NOT NULL,
+Email varchar(50) NOT NULL,
+
+PRIMARY KEY (Email,utID),
+FOREIGN KEY (utID) REFERENCES [Type](utID),
+FOREIGN KEY (Email) REFERENCES Users(Email),
+);
+CREATE TABLE Users(
+FirstName nvarchar(50) NOT NULL,
+LastName nvarchar(50) NOT NULL,
+Email varchar(50) NOT NULL,
+pass varchar(6),
+
+PRIMARY KEY (Email),
+
+);
+
+ALTER TABLE Users
+DROP COLUMN utID;
+
+ALTER TABLE [dbo].[FeedBack_Meet]
+DROP COLUMN [nameMetting];
+
+ALTER TABLE [dbo].[FeedBack_Meet]
+ADD [nameMetting] nvarchar(150) NOT NULL;
+
+CREATE TABLE studentInGroup (
+IDStudent nvarchar(9) NOT NULL,
+NumGroup int NOT NULL,
+FOREIGN KEY (NumGroup) REFERENCES Groups(NumGroup),
+FOREIGN KEY (IDStudent) REFERENCES Student(IDStudent),
+);
+CREATE TABLE Student(
+IDStudent nvarchar(9) NOT NULL,
+FirstName nvarchar(50) NOT NULL,
+LastNAme nvarchar(50) NOT NULL,
+Email varchar(50) ,
+pass varchar(6),
+
+PRIMARY KEY (IDStudent),
+
+);
+
+CREATE TABLE Groups(
+NumGroup int IDENTITY (1,1) NOT NULL,
+NameGroup nvarchar(9) NOT NULL,
+NameProject nvarchar(90) NOT NULL,
+NameOrganization nvarchar(90) NOT NULL,
+ProjectType nvarchar(50),
+finalScore float,
+EmailMentor varchar(50) NOT NULL,
+utID int NOT NULL,
+
+PRIMARY KEY (NumGroup),
+FOREIGN KEY (EmailMentor,utID) REFERENCES UsersType(Email,utID),
+);
+
+
+CREATE TABLE Department(
+NumDepartment int IDENTITY (1,1) NOT NULL,
+NameDepartment nvarchar(90) NOT NULL,
+
+PRIMARY KEY (NumDepartment),
+);
+
+CREATE TABLE Course(
+NumCourse int IDENTITY (1,1) NOT NULL,
+NameCourse nvarchar(90) NOT NULL,
+
+PRIMARY KEY (NumCourse),
+
+);
+
+CREATE TABLE Course_Department(
+NumCourse int  NOT NULL,
+NumDepartment int NOT NULL,
+
+FOREIGN KEY (NumCourse) REFERENCES Course(NumCourse),
+FOREIGN KEY (NumDepartment) REFERENCES Department(NumDepartment),
+
+);
+
+
+
+CREATE TABLE FeedBack_Doc(
+NumDoc int IDENTITY (1,1) NOT NULL,
+NameDoc nvarchar(90) NOT NULL,
+NumMeeting int  NOT NULL,
+[status]  bit default 0 Not Null,
+
+PRIMARY KEY (NumDoc),
+FOREIGN KEY (NumMeeting) REFERENCES FeedBack_Meet(NumMeeting),
+);
+
+CREATE TABLE Manager_feedback(
+NumDoc int NOT NULL,
+EmailManager varchar(50) NOT NULL,
+utID int NOT NULL,
+
+
+FOREIGN KEY (NumDoc) REFERENCES FeedBack_Doc(NumDoc),
+FOREIGN KEY (EmailManager,utID) REFERENCES UsersType(Email,utID),
+);
+
+
+CREATE TABLE Judge_Groups(
+EmailJudge varchar(50) NOT NULL,
+NumGroup int NOT NULL, 
+utID int NOT NULL,
+sumScore float,
+startTime varchar(50) ,
+endTime  varchar(50) , 
+statusFeed bit default 0 Not Null,
+
+
+FOREIGN KEY (EmailJudge,utID) REFERENCES UsersType(Email,utID),
+FOREIGN KEY (NumGroup) REFERENCES Groups(NumGroup),
+);
+
+
+CREATE TABLE FeedBack_Meet(
+NumMeeting int IDENTITY (1,1) NOT NULL,
+nameMetting nvarchar(100) NOT NULL ,
+DateMeeting Date NOT NULL , 
+yearMeeting nvarchar(10) NOT NULL , 
+NumCourse int NOT NULL,
+NumDepartment int  NOT NULL,
+
+PRIMARY KEY (NumMeeting),
+FOREIGN KEY (NumCourse) REFERENCES Course(NumCourse),
+FOREIGN KEY (NumDepartment) REFERENCES Department(NumDepartment),
+
+);
+CREATE TABLE FeedBack_Meet_Groups(
+NumMeeting int NOT NULL,
+NumGroup int NOT NULL, 
+
+
+FOREIGN KEY (NumMeeting) REFERENCES FeedBack_Meet(NumMeeting),
+FOREIGN KEY (NumGroup) REFERENCES Groups(NumGroup),
+);
+CREATE TABLE Scala(
+numScala int IDENTITY(1,1) NOT NULL,
+nameScala nvarchar(50) NOT NULL,
+
+PRIMARY KEY (numScala),
+);
+
+CREATE TABLE Criteria(
+NumCrit int IDENTITY (1,1) NOT NULL,
+NameCrit nvarchar(100) NOT NULL,
+DescriptionCrit nvarchar(500) NOT NULL , 
+
+PRIMARY KEY (NumCrit),
+
+);
+
+CREATE TABLE FeedBack_Criteria(
+NumCrit int  NOT NULL,
+NumDoc int  NOT NULL,
+WeightCrit float NOT NULL,
+numScala int NOT NULL , 
+
+PRIMARY KEY (NumCrit,NumDoc),
+FOREIGN KEY (NumCrit) REFERENCES Criteria(NumCrit),
+FOREIGN KEY (NumDoc) REFERENCES FeedBack_Doc(NumDoc),
+FOREIGN KEY (numScala) REFERENCES Scala(numScala),
+);
+
+CREATE TABLE Full_feedback(
+NumCrit int  NOT NULL,
+[NumDoc] int  NOT NULL,
+[EmailJudge] varchar(50) NOT NULL,
+utID int NOT NULL,
+[NumGroup] int not null,
+[Score] float not null,
+[Note] nvarchar(500) not null, 
+statusFB bit default 0 not null , 
+
+FOREIGN KEY (NumCrit) REFERENCES Criteria(NumCrit),
+FOREIGN KEY (NumDoc) REFERENCES FeedBack_Doc(NumDoc),
+FOREIGN KEY (EmailJudge,utID) REFERENCES UsersType(Email,utID),
+FOREIGN KEY (NumGroup) REFERENCES Groups(NumGroup),
+);
+
+select* from Scala

@@ -1,0 +1,702 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="STEPS | Multipurpose Working Wizard with Branches">
+    <meta name="author" content="Ansonika">
+    <title>Feedback Systems</title>
+    <!-- Favicons-->
+    <link rel="shortcut icon" href="img/fav.png" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon" href="img/apple-touch-icon-57x57-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="img/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="img/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="img/apple-touch-icon-144x144-precomposed.png">
+    <!-- GOOGLE WEB FONT -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- BASE CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.rtlcss.com/bootstrap/v4.1.3/css/bootstrap.min.css" integrity="sha384-Jt6Tol1A2P9JBesGeCxNrxkmRFSjWCBW1Af7CSQSKsfMVQCqnUVWhZzG0puJMCK6"
+          crossorigin="anonymous">
+    <link href="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/build/css/bootstrap-datetimepicker.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/menu.css" rel="stylesheet">
+    <link href="css/vendors.min.css" rel="stylesheet">
+    <link href="css/icon_fonts/css/all_icons.min.css" rel="stylesheet">
+    <link href="css/skins/square/grey.css" rel="stylesheet">
+    <!-- YOUR CUSTOM CSS -->
+    <link href="css/custom.css" rel="stylesheet">
+    <script src="js/modernizr.js"></script>
+    <!-- Modernizr -->
+    <script src="Scripts/ajaxCalls.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+
+    <script>
+        function f1() {
+            return false;
+        }
+        $(document).ready(function () {
+       
+            $("#wrapped").submit(f1);
+
+            loginUser = JSON.parse(localStorage["Login"]); //user from login page
+            //check if manager
+            for (i in loginUser) {
+                if (loginUser[i].Type.Type == 'judge') {
+                    getuser = loginUser[i];
+                }
+            }
+            console.log(loginUser[0]);
+            $("#helloAdmin").append("שלום, " + getuser.FirstName);
+
+            //ajaxCall("GET", "./api/Doc", "", GETSuccessDep, GETErrorDep); // show all Dep
+            //ajaxCall("GET", "./api/Doc/Year", "", GETSuccessYear, GETErrorYear); // show all hebYear
+            //ajaxCall("GET", "./api/Doc/Cours", "", GETSuccessCours, GETErrorCours); // show all Cours
+            //ajaxCall("GET", "./api/Doc/Scala", "", GETSuccessScala, GETErrorScala); // show all Scala
+            dashboard(getuser);
+            //ajaxCall("Get", "./api/Criteria", "", GETSuccessBankCrit, GETErrorBankCrit); // take all bank crit if will be necessary
+
+        });
+        //-------------dashboard(getUser)-----------------------------------//
+        function dashboard(getuser) {
+
+            document.getElementById("resultJ").innerHTML = "";
+            ajaxCall("GET", "./api/User/judge/" + getuser, "", GETSuccessJ, GETErrorJ); // show all ready feeds
+        }
+
+        function GETSuccessJ(data) {
+            localStorage["AllDoc"] = JSON.stringify(data);
+            localData = data;
+            str = "";
+            if (data == "") { return; }
+            else {
+              
+                console.log(data);
+                console.log(data[0].DetailsMeet.Date.split("T")[0].split("-").reverse());
+                //int numMeeting;
+                //string nameMeeting;
+                //string yearMeeting;
+                //DateTime date;
+                //CoursesAndDepartment detailsCourseDep;
+                for (i in data) {
+                    str += '<div id="' + data[i].NumMeeting + '" class="col-md-4 col-sm-6 search" style="direction:rtl" onclick="showFeed(this.id)"><div class="service_box"><div class="service_icon">30/3</div><h3>' +
+                        data[i].NameMeeting + '</h3><p><b>תאריך הצגה :</b>' +
+                        data[i].Date.split("T")[0] + '</p><p><b>שם הקורס :</b>' +
+                        data[i].DetailsCourseDep.NameCourse + '</p><p><b>מחלקה :</b>' +
+                        data[i].DetailsCourseDep.NameDepartment + '</p><p><b>שנה :</b> ' +
+                        data[i].YearMeeting + '</p></div></div>';
+                }
+                console.log(str);
+                $('#resultJ').append(str);
+            }
+        }
+
+        function GETErrorJ(err) {
+            console.log(err);
+        }
+
+
+    </script>
+
+</head>
+
+<body>
+
+            <div id="preloader">
+                <div data-loader="circle-side"></div>
+            </div>
+            <!-- /Preload -->
+
+            <div id="loader_form">
+                <div data-loader="circle-side-2"></div>
+            </div>
+            <!-- /loader_form -->
+
+            <header>
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-3">
+                            <div id="logo_home">
+                                <h1><a href="index.html">&nbsp</a></h1>
+                            </div>
+                        </div>
+                        <div class="col-9">
+                            <div id="social" class="m-auto">
+                                <ul>
+                                    <li><a href="index2.html">Admin</a></li>
+                                    <li><a style="color: #89E894" href="index3.html">Judge</a></li>
+                                    <li><a href="index4.html">Mentor</a></li>
+                                    <li><a href="index5.html">Student</a></li>
+                                </ul>
+                            </div>
+                            <!-- /social -->
+                            <nav>
+                                <ul class="cd-primary-nav">
+                                    <li><a href="javascript:void(0)" class="animated_link">Menu</a></li>
+                                    <li><a href="javascript:void(0)" class="animated_link">Menu</a></li>
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                <!-- /container -->
+            </header>
+            <!-- /Header -->
+
+            <main>
+                <div class="container">
+                    <div id="wizard_container">
+                        <form name="example-1" id="wrapped" method="POST">
+
+                            <!-- Leave for security protection, read docs for details -->
+                            <div id="middle-wizard">
+
+                                <div class="row">
+                                    <div class="col-md-12">
+
+                                        <div id="tabsJustifiedContent" class="tab-content">
+                                             <h2 class="text-center">Judge Dashboard</h2>
+
+                                                <!-- 1st-slide start -->
+                                                <section id="first-slide" class="container py-4">
+                                                    <div class="branch" id="Seo-Optimization">
+                                                        <div class="step" data-state="budget">
+
+                                                            <div class="row">
+                                                                <div class="col-8 mx-auto">
+                                                                    <div class="row">
+                                                                        <div class="col-5">
+                                                                            <div class="form-group">
+                                                                                <select class="form-control" id="year">
+                                                                                    <option>2018</option>
+                                                                                    <option>2013</option>
+                                                                                    <option>2014</option>
+
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-7">
+                                                                            <div class="form-group">
+                                                                                <select class="form-control" id="">
+                                                                                    <option>Industrial engineering</option>
+                                                                                    <option>Industrial engineering</option>
+                                                                                    <option>Industrial engineering</option>
+
+                                                                                </select>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                                    <!-- Search form -->
+                                                                    <div class="p-1 rounded shadow-sm mb-4">
+                                                                        <div class="input-group">
+                                                                            <div class="input-group-prepend">
+                                                                                <button id="button-addon2" type="submit" class="btn btn-link text-info">
+                                                                                    <i class="icon-search-8"></i></button>
+                                                                            </div>
+                                                                            <input type="search" placeholder="Search" aria-describedby="button-addon2" class="form-control border-0">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="row" id="resultJ">
+                                                                <!--<div class="col-md-4 col-sm-6">
+                                                                    <div class="service_box">
+                                                                        <div class="service_icon">
+                                                                            9/9
+                                                                        </div>
+                                                                        <h3>Course Name</h3>
+                                                                        <p><b>Presentation Date :</b> 12-2-2020</p>
+                                                                        <p><b>Departure :</b> Industrial engineering</p>
+                                                                        <p><b>Year :</b> 2012</p>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-md-4 col-sm-6">
+                                                                    <div class="service_box">
+                                                                        <div class="service_icon">
+                                                                            9/3
+                                                                        </div>
+                                                                        <h3>Final project-part A</h3>
+                                                                        <p><b>Presentation Date :</b> 12-2-2020</p>
+                                                                        <p><b>Departure :</b> Industrial engineering</p>
+                                                                        <p><b>Year :</b> 2012</p>
+                                                                    </div>
+                                                                </div>
+
+                                                                <div class="col-md-4 col-sm-6">
+                                                                    <div class="service_box">
+                                                                        <div class="service_icon">
+                                                                            8/8
+                                                                        </div>
+                                                                        <h3>Course Name</h3>
+                                                                        <p><b>Presentation Date :</b> 12-2-2020</p>
+                                                                        <p><b>Departure :</b> Industrial engineering</p>
+                                                                        <p><b>Year :</b> 2012</p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4 col-sm-6">
+                                                                    <div class="service_box">
+                                                                        <div class="service_icon">
+                                                                            9/0
+                                                                        </div>
+                                                                        <h3>Course Name</h3>
+                                                                        <p><b>Presentation Date :</b> 12-2-2020</p>
+                                                                        <p><b>Departure :</b> Industrial engineering</p>
+                                                                        <p><b>Year :</b> 2012</p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4 col-sm-6">
+                                                                    <div class="service_box">
+                                                                        <div class="service_icon">
+                                                                            8/4
+                                                                        </div>
+                                                                        <h3>Course Name</h3>
+                                                                        <p><b>Presentation Date :</b> 12-2-2020</p>
+                                                                        <p><b>Departure :</b> Industrial engineering</p>
+                                                                        <p><b>Year :</b> 2012</p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-4 col-sm-6">
+                                                                    <div class="service_box">
+                                                                        <div class="service_icon">
+                                                                            8/3
+                                                                        </div>
+                                                                        <h3>Course Name</h3>
+                                                                        <p><b>Presentation Date :</b> 12-2-2020</p>
+                                                                        <p><b>Departure :</b> Industrial engineering</p>
+                                                                        <p><b>Year :</b> 2012</p>
+                                                                    </div>
+                                                                </div>-->
+                                                            </div>
+
+                                                        </div>
+
+                                                    </div>
+                                                </section>
+                                                <!-- 1st-slide end -->
+
+                                                <!--2nd slide start-->
+                                                <section id="second-slide" class="container py-4">
+
+                                                            <div class="row">
+                                                                <div class="col-12 text-center">
+                                                                    <h3><b>Groups</b></h3>
+                                                                    <h4>Final project – part A</h4>
+                                                                </div>
+                                                            </div>
+
+                                                                    <div class="row py-5">
+                                                                        <div class="col-sm-8 mx-auto">
+                                                                            <div class="form-group">
+                                                                                <select class="form-control" id="">
+                                                                                    <option>Industrial engineering</option>
+                                                                                    <option>Industrial engineering</option>
+                                                                                    <option>Industrial engineering</option>
+
+                                                                                </select>
+                                                                            </div>
+
+                                                                            <div class="p-1 rounded shadow-sm mb-4">
+                                                                                <div class="input-group">
+                                                                                    <div class="input-group-prepend">
+                                                                                        <button id="button-addon2" type="submit" class="btn btn-link text-info">
+                                                                                            <i class="icon-search-8"></i></button>
+                                                                                    </div>
+                                                                                    <input type="search" placeholder="Search" aria-describedby="button-addon2" class="form-control border-0">
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+
+                                                            <div class="row">
+                                                                <div class="col-md-3 col-sm-6">
+                                                                    <div class="service_box">
+                                                                        <div class="service_icon">
+                                                                        </div>
+                                                                        <h3>Project name</h3>
+                                                                        <p><b>Group name:</b> </p>
+                                                                        <p><b>Student name:</b></p>
+                                                                        <p><b>Student name:</b></p>
+                                                                        <p><b>Student name:</b></p>
+                                                                        <hr>
+                                                                        <p><b>Mentor: name</b></p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-3 col-sm-6">
+                                                                    <div class="service_box">
+                                                                        <div class="service_icon">
+                                                                        </div>
+                                                                        <h3>Project name</h3>
+                                                                        <p><b>Group name:</b> </p>
+                                                                        <p><b>Student name:</b></p>
+                                                                        <p><b>Student name:</b></p>
+                                                                        <p><b>Student name:</b></p>
+                                                                        <hr>
+                                                                        <p><b>Mentor: name</b></p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-3 col-sm-6">
+                                                                    <div class="service_box">
+                                                                        <div class="service_icon">
+                                                                        </div>
+                                                                        <h3>Project name</h3>
+                                                                        <p><b>Group name:</b> </p>
+                                                                        <p><b>Student name:</b></p>
+                                                                        <p><b>Student name:</b></p>
+                                                                        <p><b>Student name:</b></p>
+                                                                        <hr>
+                                                                        <p><b>Mentor: name</b></p>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-md-3 col-sm-6">
+                                                                    <div class="service_box">
+                                                                        <div class="service_icon">
+                                                                        </div>
+                                                                        <h3>Project name</h3>
+                                                                        <p><b>Group name:</b> </p>
+                                                                        <p><b>Student name:</b></p>
+                                                                        <p><b>Student name:</b></p>
+                                                                        <p><b>Student name:</b></p>
+                                                                        <hr>
+                                                                        <p><b>Mentor: name</b></p>
+                                                                    </div>
+                                                                </div>
+
+                                                            </div>
+
+                                                    <div id="bottom-wizard">
+                                                        <a class="btn btn-primary btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> Return</a>
+                                                    </div>
+                                                </section>
+                                                <!-- 2nd-slide end -->
+
+                                                <!-- 3rd-slide start -->
+
+                                                <section id="third-slide" class="container py-4">
+
+                                                    <div class="slide3">
+                                                        <div class="row pt-5">
+                                                            <div class="col-12 text-center">
+                                                                <h3>Final project-part A</h3>
+                                                                <h5>Project name-group name</h5>
+                                                            </div>
+                                                        </div>
+                                                        <div class="row pt-5">
+                                                            <div class="col-sm-8 mx-auto time-counter">
+
+                                                                    <div>
+                                                                        <a href="javascript:void(0)" id="increment" class="timeControl">+</a>
+                                                                    <p id="minutes"></p>
+                                                                    <a href="javascript:void(0)" id="decrement" class="timeControl">-</a>
+                                                                    </div>
+                                                                    <div>
+                                                                        <i class='fa fa-play' id="start"></i>
+                                                                    <i class='fa fa-pause' id="pause"></i>
+                                                                    <br>
+                                                                    <a class="btn btn-defult text-light" href="javascript:void(0)" id="reset">Reset</a>
+                                                                    </div>
+
+                                                            </div>
+                                                        </div>
+                                                        <div class="row pt-4 ">
+                                                            <div class="col-sm-8 mx-auto text-right">
+                                                                <h5>1.Criteria name </h5>
+                                                                <h6>Descriptionא נא תאר את אופן ההצגה ואופיו<:</h6>
+                                                                <h5>Weight :  40%</h5>
+
+                                                                <div class="col-sm-12 text-right">
+                                                                    <div class="form-group">
+                                                                        <textarea name="" id="" class="form-control" placeholder="write your comment here"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row pt-4 ">
+
+                                                            <div class="col-sm-8 mx-auto text-right">
+                                                                <div class="row">
+                                                                    <div class="col-sm-2 col-3"><h5 class="">Grade:</h5></div>
+                                                                    <div class="col-sm-6 col-9">
+                                                                    <div style="direction: ltr;" class="range-slider m-auto pb-3">
+                                                                    <input class="range-slider__range" type="range" value="90" min="0" max="100">
+                                                                    <span class="range-slider__value">90</span>
+
+
+                                                                    </div>
+                                                                </div>
+
+
+                                                                </div>
+
+                                                                <h5>2.Criteria name </h5>
+                                                                <h6>Descriptionא נא תאר את אופן ההצגה ואופיו<:</h6>
+                                                                <h5>Weight :  60%</h5>
+
+                                                                <div class="col-sm-12">
+                                                                    <div class="form-group">
+                                                                        <textarea name="" id="" class="form-control" placeholder="write your comment here"></textarea>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row">
+                                                            <div class="col-4 mx-auto text-right">
+                                                                <div class="custom-control custom-radio custom-control-inline">
+                                                                    <input type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input">
+                                                                    <label class="custom-control-label" for="customRadioInline1">No</label>
+                                                                </div>
+                                                                <div class="custom-control custom-radio custom-control-inline">
+                                                                    <input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input">
+                                                                    <label class="custom-control-label" for="customRadioInline2">Yes</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="row pt-3">
+                                                            <div class="col-sm-4 mx-auto text-center">
+                                                                <a class="btn btn-defult text-light m-3 prev" href="javascript:void(0)"> Done</a>
+
+                                                                <a class="btn btn-defult text-light m-3 prev" href="javascript:void(0)"> Save</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div id="bottom-wizard">
+                                                        <a class="btn btn-primary btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> Return</a>
+                                                    </div>
+                                                </section>
+                                                <!-- 3rd-slide end -->
+
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!-- /middle-wizard -->
+                        </form>
+                    </div>
+                    <!-- /Wizard container -->
+                </div>
+                <!-- /Container -->
+            </main>
+            <!-- /main -->
+
+            <footer>
+                <div class="container clearfix">
+
+                    <p>© 2020 | Feedback System</p>
+                </div>
+            </footer>
+            <!-- /footer -->
+
+            <div class="cd-overlay-nav">
+                <span></span>
+            </div>
+            <!-- /cd-overlay-nav -->
+
+            <div class="cd-overlay-content">
+                <span></span>
+            </div>
+            <!-- /cd-overlay-content -->
+
+            <a href="#0" class="cd-nav-trigger">Menu<span class="cd-icon"></span></a>
+            <!-- /cd-nav-trigger -->
+
+            <!-- Modal terms -->
+            <div class="modal fade" id="terms-txt" tabindex="-1" role="dialog" aria-labelledby="termsLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="termsLabel">Terms and conditions</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p>Lorem ipsum dolor sit amet, in porro albucius qui, in <strong>nec quod novum accumsan</strong>, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
+                            <p>Lorem ipsum dolor sit amet, in porro albucius qui, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus. Lorem ipsum dolor sit amet, <strong>in porro albucius qui</strong>, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
+                            <p>Lorem ipsum dolor sit amet, in porro albucius qui, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Modal terms -->
+
+            <!-- COMMON SCRIPTS -->
+            <script src="js/jquery-2.2.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
+    <script src="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js"></script>
+    <script src="js/common_scripts.min.js"></script>
+    <script src="js/menu.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/wizard_func_single_branch.js"></script>
+    <script type="text/javascript">
+                $(function() {
+
+                    $('#datetimepicker3').datetimepicker({
+                        format: 'LT'
+                    });
+                    $('#datetimepicker3').datetimepicker({
+                        format: 'LT'
+                    });
+                });
+    </script>
+    <script>
+                $(document).ready(function() {
+                    $("#second-slide").hide();
+                    $("#third-slide").hide();
+
+                    $("#first-slide .service_box").click(function() {
+                        $("#first-slide").hide();
+                        $("#second-slide").fadeIn();
+                    });
+
+                    $("#second-slide .prev").click(function() {
+                        $("#second-slide").hide();
+                        $("#first-slide").fadeIn();
+                    });
+                    $("#second-slide .service_box").click(function() {
+                        $("#second-slide").hide();
+                        $("#third-slide").fadeIn();
+                    });
+
+                    $("#third-slide .prev").click(function() {
+                        $("#third-slide").hide();
+                        $("#second-slide").fadeIn();
+                    });
+                });
+    </script>
+    <script type="text/javascript">
+
+// First let's set the colors of our sliders
+const settings={
+          fill: '#1abc9c',
+          background: '#d7dcdf'
+}
+
+// First find all our sliders
+const sliders = document.querySelectorAll('.range-slider');
+
+
+Array.prototype.forEach.call(sliders,(slider)=>{
+
+          slider.querySelector('input').addEventListener('input', (event)=>{
+            // 1. apply our value to the span
+            slider.querySelector('span').innerHTML = event.target.value;
+            // 2. apply our fill to the input
+            applyFill(event.target);
+          });
+          // Don't wait for the listener, apply it now!
+          applyFill(slider.querySelector('input'));
+});
+
+// This function applies the fill to our sliders by using a linear gradient background
+function applyFill(slider) {
+          // Let's turn our value into a percentage to figure out how far it is in between the min and max of our input
+          const percentage = 100*(slider.value-slider.min)/(slider.max-slider.min);
+          // now we'll create a linear gradient that separates at the above point
+          // Our background color will change here
+          const bg = `linear-gradient(90deg, ${settings.fill} ${percentage}%, ${settings.background} ${percentage+0.1}%)`;
+          slider.style.background = bg;
+}
+
+    </script>
+    <script>
+                $(document).ready(function() {
+//Variables
+var seconds = 300;
+var minutes = seconds / 60;
+var clockseconds = 0;
+var interval;
+var minutesDisplay = $("#minutes");
+var timerControls = $('.timeControl');
+
+//Assign time display values
+minutesDisplay.text(minutes + ":00");
+
+//Increase timer length
+$("#increment").click(function() {
+          seconds += 60;
+          minutes += 1;
+          minutesDisplay.text(function(_a, input) {
+            return (eval(+ minutes) + ":00");
+          });
+});
+
+//Decrease timer length
+$("#decrement").click(function() {
+          seconds -= 60;
+          minutes -= 1;
+          minutesDisplay.text(function(_a, input) {
+            return eval(+ minutes) + ":00";
+          });
+});
+
+//Start countdown
+$("#start").click(function() {
+            timerControls.addClass('hidden');
+            var interval = setInterval(countdown, 1000);
+
+          //reset countdown
+          $("#reset").click(function() {
+             seconds = 300;
+             minutes = seconds / 60;
+             clockseconds = 0;
+             timerControls.removeClass('hidden');
+             minutesDisplay.text(minutes + ":00").fadeTo(0, 1);
+             clearInterval(interval);
+               });
+          //pause countdown
+          $('#pause').click(function() {
+            clearInterval(interval);
+          });
+          });
+
+//countdown functionality
+function countdown() {
+          //stop countdown when over
+          if (minutes === 0 && clockseconds === 0) {
+             minutesDisplay.text("Time up!");
+             $("#gong").get(0).play();
+             clearInterval(interval);
+             }
+
+          //transition from end of one minute to new minute
+          else if (clockseconds === 0) {
+            clockseconds += 59;
+            minutes --;
+          }
+
+          //seconds decrement
+          else {
+            seconds--;
+            clockseconds --;
+          }
+
+          //make sure display is showing correct amount of 0's
+          if (clockseconds > 9) {
+            minutesDisplay.text(minutes + ":" + clockseconds);
+          }
+          else {
+            minutesDisplay.text(minutes + ":" + "0" + clockseconds);
+          }
+}
+});
+    </script>
+    </body>
+
+</html>

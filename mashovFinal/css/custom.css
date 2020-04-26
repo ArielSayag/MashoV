@@ -1,0 +1,447 @@
+/*============================================================================================*/
+/* Your custom styles below */
+/*============================================================================================*/
+body{direction: rtl;}
+
+button#button-addon2{
+
+	display: block !important;
+  cursor: pointer;
+}
+ .nav-tabs .nav-item{
+
+  border: 1px solid #33b5e5;
+ }
+.service_box {
+    height: 80%;
+    margin: 20px 0;
+    padding: 40px 20px;
+    text-align: center;
+    border-radius: 5px;
+    background: #5a5a5a;
+    transition: all 0.30s ease 0s;
+    cursor: pointer;
+}
+        .service_box:hover{
+            background: #89E894;
+        }
+
+        .service_box .service_icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto;
+    font-size: 25px;
+    background: #fff;
+    line-height: 60px;
+    border-radius: 50px;
+    transform: translateY(0);
+    transition: all 0.30s ease 0s;
+}
+        .service_box:hover .service_icon{
+            transform: translateY(-100%);
+        }
+        .service_box .service_icon i{
+            color:#333;
+        }
+        .service_box h3{
+            position: relative;
+            top:40px;
+            margin:0;
+            color:#fff;
+            font-size:23px;
+            text-transform:uppercase;
+            transform: translateY(0%);
+            transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55) 0s;
+        }
+        .service_box:hover h3{
+            top:-40px;
+        }
+        .service_box  p{
+            color:#fff;
+            margin:0;
+            opacity:0;
+            transition: all 0.30s linear 0s;
+        }
+        .service_box:hover p{
+            opacity:1;
+        }
+
+.custom-file-input {
+  color: transparent;
+  opacity: 1;
+}
+.custom-file-input::-webkit-file-upload-button {
+  visibility: hidden;
+}
+.custom-file-input::before {
+  content: 'Browse';
+  color: black;
+  display: inline-block;
+  background: #fff;
+  border: 1px solid #999;
+  border-radius: 3px;
+  padding: 8px 30px;
+  outline: none;
+  white-space: nowrap;
+  -webkit-user-select: none;
+  cursor: pointer;
+  text-shadow: 1px 1px #fff;
+  font-weight: 600;
+  font-size: 12pt;
+}
+.custom-file-input:hover::before {
+  border-color: black;
+}
+.custom-file-input:active {
+  outline: 0;
+}
+.custom-file-input:active::before {
+  background: -webkit-linear-gradient(top, #e3e3e3, #f9f9f9); 
+}
+
+.icon-folder-open:before{
+
+	margin: 0;
+}
+
+.input-group-addon {
+    padding: 6px 12px;
+    font-size: 25px;
+    font-weight: 400;
+    line-height: 1;
+    color: #555;
+    text-align: center;
+    background-color: #eee;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.input-group-addon .icon-clock{
+
+	font-size: 25px;
+}
+
+
+
+.range-slider {
+  margin: 60px 0 0 0%;
+}
+
+.range-slider {
+  width: 100%;
+}
+
+.range-slider__range {
+  -webkit-appearance: none;
+  width: calc(100% - (73px));
+  height: 10px;
+  border-radius: 5px;
+  background: #d7dcdf;
+  outline: none;
+  padding: 0;
+  margin: 0;
+}
+.range-slider__range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+          appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #2c3e50;
+  cursor: pointer;
+  -webkit-transition: background .15s ease-in-out;
+  transition: background .15s ease-in-out;
+}
+.range-slider__range::-webkit-slider-thumb:hover {
+  background: #1abc9c;
+}
+.range-slider__range:active::-webkit-slider-thumb {
+  background: #1abc9c;
+}
+.range-slider__range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border: 0;
+  border-radius: 50%;
+  background: #2c3e50;
+  cursor: pointer;
+  -moz-transition: background .15s ease-in-out;
+  transition: background .15s ease-in-out;
+}
+.range-slider__range::-moz-range-thumb:hover {
+  background: #1abc9c;
+}
+.range-slider__range:active::-moz-range-thumb {
+  background: #1abc9c;
+}
+.range-slider__range:focus::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px #fff, 0 0 0 6px #1abc9c;
+}
+
+.range-slider__value {
+  display: inline-block;
+  position: relative;
+  width: 60px;
+  color: #fff;
+  line-height: 20px;
+  text-align: center;
+  border-radius: 3px;
+  background: #2c3e50;
+  padding: 5px 10px;
+  margin-left: 8px;
+}
+.range-slider__value:after {
+  position: absolute;
+  top: 8px;
+  left: -7px;
+  width: 0;
+  height: 0;
+  border-top: 7px solid transparent;
+  border-right: 7px solid #2c3e50;
+  border-bottom: 7px solid transparent;
+  content: '';
+}
+
+::-moz-range-track {
+  background: #d7dcdf;
+  border: 0;
+}
+
+input::-moz-focus-inner,
+input::-moz-focus-outer {
+  border: 0;
+}
+
+.custom-control-label{
+
+  font-size: 20px;
+}
+
+/* Timer css */
+
+
+
+#app {
+  text-align: center;
+}
+
+
+#app {
+  padding: 10px;
+  margin: 0 auto;
+  max-width: 1000px;
+}
+
+#app input[type=number] {
+  padding: 10px;
+  font-size: inherit;
+  width: 100%;
+}
+
+#app a{
+
+  display: inline-block;
+}
+[v-cloak] {
+  opacity: 0;
+}
+
+#app label {
+  width: 20%;
+  padding: 10px 0;
+  display: inline-block;
+}
+
+#app .timer {
+  font-size: 2em;
+  margin: 20px;
+}
+
+
+
+.upload-btn-wrapper {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+
+.upload-btn-wrapper .btn {
+    color: white!important;
+    border: 1px solid white;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.upload-btn-wrapper input[type=file] {
+  font-size: 100px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  opacity: 0;
+}
+
+.progress-bar{
+
+  background-color: #89E894;
+}
+.text-info{color: #89E894!important;}
+.alert-dismissible .close{left: auto;right: -15px; top: -4px;}
+.text-right{text-align: right!important;}
+.text-center {
+    text-align: center !important;
+}
+
+.time-counter{font-size: 30px;text-align: center;}
+.time-counter #minutes {
+  margin:0 10px;
+  display: inline-block;
+  font-size: 50px;
+}
+.time-counter .timeControl{vertical-align: super;}
+.time-counter .fa {
+  font-size:20px;
+  display:inline-block;
+  margin:0 20px;
+  position:relative;
+  bottom:0;
+  transition:bottom .2s;
+}
+.time-counter .fa:hover {
+  bottom:2px;
+}
+
+.time-counter a, .time-counter i {
+  cursor:pointer;
+}
+
+.time-counter a:focus, .time-counter i:focus {
+  outline:none;
+}
+.time-counter #reset:hover, .time-counter .timeControl:hover {
+  opacity:.8;
+}
+.time-counter .hidden {
+  visibility:hidden;
+}
+.service_box1 {
+    height: 80%;
+    margin: 20px 0;
+    padding: 40px 20px;
+    text-align: center;
+    border-radius: 5px;
+    background: #5a5a5a;
+    transition: all 0.30s ease 0s;
+    cursor: pointer;
+}
+
+    .service_box1:hover {
+        background: #F0E68C;
+    }
+
+    .service_box1 .service_icon {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto;
+        font-size: 25px;
+        background: #fff;
+        line-height: 60px;
+        border-radius: 50px;
+        transform: translateY(0);
+        transition: all 0.30s ease 0s;
+    }
+
+    .service_box1:hover .service_icon {
+        transform: translateY(-100%);
+    }
+
+    .service_box1 .service_icon i {
+        color: #333;
+    }
+
+    .service_box1 h3 {
+        position: relative;
+        top: 40px;
+        margin: 0;
+        color: #fff;
+        font-size: 23px;
+        text-transform: uppercase;
+        transform: translateY(0%);
+        transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55) 0s;
+    }
+
+    .service_box1:hover h3 {
+        top: -40px;
+    }
+
+    .service_box1 p {
+        color: #fff;
+        margin: 0;
+        opacity: 0;
+        transition: all 0.30s linear 0s;
+    }
+
+    .service_box1:hover p {
+        opacity: 1;
+    }
+
+.service_box2 {
+    height: 80%;
+    margin: 20px 0;
+    padding: 40px 20px;
+    text-align: center;
+    border-radius: 5px;
+    background: #5a5a5a;
+    transition: all 0.30s ease 0s;
+    cursor: pointer;
+}
+
+.service_box2:hover {
+    background: #E9967A;
+}
+
+.service_box2 .service_icon {
+    width: 60px;
+    height: 60px;
+    margin: 0 auto;
+    font-size: 25px;
+    background: #fff;
+    line-height: 60px;
+    border-radius: 50px;
+    transform: translateY(0);
+    transition: all 0.30s ease 0s;
+}
+
+.service_box2:hover .service_icon {
+    transform: translateY(-100%);
+}
+
+.service_box2 .service_icon i {
+    color: #333;
+}
+
+.service_box2 h3 {
+    position: relative;
+    top: 40px;
+    margin: 0;
+    color: #fff;
+    font-size: 23px;
+    text-transform: uppercase;
+    transform: translateY(0%);
+    transition: all 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55) 0s;
+}
+
+.service_box2:hover h3 {
+    top: -40px;
+}
+
+.service_box2 p {
+    color: #fff;
+    margin: 0;
+    opacity: 0;
+    transition: all 0.30s linear 0s;
+}
+
+.service_box2:hover p {
+    opacity: 1;
+}
