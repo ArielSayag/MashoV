@@ -11,10 +11,12 @@ namespace mashovFinal.Models
         string nameCrit;
         string descriptionCrit;
         double weightCrit;
-        int typeCrit;
+        int typeCrit; //numScala
         double score;
         string note;
         string nameScala;
+        string typeCssName; // only for the function SaveToData index3.html
+        int valueCrit;
         
         public int NumCrit { get => numCrit; set => numCrit = value; }
         public string NameCrit { get => nameCrit; set => nameCrit = value; }
@@ -24,9 +26,11 @@ namespace mashovFinal.Models
         public string NameScala { get => nameScala; set => nameScala = value; }
         public double Score { get => score; set => score = value; }
         public string Note { get => note; set => note = value; }
+        public string TypeCssName { get => typeCssName; set => typeCssName = value; }
+        public int ValueCrit { get => valueCrit; set => valueCrit = value; }
 
         public Criterion() { }
-        public Criterion(int num , string name, string des, double we, int ty, double sc, string no ,string names)
+        public Criterion(int num , string name, string des, double we, int ty, double sc, string no ,string names,string t,int v)
         {
             numCrit = num;
             nameCrit = name;
@@ -36,6 +40,8 @@ namespace mashovFinal.Models
             score = sc;
             note = no;
             nameScala = names;
+            TypeCssName = t;
+            valueCrit = v;
 
         }
 

@@ -1171,77 +1171,14 @@ public class DBservices
         String command;
         StringBuilder sb = new StringBuilder();
         // use a string builder to create the dynamic string
-        sb.AppendFormat("Values('{0}')",f.Status);
+       
         String prefix = "UPDATE FeedBack_Doc Set [status] = '"+f.Status+"' , totalW='"+f.TotalWeight+"'  where[NumDoc] = '"+f.NumDoc+"'";
         command = prefix + sb.ToString();
 
         return command;
 
     }
-    //----------insertAllCritwithAllScoreOfJudge-------------------//
-    public int insert(FullFeedback full)
-    {
-
-        int numEffected = 0;
-        SqlConnection con;
-        SqlCommand cmd;
-
-
-
-        try
-        {
-            con = connect("con15"); // create the connection
-        }
-        catch (Exception ex)
-        {
-            // write to log
-            throw (ex);
-        }
-
-        foreach (var item in full.CritDoc.AllCrit)
-        {
-            foreach (var tem in full.GroupM.JudgesGroup)
-            {
-                String cStr = BuildInsertCommand(full, item, tem);
-                cmd = CreateCommand(cStr, con);
-
-
-                try
-                {
-                    numEffected += cmd.ExecuteNonQuery(); // execute the command
-
-
-                }
-                catch (Exception ex)
-                {
-                    throw (ex);
-                }
-            }
-        }
-
-        if (con != null)
-        {
-            // close the db connection
-            con.Close();
-        }
-        return numEffected;
-    }
-    //-------------------insertAllCritwithAllScoreOfJudge----------------//
-    private String BuildInsertCommand(FullFeedback full, Criterion c, Judge_Group_Meeting j)
-    {
-        String command;
-        StringBuilder sb = new StringBuilder();
-        // use a string builder to create the dynamic string
-        sb.AppendFormat("Values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')",
-       c.NumCrit, full.CritDoc.Doc.NumDoc, j.Judge.Email, full.GroupM.Group.NumGroup, c.Score, c.Note);
-        String prefix = "INSERT INTO Full_feedback " + "(NumCrit,NumDoc,EmailJudge,NumGroup,Score,Note)";
-        command = prefix + sb.ToString();
-
-        return command;
-
-    }
-
-
+   
 
 
 
@@ -2386,7 +2323,7 @@ public class DBservices
         try
         {
             con = connect("con15");
-            String selectSTR = " select distinct m.NumMeeting, m.DateMeeting,m.yearMeeting,m.nameMetting,d.NameDepartment,c.NameCourse from Judge_Groups jg inner join FeedBack_Meet_Groups mg on jg.NumGroup=mg.NumGroup inner join FeedBack_Meet m on m.NumMeeting=mg.NumMeeting inner join Course c on c.NumCourse=m.NumCourse inner join Department d on d.NumDepartment=m.NumDepartment where jg.EmailJudge='" + u.Email+"' and jg.utID='"+u.Type.NumType+"'";
+            String selectSTR = " select distinct m.NumMeeting, m.DateMeeting,m.yearMeeting,m.nameMetting,d.NameDepartment,c.NameCourse,c.NumCourse,d.NumDepartment from Judge_Groups jg inner join FeedBack_Meet_Groups mg on jg.NumGroup=mg.NumGroup inner join FeedBack_Meet m on m.NumMeeting=mg.NumMeeting inner join Course c on c.NumCourse=m.NumCourse inner join Department d on d.NumDepartment=m.NumDepartment where jg.EmailJudge='" + u.Email+"' and jg.utID='"+u.Type.NumType+"'";
 
             SqlCommand cmd = new SqlCommand(selectSTR, con);
             SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
@@ -2428,7 +2365,7 @@ public class DBservices
         return doc;
     }
     //----------------------------------------GetAllGroupsByMetting---------------------------------------//
-    public List<Group_Meeting> getJudgeGroups(Users u)//??
+    public List<Group_Meeting> getJudgeGroups(Users u , int numMeet)
     {
 
 
@@ -2438,7 +2375,7 @@ public class DBservices
         try
         {
             con = connect("con15");
-            String selectSTR = "select distinct g.NumGroup,g.NameGroup,g.NameProject,g.NameOrganization ,u.FirstName,u.LastName,jg.startTime,jg.endTime  from Groups g inner join Judge_Groups jg on g.NumGroup=jg.NumGroup inner join  FeedBack_Meet_Groups mg on mg.NumGroup = jg.NumGroup inner join FeedBack_Meet m on m.NumMeeting = mg.NumMeeting inner join Users u on u.Email = g.EmailMentor where jg.EmailJudge = '" + u.Email+"' and mg.NumMeeting = ''";
+            String selectSTR = "select distinct g.NumGroup,g.NameGroup,g.NameProject,g.NameOrganization ,u.FirstName,u.LastName,jg.startTime,jg.endTime ,jg.sumScore from Groups g inner join Judge_Groups jg on g.NumGroup=jg.NumGroup inner join  FeedBack_Meet_Groups mg on mg.NumGroup = jg.NumGroup inner join FeedBack_Meet m on m.NumMeeting = mg.NumMeeting inner join Users u on u.Email = g.EmailMentor where jg.EmailJudge = '" + u.Email+ "' and jg.utID='" + u.Type.NumType+"' and mg.NumMeeting = '"+ numMeet + "'";
 
 
             SqlCommand cmd = new SqlCommand(selectSTR, con);
@@ -2460,6 +2397,7 @@ public class DBservices
                 gm.Group.Mentor.LastName = (string)dr["LastName"];
                 gm.StartTime = (string)dr["startTime"];
                 gm.EndTime = (string)dr["endTime"];
+                gm.Sum = Convert.ToDouble( dr["sumScore"]);
 
 
 
@@ -2497,7 +2435,7 @@ public class DBservices
             try
             {
                 con = connect("con15");
-                String selectSTR = "select s.FirstName,s.LastNAme,s.IDStudent from Groups g inner join studentInGroup sg on g.NumGroup = sg.NumGroup  inner join Student s on s.IDStudent = sg.IDStudent inner join  FeedBack_Meet_Groups mg on mg.NumGroup = g.NumGroup where g.NameGroup = '" + g.Group.NumGroup + "'";
+                String selectSTR = "select s.FirstName,s.LastNAme,s.IDStudent from Groups g inner join studentInGroup sg on g.NumGroup = sg.NumGroup  inner join Student s on s.IDStudent = sg.IDStudent inner join  FeedBack_Meet_Groups mg on mg.NumGroup = g.NumGroup where g.NumGroup = '" + g.Group.NumGroup + "'";
 
                 SqlCommand cmd = new SqlCommand(selectSTR, con);
                 SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
@@ -2535,6 +2473,199 @@ public class DBservices
        
         return all;
     }
+    ////-----------------------------if not edit in the first time-------------------//
+    public CritInDoc getMeetDocupdate(int numGroup,Users j)
+    {
+        CritInDoc testupdate = new CritInDoc();
+        testupdate.Doc = new FeedBack_Doc();
+        testupdate.AllCrit = new List<Criterion>();
+        SqlConnection con = null;
+        FullFeedback f = new FullFeedback();
+        try
+        {
+            con = connect("con15");
+            String selectSTR = " select c.NameCrit ,c.DescriptionCrit , c.NumCrit ,f.NumDoc ,f.Score ,f.Note , fc.WeightCrit , s.numScala,s.nameScala ,f.valueCrit from Criteria c inner join FeedBack_Criteria fc on c.NumCrit = fc.NumCrit inner join Full_feedback f on f.NumCrit = c.NumCrit inner join Judge_Groups jg on jg.NumGroup = f.NumGroup inner join Scala s on s.numScala = fc.numScala where jg.NumGroup = '" + numGroup+ "' and jg.EmailJudge = '"+j.Email+"'";
+
+
+            SqlCommand cmd = new SqlCommand(selectSTR, con);
+            SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dr.Read())
+            {
+                Criterion c = new Criterion();
+
+                c.NumCrit = Convert.ToInt32(dr["NumCrit"]);
+                c.NameCrit = (string)dr["NameCrit"];
+                c.DescriptionCrit = (string)dr["DescriptionCrit"];
+                c.WeightCrit = Convert.ToDouble(dr["WeightCrit"]);
+                c.TypeCrit = Convert.ToInt32(dr["numScala"]);
+                c.NameScala = (string)dr["nameScala"];
+                c.Note= (string)dr["Note"];
+                c.Score = Convert.ToDouble(dr["Score"]);
+                c.ValueCrit = Convert.ToInt32(dr["valueCrit"]);
+                testupdate.Doc.NumDoc = Convert.ToInt32(dr["NumDoc"]);
+                testupdate.AllCrit.Add(c);
+            }
+
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+
+        }
+        return testupdate;
+    }
+    //-----------------------------get all critfromDocMeet-------------------//
+    public CritInDoc getMeetDoc(int indexMeet)
+    {
+        CritInDoc test = new CritInDoc();
+        test.Doc = new FeedBack_Doc();
+        test.AllCrit = new List<Criterion>();
+        SqlConnection con = null;
+
+        try
+        {
+            con = connect("con15");
+            String selectSTR = " select d.NumDoc ,d.NumMeeting,c.NumCrit,c.numScala,s.nameScala, c.WeightCrit,ca.NameCrit,ca.DescriptionCrit from [FeedBack_Doc] d inner join FeedBack_Criteria c on d.NumDoc=c.NumDoc inner join Criteria ca on ca.NumCrit=c.NumCrit inner join Scala s on s.numScala=c.numScala where d.NumMeeting='" + indexMeet + "'";
+
+
+            SqlCommand cmd = new SqlCommand(selectSTR, con);
+            SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dr.Read())
+            {
+                Criterion c = new Criterion();
+
+                c.NumCrit = Convert.ToInt32(dr["NumCrit"]); 
+                c.NameCrit = (string)dr["NameCrit"]; 
+                c.DescriptionCrit = (string)dr["DescriptionCrit"]; 
+                c.WeightCrit = Convert.ToDouble(dr["WeightCrit"]); 
+                c.TypeCrit = Convert.ToInt32(dr["numScala"]); 
+                c.NameScala = (string)dr["nameScala"];
+               test.Doc.NumDoc= Convert.ToInt32(dr["NumDoc"]);
+                test.AllCrit.Add(c);
+
+            }
+            
+         
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+
+        }
+        return test;
+    }
+    //----------insertAllCritwithAllScoreOfJudge-------------------//
+    public int insert(FullFeedback full)
+    {
+
+        int numEffected = 0;
+        SqlConnection con;
+        SqlCommand cmd;
+        SqlCommand cmd1;
+
+
+
+        try
+        {
+            con = connect("con15"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        foreach (var item in full.CritDoc.AllCrit)
+        {
+            
+                String cStr = BuildInsertCommand(full, item, full.Judes);
+                cmd = CreateCommand(cStr, con);
+
+
+                try
+                {
+                    numEffected += cmd.ExecuteNonQuery(); // execute the command
+
+
+                }
+                catch (Exception ex)
+                {
+                    throw (ex);
+                }
+            
+        }
+
+        String cStr1 = BuildInsertCommandupdate(full);
+        cmd1 = CreateCommand(cStr1, con);
+
+
+        try
+        {
+            numEffected += cmd1.ExecuteNonQuery(); // execute the command
+
+
+        }
+        catch (Exception ex)
+        {
+            throw (ex);
+        }
+
+        if (con != null)
+        {
+            // close the db connection
+            con.Close();
+        }
+        return numEffected;
+    }
+    //-------------------insertAllCritwithAllScoreOfJudge----------------//
+    private String BuildInsertCommand(FullFeedback full, Criterion c, Users j)
+    {
+        String command;
+        StringBuilder sb = new StringBuilder();
+        // use a string builder to create the dynamic string
+        sb.AppendFormat("Values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')",
+       c.NumCrit, full.CritDoc.Doc.NumDoc, j.Email,j.Type.NumType, full.GroupM.Group.NumGroup, c.Score, c.Note);
+        String prefix = "INSERT INTO Full_feedback " + "(NumCrit,NumDoc,EmailJudge,utID,NumGroup,Score,Note)";
+        command = prefix + sb.ToString();
+
+        return command;
+
+    }
+    //-------------------updateScoreForGroup----------------------------------//
+    private String BuildInsertCommandupdate(FullFeedback f)
+    {
+        String command;
+        StringBuilder sb = new StringBuilder();
+        // use a string builder to create the dynamic string
+
+        String prefix = "UPDATE [Judge_Groups] Set [sumScore] = '" + f.Sum + "' [statusFeed]='"+f.StatusFull+"'   where [NumGroup] = '" + f.GroupM.Group.NumGroup + "' and EmailJudge='"+f.Judes.Email+"'";
+        command = prefix + sb.ToString();
+
+        return command;
+
+    }
+    
+
+
 }
 
 

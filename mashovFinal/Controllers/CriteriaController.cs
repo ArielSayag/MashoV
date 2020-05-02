@@ -31,6 +31,21 @@ namespace mashovFinal.Controllers
             Criterion c = new Criterion();
             return c.getAllCrit();
         }
+       
+        [HttpGet]
+        [Route("api/Criteria/judge/{numMeet}")]
+        public CritInDoc Get(int numMeet)
+        {
+            CritInDoc c = new CritInDoc();
+            return c.getTest(numMeet);
+        }
+        [HttpPut]
+        [Route("api/Criteria/Group/{numMeet}")]
+        public CritInDoc Pur(int numMeet,[FromBody] Users judge)
+        {
+            CritInDoc c = new CritInDoc();
+            return c.getTestupdate(numMeet,judge);
+        }
 
     }
 }

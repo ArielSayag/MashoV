@@ -17,13 +17,19 @@ namespace mashovFinal.Controllers
 
             return u.getUserDetails();
         }
-        //[HttpGet]
-        //[Route("/api/User/judge/{getuser}")]
-        //public List<FeedBack_Meeting> GetJudge([FromBody]Users u)
-        //{
+        [HttpPut]
+        [Route("api/User/judge")]
+        public List<FeedBack_Meeting> PutJudge([FromBody]Users u)
+        {
 
-        //    return u.getJudge();
-        //}
+            return u.getJudge();
+        }
+        [HttpPut]
+        [Route("api/User/judge/Groups/{metting}")]
+        public List<Group_Meeting> Put(int metting, [FromBody]Users u)
+        {
 
+            return u.getJudgeGroup(metting);
+        }
     }
 }

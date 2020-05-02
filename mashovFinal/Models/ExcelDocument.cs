@@ -490,6 +490,8 @@ namespace mashovFinal.Models
 
                         ISheet sheet = book.GetSheetAt(a);
 
+                        string nameSheet = book.GetSheetName(a);
+
                         int colRange = 0;
                         Dictionary<string, int> firstRow = new Dictionary<string, int>();
                         while (sheet.GetRow(0).GetCell(colRange) != null)
@@ -525,7 +527,8 @@ namespace mashovFinal.Models
                             foreach (var j in firstRow)//col
                             {
                                 int errRow = row + 1;
-                                int errCol = j.Value + 1;
+                                string errCol = j.Key;
+                                string errMsg = " בגיליון '" + nameSheet + "', שגיאה בעמודה:  '" + errCol + "' :בשורה " + errRow;
 
                                 switch (j.Key)
                                 {
@@ -560,21 +563,38 @@ namespace mashovFinal.Models
                                     case "שם הסטודנט":
                                         if (sheet.GetRow(row).GetCell(j.Value) == null)
                                         {
-                                            int numJ = firstRow["מס שופט"];
-                                            if ((sheet.GetRow(row).GetCell(j.Value) == null)&&(sheet.GetRow(row).GetCell(numJ).ToString()==null))
+                                            int numL = firstRow["שם משפחה"];
+                                            int numID = firstRow["ת.ז"];
+                                            if ((sheet.GetRow(row).GetCell(numL).ToString() != "") || (sheet.GetRow(row).GetCell(numID).ToString() != ""))
                                             {
-                                                result.Add("msg", " שגיאה בשורה" + errRow + " ועמודה " + errCol);
+                                                result.Add("msg", errMsg);
                                                 return result;
                                             }
-                                        
-                                          //  break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
+                                            else
+                                            {
+                                                break;
+                                            }
+
+
 
                                         }
                                         else if (sheet.GetRow(row).GetCell(j.Value).ToString() == "")
                                         {
-                                            result.Add("msg", " שגיאה בשורה" + errRow + " ועמודה " + errCol);
-                                            return result;
-                                           // break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
+                                          
+                                            //int numJ = firstRow["מס שופט"];
+                                            int numL = firstRow["שם משפחה"];
+                                            int numID = firstRow["ת.ז"];
+                                            if ((sheet.GetRow(row).GetCell(numL).ToString() != "")|| (sheet.GetRow(row).GetCell(numID).ToString() != ""))
+                                            {
+                                                result.Add("msg", errMsg);
+                                                return result;
+                                            }
+                                            else
+                                            {
+                                                break;
+                                            }
+                                            
+                                           
                                         }
                                         else
                                         {
@@ -608,15 +628,25 @@ namespace mashovFinal.Models
                                     case "שם משפחה":
                                         if (sheet.GetRow(row).GetCell(j.Value) == null)
                                         {
-                                            result.Add("msg", " שגיאה בשורה" + errRow + " ועמודה " + errCol);
+                                            result.Add("msg", errMsg);
                                             return result;
                                             //break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
 
                                         }
                                         else if (sheet.GetRow(row).GetCell(j.Value).ToString() == "")
                                         {
-                                            result.Add("msg", " שגיאה בשורה" + errRow + " ועמודה " + errCol);
-                                            return result;
+                                            int numF = firstRow["שם הסטודנט"];
+                                            int numID = firstRow["ת.ז"];
+                                            if ((sheet.GetRow(row).GetCell(numF).ToString() != "") || (sheet.GetRow(row).GetCell(numID).ToString() != ""))
+                                            {
+                                                result.Add("msg", errMsg);
+                                                return result;
+                                            }
+                                            else
+                                            {
+                                                break;
+                                            }
+                                          
                                             //break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
                                         }
                                         else
@@ -630,69 +660,70 @@ namespace mashovFinal.Models
                                     case "ת.ז":
                                         if (sheet.GetRow(row).GetCell(j.Value) == null)
                                         {
-                                            result.Add("msg", " שגיאה בשורה" + errRow + " ועמודה " + errCol);
-                                            return result;
-                                           // break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
+                                            int numF = firstRow["שם הסטודנט"];
+                                            int numL = firstRow["שם משפחה"];
+                                            if ((sheet.GetRow(row).GetCell(numF).ToString() != "") || (sheet.GetRow(row).GetCell(numL).ToString() != ""))
+                                            {
+                                                result.Add("msg", errMsg);
+                                                return result;
+                                            }
+                                            else
+                                            {
+                                                break;
+                                            }
+                                            
 
                                         }
                                         else if (sheet.GetRow(row).GetCell(j.Value).ToString() == "")
                                         {
-                                            result.Add("msg", " שגיאה בשורה" + errRow + " ועמודה " + errCol);
-                                            return result;
-                                           // break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
+                                            int numF = firstRow["שם הסטודנט"];
+                                            int numL = firstRow["שם משפחה"];
+                                            if ((sheet.GetRow(row).GetCell(numF).ToString() != "") || (sheet.GetRow(row).GetCell(numL).ToString() != ""))
+                                            {
+                                                result.Add("msg", errMsg);
+                                                return result;
+                                            }
+                                            else
+                                            {
+                                                break;
+                                            }
                                         }
                                         else
                                         {
                                             //s.Id = sheet.GetRow(row).GetCell(j.Value).ToString();
                                            string id = sheet.GetRow(row).GetCell(j.Value).ToString();
-                                            if (id.Length != 9)
+                                            if ((id.Length != 9)||(!IsAllDigits(id)))
                                             {
-                                                result.Add("msg", " שגיאה בשורה" + errRow + " ועמודה " + errCol+" תעודת זהות אינה תקינה");
+                                                result.Add("msg", errMsg + " תעודת זהות אינה תקינה");
                                                 return result;
                                             }
-                                            //int idnum = int.Parse(id);
-                                            //bool isNumeric = int.TryParse(id, out idnum);
-                                            //if (!isNumeric)
-                                            //{
-                                            //    result.Add("msg", " שגיאה בשורה" + errRow + " ועמודה " + errCol + " תעודת זהות אינה תקינה");
-                                            //    return result;
-                                            //}
+                                            else
+                                            {
+                                                s.Id = id;
+                                            }
+                                       
 
                                         }
                                         break;
 
                                     case "כתובת מייל":
-                                        if (sheet.GetRow(row).GetCell(j.Value) == null)
-                                        {
-                                            result.Add("msg", " שגיאה בשורה" + errRow + " ובעמודה " + errCol);
-                                            return result;
-                                           // break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
-
-                                        }
-                                        else if (sheet.GetRow(row).GetCell(j.Value).ToString() == "")
-                                        {
-                                            result.Add("msg", " שגיאה בשורה" + errRow + " ובעמודה " + errCol);
-                                            return result;
-                                           // break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
-                                        }
-                                        else
-                                        {
+                                     
                                             u.Email = sheet.GetRow(row).GetCell(j.Value).ToString();
-                                        }
+                                        
                                         break;
                                     case "שם משתמש":
                                         if (sheet.GetRow(row).GetCell(j.Value) == null)
                                         {
-                                            result.Add("msg", " שגיאה בשורה" + errRow + " ובעמודה " + errCol);
+                                            result.Add("msg", errMsg);
                                             return result;
-                                           // break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
+                                           
 
                                         }
                                         else if (sheet.GetRow(row).GetCell(j.Value).ToString() == "")
                                         {
-                                            result.Add("msg", " שגיאה בשורה" + errRow + " ובעמודה " + errCol);
+                                            result.Add("msg", errMsg);
                                             return result;
-                                           // break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
+                                           
                                         }
                                         else
                                         {
@@ -702,14 +733,14 @@ namespace mashovFinal.Models
                                     case "שם משפחה משתמש":
                                         if (sheet.GetRow(row).GetCell(j.Value) == null)
                                         {
-                                            result.Add("msg", " שגיאה בשורה" + errRow + " ובעמודה " + errCol);
+                                            result.Add("msg", errMsg);
                                             return result;
                                            // break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
 
                                         }
                                         else if (sheet.GetRow(row).GetCell(j.Value).ToString() == "")
                                         {
-                                            result.Add("msg", " שגיאה בשורה" + errRow + " ובעמודה " + errCol);
+                                            result.Add("msg", errMsg);
                                             return result;
                                            // break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
                                         }
@@ -892,45 +923,46 @@ namespace mashovFinal.Models
 
                                     case "שעת התחלה":
                                         if (emteyTeam == false)
-                                        {//??????????????????//////
-                                            jg.StartTime = Convert.ToDateTime(sheet.GetRow(row).GetCell(j.Value).ToString()).ToString("HH:mm");
-                                            // jg.StartTime = DateTime.FromOADate(sheet.GetRow(row).GetCell(j.Value).ToString()).ToString("HH:mm");
-                                            // jg.StartTime = (DateTime)xlRange.Cells[i, j].Value2;
+                                        {
+                                         
+                                            jg.StartTime = DateTime.FromOADate(sheet.GetRow(row).GetCell(j.Value).NumericCellValue).ToString("HH:mm");
+                                         
+
                                         }
                                         break;
                                     case "שעת סיום":
                                         if (emteyTeam == false)
                                         {
-                                            jg.EndTime = Convert.ToDateTime(sheet.GetRow(row).GetCell(j.Value).ToString()).ToString("HH:mm");
-                                            // jg.EndTime = DateTime.FromOADate(Convert.ToDouble(sheet.GetRow(row).GetCell(j.Value).ToString())).ToString("HH:mm");
+                                            jg.EndTime = DateTime.FromOADate(sheet.GetRow(row).GetCell(j.Value).NumericCellValue).ToString("HH:mm");
                                         }
                                         break;
                                     case "מס רץ":
                                         if (sheet.GetRow(row).GetCell(j.Value) == null)
                                         {
-                                            result.Add("msg", " שגיאה בשורה" + errRow + " ובעמודה " + errCol);
+                                            result.Add("msg", errMsg);
                                             return result;
-                                           // break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
+                                         
 
                                         }
                                         else if (sheet.GetRow(row).GetCell(j.Value).ToString() == "")
                                         {
-                                            result.Add("msg", " שגיאה בשורה" + errRow + " ובעמודה " + errCol);
+                                            result.Add("msg", errMsg);
                                             return result;
-                                           // break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
+                                           
                                         }
                                        else if (sheet.GetRow(row).GetCell(j.Value+1) == null)
                                         {
-                                            int errCol2 = errCol + 1;
-                                            result.Add("msg", " שגיאה בשורה" + errRow + " ובעמודה " + errCol2);
+                                           
+                                            string errmail = "כתובת מייל";
+                                            result.Add("msg", " בגיליון "+ nameSheet + ",  שגיאה בשורה " + errRow + " ובעמודה " + errmail);
                                             return result;
                                            // break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
 
                                         }
                                         else if (sheet.GetRow(row).GetCell(j.Value+1).ToString() == "")
                                         {
-                                            int errCol2 = errCol + 1;
-                                            result.Add("msg", " שגיאה בשורה" + errRow + " בעמודה " + errCol2);
+                                            string errmail = "כתובת מייל";
+                                            result.Add("msg", " בגיליון " + nameSheet + ",  שגיאה בשורה " + errRow + " ובעמודה " + errmail);
                                             return result;
                                           //  break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
                                         }
@@ -938,11 +970,11 @@ namespace mashovFinal.Models
                                         {
                                             double x = Convert.ToDouble(sheet.GetRow(row).GetCell(j.Value).ToString());
                                             
-                                                string y = sheet.GetRow(row).GetCell(j.Value + 1).ToString();
+                                            string y = sheet.GetRow(row).GetCell(j.Value + 1).ToString();
                                             if (!IsValid(y))
                                             {
-                                                int errCol2 = errCol + 1;
-                                                result.Add("msg", " שגיאה בשורה" + errRow + " בעמודה " + errCol2+" כתובת אימייל אינה תקינה");
+                                                string errmail = "כתובת מייל";
+                                                result.Add("msg", " בגיליון " + nameSheet + ",  שגיאה בשורה " + errRow + " ובעמודה " + errmail);
                                                 return result;
                                             }
                                             connection.Add(x, y);
@@ -952,6 +984,17 @@ namespace mashovFinal.Models
                                     case "תאריך":
                                         if (oneDate == false)
                                         {
+                                            int numDate = firstRow["תאריך"];
+                                            if (sheet.GetRow(0).GetCell(numDate) == null)
+                                            {
+                                                result.Add("msg", errMsg);
+                                                return result;
+                                            }
+                                            else if (sheet.GetRow(0).GetCell(numDate).ToString() == "")
+                                            {
+                                                result.Add("msg", errMsg);
+                                                return result;
+                                            }
                                             if (sheet.GetRow(row).GetCell(j.Value) == null)
                                             {
 
@@ -975,12 +1018,12 @@ namespace mashovFinal.Models
                                             }
 
                                         }
-                                        else
-                                        {
-                                            Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-IL");
-                                            DateTime date1 = Convert.ToDateTime(sheet.GetRow(1).GetCell(j.Value).ToString());
-                                            m.Date = date1;
-                                        }
+                                        //else
+                                        //{
+                                        //    Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-IL");
+                                        //    DateTime date1 = Convert.ToDateTime(sheet.GetRow(1).GetCell(j.Value).ToString());
+                                        //    m.Date = date1;
+                                        //}
                                         break;
                                 }
                             }
@@ -1103,6 +1146,7 @@ namespace mashovFinal.Models
                 return false;
             }
         }
+        public bool IsAllDigits(string s) => s.All(char.IsDigit);
        
     }
    

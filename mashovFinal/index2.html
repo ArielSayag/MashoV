@@ -49,309 +49,7 @@
 
         var str = "";
         var localData;
-        //-------------------started dash for admin---------------------------------//
-        function GETSuccessUser(data) {
-            localStorage["AllDoc"] = JSON.stringify(data);
-            localData = data;
-            str = "";
-            if (data == "") { return; }
-            else {
-                document.getElementById("results").innerHTML = "";
-                console.log(data);
-                console.log(data[0].DetailsMeet.Date.split("T")[0].split("-").reverse());
-
-                for (i in data) {
-
-                    if (!data[i].Status) {
-                        if (data[i].TotalWeight == 0) {
-                            str += '<div id="' + i + '" class="col-md-4 col-sm-6 search " style="direction:rtl" title="המשוב 0% קריטריונים ,לחץ לעדכון" onclick="showFeed(this.id)"><div class="service_box2  sameBorderStyle">';
-                        }
-                        else {
-                            str += '<div id="' + i + '" class="col-md-4 col-sm-6 search " style="direction:rtl" title="המשוב אינו מוכן ,לחץ לעדכון" onclick="showFeed(this.id)"><div class="service_box1  sameBorderStyle">';
-                        }
-                    }
-                    else if (data[i].Status) {
-
-                        str += '<div id="' + i + '" class="col-md-4 col-sm-6 search" style="direction:rtl" onclick="showFeed(this.id)"><div class="service_box">';
-                    }
-
-                    str += '<div class="service_icon">30/3</div><h3>' +
-                        data[i].DetailsMeet.NameMeeting + '</h3><p><b>תאריך הצגה :</b>' +
-                        data[i].DetailsMeet.Date.split("T")[0] + '</p><p><b>שם הקורס :</b>' +
-                        data[i].DetailsMeet.DetailsCourseDep.NameCourse + '</p><p><b>מחלקה :</b>' +
-                        data[i].DetailsMeet.DetailsCourseDep.NameDepartment + '</p><p><b>שנה :</b> ' +
-                        data[i].DetailsMeet.YearMeeting + '</p></div></div>';
-                }
-                console.log(str);
-                $('#results').append(str);
-            }
-        }
-        function GETErrorUsere(err) { console.log(err); }
-
-        //----------------------------------when I want to watch on ready or need to update FeedBack-------/
-        var newDoc = "";
-        function showFeed(id) {
-            console.log(localData[id]);
-            newDoc = localData[id];
-            $("#first-slide").hide();
-            $("#fourth-slide").fadeIn();
-           // $("#third-slide").fadeIn();
-            document.getElementById("addHere").innerHTML = "";
-            ajaxCall("PUT", "./api/Criteria", JSON.stringify(localData[id]), GETSuccessDoc, GETErrorDoc);
-         
-
-        }
-        var str1 = "";
-        var critFdata = "";
-        var countFeedName = 1;
-        var totalW = 0;
-        var IdDoc = "";
-        var totalWeight = 0;
-
-        function GETSuccessDoc(data) {
-            console.log(data);
-            console.log(data.AllCrit);
-            document.getElementsByClassName("nameFeed").innerHTML = "";
-            // document.getElementById("five").innerHTML = "";
-            console.log(data);
-            console.log(data.AllCrit);
-            listCritEdit = data.AllCrit;
-            IdDoc = data.Doc;
-
-
-            $('.nameFeed').append(data.Doc.NameDoc);
-            for (i in listCritEdit ) {
-                critFdata = 'fdata' + i;
-                totalWeight += parseInt(listCritEdit[i].WeightCrit);
-                str1 +=`<div id="${critFdata}" class="row pt-4">
-                        <div class="col-sm-3"></div>                     
-                        <div id="idC" value="${listCritEdit[i].NumCrit}" class="col-sm-5">                  
-                        <h5 id="fdataname" class="feedback1-show" value="${listCritEdit[i].NameCrit}">${countFeedName++})${listCritEdit[i].NameCrit}</h5>
-                        <h6 id="fdatadec" class="feedback1-show" value="${listCritEdit[i].DescriptionCrit}">תיאור:${listCritEdit[i].DescriptionCrit}</h6>
-                        <h7 id="weight" class="feedback1-show" value="${listCritEdit[i].WeightCrit}" >משקל: ${listCritEdit[i].WeightCrit}</h7>
-                        <div class="col-sm-12 p-0">
-                        <div class="form-group">
-                        <h7 id="scala" name="${listCritEdit[i].TypeCrit}" class="feedback1-show" value="${listCritEdit[i].NameScala}" >סקאלה: ${listCritEdit[i].NameScala}</h7>
-                        </div>
-                        </div>
-                        </div>
-                        <div class="col-sm-1">
-                        <a href="javascript:void(0)" class="btn btn-defult m-2 feedback1-edit-btn" onclick="crit_edit_btn(${critFdata})">ערוך<i class="icon-edit"></i></a>
-                        </div>
-                        </div>`;
-
-              
-
-
-            }
-            document.getElementById("aria-valuenow").innerHTML = "";
-            $("#aria-valuenow").append(totalWeight);
-            $("#aria-valuenow").progressbar({ value: totalWeight });
-            $("#aria-valuenow").css({ "width": totalWeight + "%" });
-
-            if (totalWeight < 100) {
-                str1 += `<div class="row pt-4" >
-                    <div class="col-sm-3"></div>
-                    <div class="col-sm-5"><div id="newFor" ><div class="form-group">
-                    <select class="form-control" onclick="addSecendTime(newFor)" id="add-criteria-btn">
-                        <option selected disabled>הוסף קריטריון</option>
-                        <option value="Choose From List">בחר מרשימה</option>
-                       <option value="New">חדש</option>
-                    </select>
-                        </div></div>`;
-            }
-            $('#addHere').append(str1);
-        }
-        function GETErrorDoc(err) { console.log(err); }
-        var sreEdit = "";
-        var countEditCrit = "";
-        var scala1 = '';
-        var critArr = [];
-        function crit_edit_btn(critId) {
-            
-            countEditCrit = $(critId).attr('id');
-
-            critArr[0] = $(critId).find("#fdataname").attr('value');
-            critArr[1] = $(critId).find("#fdatadec").attr('value');
-            critArr[2] = $(critId).find("#weight").attr('value');
-            critArr[3] = $(critId).find("#scala").attr('name');
-            critArr[4] = $(critId).find("#scala").attr('value');
-            critArr[5] = $(critId).find("#idC").attr('value');
-
-
-            sreEdit = `<div id="${countEditCrit}" class="row pt-4">
-                <div class="col-sm-3"></div>
-                  <div id="idcrit" value="${critArr[5]}" class="col-sm-5">               
-                      <input id="critname1" type="text" class="form-control feedback1-edit" value="${critArr[0]}">
-                      <textarea id="description1" type="text"  style="height:200px"  class="form-control feedback1-edit" >${critArr[1]}</textarea>
-                      <input id="weight1" type="text" class="form-control feedback1-edit" value="${critArr[2]}">
-                       <div class="col-sm-12 p-0">
-                          <div class="form-group">
-                             <select class="form-control"  id="scala1">
-                             <option  value="${critArr[3]}">${critArr[4]}</option>
-                                <option value="1">כן/לא</option>
-                <option value="2">בוצע/לא בוצע</option>
-                <option value="3">רציף 1-100</option>
-                <option value="4">1-10 רציף</option>
-                <option value="5">1-5 בדיד</option>
-                <option value="6">1-10 בדיד</option>
-                             </select>
-                           </div>
-
-                       </div>
-                      <div class=row>
-                     <a class="btn btn-defult text-light m-3 feedback1-show-btn feedback1-edit" onclick="saveThisCrit(${countEditCrit},1)" href="javascript:void(0)"> שמור</a>
-                     <a class="btn btn-defult text-light m-3 feedback1-show-btn feedback1-edit" onclick="saveThisCrit(${countEditCrit},0)" href="javascript:void(0)"> בטל</a>
-                        </div>
-                   </div>
-                 </div>`;
-          
-            $(critId).replaceWith(sreEdit);
-           
-        }
-        var thiscrit = null;
-        var thisEditCrit1 = "";
-        function saveThisCrit(thisEditCrit, saveORnot) {
-
-            //if (thiscrit != null) {
-            //    swal('🤦‍♀️אנא המתן..עומס כבד על המערכת');
-
-            //    return;
-            //}
-            thisEditCrit1 = thisEditCrit;
-            thiscrit = $(thisEditCrit).attr('id');
-            var temp = document.getElementById(thiscrit);
-
-
-            var critnam = temp.querySelector("#critname1").value;
-            var dec = temp.querySelector("#description1").value;
-            var weight = temp.querySelector("#weight1").value;
-            var id = $(thisEditCrit).find("#idcrit").attr('value');
-            critnam = tempString(critnam);
-            dec = tempString(dec);
-            var scalaid = temp.querySelector("#scala1").value;
-
-
-
-            if (!saveORnot) {
-                scalaid = critArr[3];
-                critnam = critArr[0];
-                dec = critArr[1];
-                weight = critArr[2];
-
-
-                strthis = foo(id, thiscrit, scalaid, critnam, dec, weight);
-
-                $(thisEditCrit).replaceWith(strthis);
-
-            }
-            else {
-                var newW = parseInt(weight);
-                var oldW = parseInt(critArr[2]);
-                var sum = totalWeight - oldW + newW;
-
-                if (sum <= 100) {
-                    totalWeight -= oldW;
-                    totalWeight += newW;
-
-
-                    document.getElementById("aria-valuenow").innerHTML = "";
-                    $("#aria-valuenow").append(totalWeight);
-                    $("#aria-valuenow").progressbar({ value: totalWeight });
-                    $("#aria-valuenow").css({ "width": totalWeight + "%" });
-
-                    c = {
-                        "NumCrit": id,
-                        "NameCrit": critnam,
-                        "DescriptionCrit": dec,
-                        "WeightCrit": weight,
-                        "TypeCrit": scalaid,
-                    }
-                    var lis = [];
-                    lis.push(c);
-                    cd = {
-                        "Doc": IdDoc,
-                        "AllCrit": lis,
-
-                    }
-
-
-                    ajaxCall("POST", "./api/Doc/UpdateCrit", JSON.stringify(cd), POSTSuccessC, POSTErrorC);
-
-
-                }
-                else {
-                    swal("עברת את ה100% ,אנא בחר משקל אחד");
-                }
-
-                //insert new crit , update his ID  and replace  it from the list<Crit> of the doc...
-            }
-
-        }
-        
-
-        function foo(id, thiscrit, scalaid, critnam, dec, weight) {
-       
-            critnam = tempString(critnam);
-            dec = tempString(dec);
-
-            for (i in listScal) {
-                if (scalaid == listScal[i].NumScala) {
-                    var scala = listScal[i].NameScala;
-                }
-            }      
-            return `<div id="${thiscrit}" class="row pt-4">
-                        <div class="col-sm-3"></div>            
-                        <div id="idcrit" value="${id}" class="col-sm-5">  
-                        <h5 id="fdataname" class="feedback1-show" value="${critnam}">${1})${critnam}</h5>
-                        <h6 id="fdatadec" class="feedback1-show" value="${dec}">תיאור:${dec}</h6>
-                        <h7 id="weight" class="feedback1-show" value="${weight}" >משקל: ${weight}</h7>
-                        <div class="col-sm-12 p-0">
-                        <div class="form-group">
-                        <h7 id="scala" name="${scalaid}" class="feedback1-show" value="${scala}" >סקאלה: ${scala}</h7>
-
-                        </div>
-                        </div>
-                        </div>
-                        <div class="col-sm-1">
-                        <a href="javascript:void(0)" class="btn btn-defult m-2 feedback1-edit-btn" onclick="crit_edit_btn(${thiscrit})">ערוך<i class="icon-edit"></i></a>
-                        </div>
-                        </div>`;
-            
-        }
-        var idnew = "";
-        function POSTSuccessC(data) {
-            console.log(data);
-            idnew = data;
-            var temp = document.getElementById(thiscrit);
-             var critnam = temp.querySelector("#critname1").value;
-            var dec = temp.querySelector("#description1").value;
-            var weight = temp.querySelector("#weight1").value;
-            var scalaid = temp.querySelector("#scala1").value;
-
-            strthis = foo(idnew, thiscrit, scalaid ,critnam, dec,weight );
-
-            $(thisEditCrit1).replaceWith(strthis);
-            thiscrit = null;
-            thisEditCrit1 = null;
-        }
-        function POSTErrorC(err) { console.log(err); }
-
-        function checkTotalw(total,newOrnot) {
-
-            if (!newOrnot) {
-
-            }
-            else {
-                totalW += total;
-            }
-            document.getElementById("aria-valuenow1").innerHTML = "";
-            $("#aria-valuenow1").append(totalW + '%');
-            $("#aria-valuenow1").progressbar({ value: totalW });
-            $("#aria-valuenow1").css({ "width": totalW + "%" });
-        }
-
-
+ 
         //---------------------show all Dep from drop down list------------------------------------//
 
         function GETSuccessDep(data) {
@@ -415,11 +113,6 @@
         function GETErrorScala(err) { console.log(err); }
    
 
-
-
-
-
-
         //-------------dashboard(getUser)-----------------------------------//
         function dashboard(getuser) {
 
@@ -446,15 +139,34 @@
         //-----------------------------------------------ready-----------------------------------------//
         var getuser = "";
         $(document).ready(function () {
-            //$("#myInput").on("keyup", function () {
-            //    var value = $(this).val();
-            //    console.log(this);
-            //    $("#results").filter(function () {
-            //        $(this).toggle($(this).text().indexOf(value) > -1)
-            //        console.log($(this).text());
+            
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val();
+                console.log(this);
+                $('#results > div').hide();
+                //$('#results:contains("' + value + '")').show();
+                $('#results > div > div > h3:contains("' + value + '")').closest('#results > div').show();
+                $('#results > div > div > p:contains("' + value + '")').closest('#results > div').show();
 
-            //    });
-            //});
+                //$('#results').find('div').each(function () {
+                //    //var innerDiv = $(this).children("div")[0];
+                //    //console.log(innerDiv);
+                //    //innerDiv.toggle(innerDiv.indexOf(value) > -1)
+
+                //    var show = $(this).contents().indexOf(value) > -1;
+                //    $(this).toggle(show);
+
+
+                //});
+
+                //$("#results").filter(function () {
+                //    $(this).toggle($(this).text().indexOf(value) > -1)
+                //    console.log($(this).text());
+
+                //});
+            });
+
+
             //$("#myInput").keyup(function () {
             //    var query = $.trim($(this).prevAll('#myInput').val().toLowerCase());
             //    $('.search').each(function () {
@@ -511,12 +223,10 @@
                         }
                     }
 
-                    var data = new FormData();  //
+                    var data = new FormData();  
                     var file = $("#files").get(0).files[0];
                     data.append("UploadedFile", file);
               
-
-                    //data.append("arry", arry);
                     for (var i = 0; i < arry.length; i++) {
                         data.append("arr" + i, arry[i]);
                     }
@@ -532,7 +242,7 @@
                         error: GETError
                     });
                 }
-                //GETSuccess(localData[1]);
+              
             });
         });
         var bankCrit = [];
@@ -575,24 +285,29 @@
         function GETSuccess(data) { //step-3- //
             console.log(data);
             
-       
-                if (data.msg != "") {
-                    swal(data["msg"]);
+
+            if (data.id == null) {
+
+                var errStr1 = data["msg"].split(",")[0];
+                var errStr2 = data["msg"].split(",")[1];
+                filesName = "";
+                $("#extractFile").val("");
+                swal(errStr1, errstr2);
+            }
+            else {
+                newDoc = {
+                    "NumDoc": parseInt(data["id"]),
+                    "NameDoc": filesName.split(".")[0],
                 }
-                else {
-                    newDoc = {
-                        "NumDoc": parseInt(data["id"]),
-                        "NameDoc": filesName.split(".")[0],
-                    }
-                    
-                    swal("הנתונים הועלו בהצלחה");
-                    
-                    document.getElementById("addHere").innerHTML = "";
-                    $('.nameFeed').append(newDoc.NameDoc);
-                    $("#second-slide").hide();
-                    $("#third-slide").fadeIn();
-                    $("#fourth-slide").fadeIn();
-                }
+
+                swal("הנתונים הועלו בהצלחה");
+
+                document.getElementById("addHere").innerHTML = "";
+                $('.nameFeed').append(newDoc.NameDoc);
+                $("#second-slide").hide();
+                $("#third-slide").fadeIn();
+                $("#fourth-slide").fadeIn();
+            }
             
     
 
@@ -959,6 +674,310 @@
             $("#addHere").append(straddCrit);
             listDiv.push(strAnat);
         }
+        //------------------------------------------------------------------------------//
+        //-------------------started dash for admin---------------------------------//
+        function GETSuccessUser(data) {
+            localStorage["AllDoc"] = JSON.stringify(data);
+            localData = data;
+            str = "";
+            if (data == "") { return; }
+            else {
+                document.getElementById("results").innerHTML = "";
+                console.log(data);
+                console.log(data[0].DetailsMeet.Date.split("T")[0].split("-").reverse());
+
+                for (i in data) {
+
+                    if (!data[i].Status) {
+                        if (data[i].TotalWeight == 0) {
+                            str += '<div id="' + i + '" class="col-md-4 col-sm-6 search " style="direction:rtl" title="המשוב 0% קריטריונים ,לחץ לעדכון" onclick="showFeed(this.id)"><div class="service_box2 content sameBorderStyle">';
+                        }
+                        else {
+                            str += '<div id="' + i + '" class="col-md-4 col-sm-6 search " style="direction:rtl" title="המשוב אינו מוכן ,לחץ לעדכון" onclick="showFeed(this.id)"><div class="service_box1 content sameBorderStyle">';
+                        }
+                    }
+                    else if (data[i].Status) {
+
+                        str += '<div id="' + i + '" class="col-md-4 col-sm-6 search" style="direction:rtl" onclick="showFeed(this.id)"><div class="service_box content">';
+                    }
+
+                    str += '<div class="service_icon">30/3</div><h3>' +
+                        data[i].DetailsMeet.NameMeeting + '</h3><p><b>תאריך הצגה :</b>' +
+                        data[i].DetailsMeet.Date.split("T")[0] + '</p><p><b>שם הקורס :</b>' +
+                        data[i].DetailsMeet.DetailsCourseDep.NameCourse + '</p><p><b>מחלקה :</b>' +
+                        data[i].DetailsMeet.DetailsCourseDep.NameDepartment + '</p><p><b>שנה :</b> ' +
+                        data[i].DetailsMeet.YearMeeting + '</p></div></div>';
+                }
+
+                $('#results').append(str);
+            }
+        }
+        function GETErrorUsere(err) { console.log(err); }
+
+        //----------------------------------when I want to watch on ready or need to update FeedBack-------/
+        var newDoc = "";
+        function showFeed(id) {
+            console.log(localData[id]);
+            newDoc = localData[id];
+            $("#first-slide").hide();
+            $("#fourth-slide").fadeIn();
+            // $("#third-slide").fadeIn();
+            document.getElementById("addHere").innerHTML = "";
+            ajaxCall("PUT", "./api/Criteria", JSON.stringify(localData[id]), GETSuccessDoc, GETErrorDoc);
+
+
+        }
+        var str1 = "";
+        var critFdata = "";
+        var countFeedName = 1;
+        var totalW = 0;
+        var IdDoc = "";
+        var totalWeight = 0;
+
+        function GETSuccessDoc(data) {
+            console.log(data);
+            console.log(data.AllCrit);
+            document.getElementsByClassName("nameFeed").innerHTML = "";
+            // document.getElementById("five").innerHTML = "";
+            console.log(data);
+            console.log(data.AllCrit);
+            listCritEdit = data.AllCrit;
+            IdDoc = data.Doc;
+
+
+            $('.nameFeed').append(data.Doc.NameDoc);
+            for (i in listCritEdit) {
+                critFdata = 'fdata' + i;
+                totalWeight += parseInt(listCritEdit[i].WeightCrit);
+                str1 += `<div id="${critFdata}" class="row pt-4">
+                        <div class="col-sm-3"></div>                     
+                        <div id="idC" value="${listCritEdit[i].NumCrit}" class="col-sm-5">                  
+                        <h5 id="fdataname" class="feedback1-show" value="${listCritEdit[i].NameCrit}">${countFeedName++})${listCritEdit[i].NameCrit}</h5>
+                        <h6 id="fdatadec" class="feedback1-show" value="${listCritEdit[i].DescriptionCrit}">תיאור:${listCritEdit[i].DescriptionCrit}</h6>
+                        <h7 id="weight" class="feedback1-show" value="${listCritEdit[i].WeightCrit}" >משקל: ${listCritEdit[i].WeightCrit}</h7>
+                        <div class="col-sm-12 p-0">
+                        <div class="form-group">
+                        <h7 id="scala" name="${listCritEdit[i].TypeCrit}" class="feedback1-show" value="${listCritEdit[i].NameScala}" >סקאלה: ${listCritEdit[i].NameScala}</h7>
+                        </div>
+                        </div>
+                        </div>
+                        <div class="col-sm-1">
+                        <a href="javascript:void(0)" class="btn btn-defult m-2 feedback1-edit-btn" onclick="crit_edit_btn(${critFdata})">ערוך<i class="icon-edit"></i></a>
+                        </div>
+                        </div>`;
+
+
+
+
+            }
+            document.getElementById("aria-valuenow").innerHTML = "";
+            $("#aria-valuenow").append(totalWeight);
+            $("#aria-valuenow").progressbar({ value: totalWeight });
+            $("#aria-valuenow").css({ "width": totalWeight + "%" });
+
+            if (totalWeight < 100) {
+                str1 += `<div class="row pt-4" >
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-5"><div id="newFor" ><div class="form-group">
+                    <select class="form-control" onclick="addSecendTime(newFor)" id="add-criteria-btn">
+                        <option selected disabled>הוסף קריטריון</option>
+                        <option value="Choose From List">בחר מרשימה</option>
+                       <option value="New">חדש</option>
+                    </select>
+                        </div></div>`;
+            }
+            $('#addHere').append(str1);
+        }
+        function GETErrorDoc(err) { console.log(err); }
+        var sreEdit = "";
+        var countEditCrit = "";
+        var scala1 = '';
+        var critArr = [];
+        function crit_edit_btn(critId) {
+
+            countEditCrit = $(critId).attr('id');
+
+            critArr[0] = $(critId).find("#fdataname").attr('value');
+            critArr[1] = $(critId).find("#fdatadec").attr('value');
+            critArr[2] = $(critId).find("#weight").attr('value');
+            critArr[3] = $(critId).find("#scala").attr('name');
+            critArr[4] = $(critId).find("#scala").attr('value');
+            critArr[5] = $(critId).find("#idC").attr('value');
+
+
+            sreEdit = `<div id="${countEditCrit}" class="row pt-4">
+                <div class="col-sm-3"></div>
+                  <div id="idcrit" value="${critArr[5]}" class="col-sm-5">               
+                      <input id="critname1" type="text" class="form-control feedback1-edit" value="${critArr[0]}">
+                      <textarea id="description1" type="text"  style="height:200px"  class="form-control feedback1-edit" >${critArr[1]}</textarea>
+                      <input id="weight1" type="text" class="form-control feedback1-edit" value="${critArr[2]}">
+                       <div class="col-sm-12 p-0">
+                          <div class="form-group">
+                             <select class="form-control"  id="scala1">
+                             <option  value="${critArr[3]}">${critArr[4]}</option>
+                                <option value="1">כן/לא</option>
+                <option value="2">בוצע/לא בוצע</option>
+                <option value="3">רציף 1-100</option>
+                <option value="4">1-10 רציף</option>
+                <option value="5">1-5 בדיד</option>
+                <option value="6">1-10 בדיד</option>
+                             </select>
+                           </div>
+
+                       </div>
+                      <div class=row>
+                     <a class="btn btn-defult text-light m-3 feedback1-show-btn feedback1-edit" onclick="saveThisCrit(${countEditCrit},1)" href="javascript:void(0)"> שמור</a>
+                     <a class="btn btn-defult text-light m-3 feedback1-show-btn feedback1-edit" onclick="saveThisCrit(${countEditCrit},0)" href="javascript:void(0)"> בטל</a>
+                        </div>
+                   </div>
+                 </div>`;
+
+            $(critId).replaceWith(sreEdit);
+
+        }
+        var thiscrit = null;
+        var thisEditCrit1 = "";
+        function saveThisCrit(thisEditCrit, saveORnot) {
+
+            //if (thiscrit != null) {
+            //    swal('🤦‍♀️אנא המתן..עומס כבד על המערכת');
+
+            //    return;
+            //}
+            thisEditCrit1 = thisEditCrit;
+            thiscrit = $(thisEditCrit).attr('id');
+            var temp = document.getElementById(thiscrit);
+
+
+            var critnam = temp.querySelector("#critname1").value;
+            var dec = temp.querySelector("#description1").value;
+            var weight = temp.querySelector("#weight1").value;
+            var id = $(thisEditCrit).find("#idcrit").attr('value');
+            critnam = tempString(critnam);
+            dec = tempString(dec);
+            var scalaid = temp.querySelector("#scala1").value;
+
+
+
+            if (!saveORnot) {
+                scalaid = critArr[3];
+                critnam = critArr[0];
+                dec = critArr[1];
+                weight = critArr[2];
+
+
+                strthis = foo(id, thiscrit, scalaid, critnam, dec, weight);
+
+                $(thisEditCrit).replaceWith(strthis);
+
+            }
+            else {
+                var newW = parseInt(weight);
+                var oldW = parseInt(critArr[2]);
+                var sum = totalWeight - oldW + newW;
+
+                if (sum <= 100) {
+                    totalWeight -= oldW;
+                    totalWeight += newW;
+
+
+                    document.getElementById("aria-valuenow").innerHTML = "";
+                    $("#aria-valuenow").append(totalWeight);
+                    $("#aria-valuenow").progressbar({ value: totalWeight });
+                    $("#aria-valuenow").css({ "width": totalWeight + "%" });
+
+                    c = {
+                        "NumCrit": id,
+                        "NameCrit": critnam,
+                        "DescriptionCrit": dec,
+                        "WeightCrit": weight,
+                        "TypeCrit": scalaid,
+                    }
+                    var lis = [];
+                    lis.push(c);
+                    cd = {
+                        "Doc": IdDoc,
+                        "AllCrit": lis,
+
+                    }
+
+
+                    ajaxCall("POST", "./api/Doc/UpdateCrit", JSON.stringify(cd), POSTSuccessC, POSTErrorC);
+
+
+                }
+                else {
+                    swal("עברת את ה100% ,אנא בחר משקל אחד");
+                }
+
+                //insert new crit , update his ID  and replace  it from the list<Crit> of the doc...
+            }
+
+        }
+
+
+        function foo(id, thiscrit, scalaid, critnam, dec, weight) {
+
+            critnam = tempString(critnam);
+            dec = tempString(dec);
+
+            for (i in listScal) {
+                if (scalaid == listScal[i].NumScala) {
+                    var scala = listScal[i].NameScala;
+                }
+            }
+            return `<div id="${thiscrit}" class="row pt-4">
+                        <div class="col-sm-3"></div>            
+                        <div id="idcrit" value="${id}" class="col-sm-5">  
+                        <h5 id="fdataname" class="feedback1-show" value="${critnam}">${1})${critnam}</h5>
+                        <h6 id="fdatadec" class="feedback1-show" value="${dec}">תיאור:${dec}</h6>
+                        <h7 id="weight" class="feedback1-show" value="${weight}" >משקל: ${weight}</h7>
+                        <div class="col-sm-12 p-0">
+                        <div class="form-group">
+                        <h7 id="scala" name="${scalaid}" class="feedback1-show" value="${scala}" >סקאלה: ${scala}</h7>
+
+                        </div>
+                        </div>
+                        </div>
+                        <div class="col-sm-1">
+                        <a href="javascript:void(0)" class="btn btn-defult m-2 feedback1-edit-btn" onclick="crit_edit_btn(${thiscrit})">ערוך<i class="icon-edit"></i></a>
+                        </div>
+                        </div>`;
+
+        }
+        var idnew = "";
+        function POSTSuccessC(data) {
+            console.log(data);
+            idnew = data;
+            var temp = document.getElementById(thiscrit);
+            var critnam = temp.querySelector("#critname1").value;
+            var dec = temp.querySelector("#description1").value;
+            var weight = temp.querySelector("#weight1").value;
+            var scalaid = temp.querySelector("#scala1").value;
+
+            strthis = foo(idnew, thiscrit, scalaid, critnam, dec, weight);
+
+            $(thisEditCrit1).replaceWith(strthis);
+            thiscrit = null;
+            thisEditCrit1 = null;
+        }
+        function POSTErrorC(err) { console.log(err); }
+
+        function checkTotalw(total, newOrnot) {
+
+            if (!newOrnot) {
+
+            }
+            else {
+                totalW += total;
+            }
+            document.getElementById("aria-valuenow1").innerHTML = "";
+            $("#aria-valuenow1").append(totalW + '%');
+            $("#aria-valuenow1").progressbar({ value: totalW });
+            $("#aria-valuenow1").css({ "width": totalW + "%" });
+        }
+
+
     </script>
 
 </head>
@@ -1057,7 +1076,7 @@
                                                                       <i class="icon-search-8"></i>
                                                                     </button>
                                                                 </div>
-                                                                <input  type="search" placeholder="Search" aria-describedby="button-addon2" class="form-control border-0">
+                                                                <input id="myInput"  type="search" placeholder="Search" aria-describedby="button-addon2" class="form-control border-0">
                                                             </div>
                                                         </div>
                                                     </div>

@@ -46,5 +46,12 @@ namespace mashovFinal.Controllers
 
             return c.updateAndinsertCrit();
         }
+        [HttpPost]
+        [Route("api/Doc")]
+        public int Post([FromBody] FullFeedback f)
+        {
+
+            return f.insert();
+        }
     }
 }

@@ -29,6 +29,17 @@ namespace mashovFinal.Models
             DBservices dbs = new DBservices();
             return dbs.insAndUpCrit(this);
         }
+        
 
+        public CritInDoc getTest(int numMeet)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.getMeetDoc(numMeet);
+        }
+        public CritInDoc getTestupdate(int numGroup, Users judge)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.getMeetDocupdate(numGroup, judge);
+        }
     }
 }

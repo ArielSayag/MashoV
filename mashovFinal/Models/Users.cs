@@ -71,5 +71,10 @@ namespace mashovFinal.Models
             DBservices dbs = new DBservices();
             return dbs.getJudgeCourse(this);
         }
+        public List<Group_Meeting> getJudgeGroup(int index)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.getJudgeGroups(this,index);
+        }
     }
 }
