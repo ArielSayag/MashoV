@@ -31,5 +31,19 @@ namespace mashovFinal.Controllers
 
             return u.getJudgeGroup(metting);
         }
+        [HttpPut]
+        [Route("api/User/Mentor")]
+        public List<FeedBack_Meeting> PutMentor([FromBody]Users u)
+        {
+
+            return u.getMentor();
+        }
+        [HttpPut]
+        [Route("api/User/Mentor/Groups/{metting}")]
+        public List<Group_Meeting> PutMentor(int metting, [FromBody]Users u)
+        {
+
+            return u.getMentorGroup(metting);
+        }
     }
 }

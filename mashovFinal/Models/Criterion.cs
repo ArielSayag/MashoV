@@ -16,8 +16,10 @@ namespace mashovFinal.Models
         string note;
         string nameScala;
         string typeCssName; // only for the function SaveToData index3.html
-        int valueCrit;
-        
+        string valueCrit;
+        int favorite;
+
+
         public int NumCrit { get => numCrit; set => numCrit = value; }
         public string NameCrit { get => nameCrit; set => nameCrit = value; }
         public string DescriptionCrit { get => descriptionCrit; set => descriptionCrit = value; }
@@ -27,10 +29,11 @@ namespace mashovFinal.Models
         public double Score { get => score; set => score = value; }
         public string Note { get => note; set => note = value; }
         public string TypeCssName { get => typeCssName; set => typeCssName = value; }
-        public int ValueCrit { get => valueCrit; set => valueCrit = value; }
+        public string ValueCrit { get => valueCrit; set => valueCrit = value; }
+        public int Favorite { get => favorite; set => favorite = value; }
 
         public Criterion() { }
-        public Criterion(int num , string name, string des, double we, int ty, double sc, string no ,string names,string t,int v)
+        public Criterion(int num , string name, string des, double we, int ty, double sc, string no ,string names,string t, string v,int f)
         {
             numCrit = num;
             nameCrit = name;
@@ -42,6 +45,7 @@ namespace mashovFinal.Models
             nameScala = names;
             TypeCssName = t;
             valueCrit = v;
+            favorite = f;
 
         }
 

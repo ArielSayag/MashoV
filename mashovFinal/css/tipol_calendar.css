@@ -1,0 +1,132 @@
+﻿@font-face {
+    font-family: FbSpacer;
+    src: url(css/FbSpacer-Regular.ttf);
+}
+
+div {
+    font-family: FbSpacer;
+}
+
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button {
+    font-family: FbSpacer;
+}
+
+#calendar {
+    float: right;
+    width: 900px;
+}
+
+form#form2 .ui-corner-all, .ui-corner-bottom, .ui-corner-right, .ui-corner-br {
+    width: auto;
+}
+
+.auto-style1 {
+    width: 179px;
+}
+
+.floatright {
+    float: right;
+}
+
+.fc-scroller {
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.fc-widget-header {
+    background: #DEDAD6;
+}
+
+.fc-view, .fc-view > table {
+    border: 2px solid #6C7187;
+}
+
+table, .fc-row:first-child table {
+    margin: 0 !important;
+}
+
+div#content .floatright h3 {
+    width: 170px;
+}
+
+select#ContentPlaceHolder1_areaFilterDDL {
+    width: 174px;
+}
+
+div#showGuardingPopupDiv h3, div#updatePopuppDiv h3 {
+    width: 80px;
+    font-size: 20px;
+    font-family: FbSpacer;
+    font-weight: normal;
+    margin-top: 10px;
+}
+
+input#ContentPlaceHolder1_TBstarttime, input#ContentPlaceHolder1_TBendtime, input#ContentPlaceHolder1_timeStartTextBox, input#ContentPlaceHolder1_timeEndTextBox,
+input#ContentPlaceHolder1_TBtimeStart, input#ContentPlaceHolder1_TBtimeEnd {
+    height: 23px;
+}
+
+div#WhicheventPopupDiv h3 {
+    text-align: center;
+}
+
+div#content h2 {
+    margin-top: 0px;
+    margin-bottom: 0px;
+    width: auto;
+    display: block;
+}
+
+h2.h2_head {
+    text-align: right !important;
+    margin-right: 590px !important;
+}
+
+span.ui-button-text {
+    padding: 5px;
+    webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+    height: 16px;
+    width: 16px;
+}
+/*מידע על הצבעים של השמירות*/
+div#infoColor {
+    position: absolute;
+    top: 250px;
+    right: 30px;
+    background: #fff;
+    width: 200px;
+    height: 230px;
+    border: 2px solid #6C7187;
+    border-radius: 25px;
+}
+
+    div#infoColor h3 {
+        width: 200px;
+    }
+
+    div#infoColor > div {
+        /*display: block;*/
+        width: 190px;
+        height: 20px;
+        margin: 0 auto;
+        text-align: center;
+        border-radius: 20px;
+    }
+
+div#FG {
+    background: #00BFFF;
+}
+
+div#NFG {
+    background: #FFC100;
+}
+
+div#NNG {
+    background: #FF0065;
+}
+
+div#EV {
+    background: #3A87AD;
+}

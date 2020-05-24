@@ -172,12 +172,13 @@ html * {
 }
 
 body {
-  background: #fff;
-  font-size: 15px;
-  font-size: 0.9375rem;
-  line-height: 1.4;
-  font-family: "Roboto Condensed", Arial, sans-serif;
-  color: #555;
+    background: #fff;
+    font-size: 15px;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+    font-family: "Roboto Condensed", Arial, sans-serif;
+    color: #555;
+
 }
 
 h1,
@@ -673,12 +674,21 @@ button.submit {
   line-height: 1;
   padding: 10px 30px 10px 30px;
 }
-.btn-primary{
-  background: #89E894;
+.btn-primary {
+    background: rgb(137, 232, 148);
+    
 }
 .btn-primary:hover{
   background: #585858;
 }
+
+.btn-primary1 {
+    background: #6495ED;
+}
+
+    .btn-primary1:hover {
+        background: #585858;
+    }
 
 button.backward {
   color: #333;
@@ -1500,12 +1510,11 @@ input.qtyminus {
     font-size: 16px;
 }
 
-.btn-defult{
-
-  background-color: #89E894;
-  border-radius: 5px;
-  color: #fff;
-  box-shadow: 0px 0px 2px 0px #00000094;
+.btn-defult {
+    background-color: #89E894;
+    border-radius: 5px;
+    color: #fff;
+    box-shadow: 0px 0px 2px 0px #00000094;
 }
 .btn-defult:hover{
 
@@ -1514,6 +1523,22 @@ input.qtyminus {
   color: #fff;
   box-shadow: 0px 0px 2px 0px #00000094;
 }
+.ex2:hover, .ex2:active {
+    text-decoration: underline;
+}
+.btn-defult2 {
+    background-color: #6495ED;
+    border-radius: 5px;
+    color: #fff;
+    box-shadow: 0px 0px 2px 0px #00000094;
+}
+
+    .btn-defult2:hover {
+        background-color: #585858;
+        border-radius: 5px;
+        color: #fff;
+        box-shadow: 0px 0px 2px 0px #00000094;
+    }
 .btn1 {
     display: table-cell;
     font-weight: 400;
@@ -1541,10 +1566,10 @@ input.qtyminus {
 }
 .box {
     transition: box-shadow .3s;
-    margin: 50px 200px 1px 200px;
+    margin: 50px 100px 1px 100px;
     border-radius: 10px;
     border: 1px solid #ccc;
-    background: #fff;
+    /*background: #fff;*/
    
 }
 
@@ -1560,7 +1585,46 @@ input.qtyminus {
     background: #fff;
     padding: 10px 50px 50px 50px;
 }
+.box2 {
+    transition: box-shadow .3s;
+    margin: 50px 0px 50px 0px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    /*background: #fff;*/
+    padding: 10px 50px 50px 50px;
+}
+.box3 {
+    transition: box-shadow .3s;
+    margin: 50px 80px 50px 80px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    background: #fff;
+    padding: 10px 50px 50px 50px;
+}
     .nav-tabs .nav-link:focus, .nav-tabs .nav-link:hover{border-color: transparent;}
 .nav-tabs .nav-item{margin-bottom: 0;}
 .nav-tabs{border-bottom: none;}
+
+.btn-defult1 {
+   
+    border-radius: 5px;
+    color: #fff;
+   
+}
+
+    .btn-defult1:hover {
+        background-color: #585858;
+        border-radius: 5px;
+        color: #fff;
+        box-shadow: 0px 0px 2px 0px #00000094;
+    }
+
+#excel {
+    /*border: 2px solid black;*/
+    height: 10%;
+    width: 30%;
+    /*position: absolute;*/
+    top: 25%;
+    left: 50%;
+}
 

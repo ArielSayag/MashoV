@@ -198,4 +198,30 @@ FOREIGN KEY (EmailJudge,utID) REFERENCES UsersType(Email,utID),
 FOREIGN KEY (NumGroup) REFERENCES Groups(NumGroup),
 );
 
-select* from Scala
+CREATE TABLE calendarMeeting(
+utID int NOT NULL,
+Email varchar(50) NOT NULL,
+NumGroup int not null,
+starttime  varchar(50) not null,
+endtime  varchar(50) not null,
+dateM datetime not null,
+placeMetting nvarchar(50) not null,
+
+FOREIGN KEY (utID) REFERENCES [Type](utID),
+FOREIGN KEY (Email) REFERENCES Users(Email),
+FOREIGN KEY (NumGroup) REFERENCES Groups(NumGroup),
+);
+
+CREATE TABLE calendarTasks(
+utID int NOT NULL,
+Email varchar(50) NOT NULL,
+NumGroup int not null,
+IDStudent nvarchar(9) not null,
+taskcompletiondate datetime not null,
+nameTask nvarchar(200) not null,
+
+FOREIGN KEY (utID) REFERENCES [Type](utID),
+FOREIGN KEY (Email) REFERENCES Users(Email),
+FOREIGN KEY (NumGroup) REFERENCES Groups(NumGroup),
+FOREIGN KEY (IDStudent) REFERENCES Student(IDStudent),
+);

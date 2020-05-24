@@ -7,6 +7,9 @@ using System.Web.Configuration;
 using System.Data;
 using System.Text;
 using mashovFinal.Models;
+using static mashovFinal.Utilities.StringHelper;
+using static mashovFinal.Utilities.MailHelper;
+using static mashovFinal.Utilities.CritRanHelper;
 
 /// <summary>
 /// DBServices is a class created by me to provides some DataBase Services
@@ -55,57 +58,298 @@ public class DBservices
         return cmd;
     }
     //--------------------------------------------------------------------------------------------------
-    // This method deletes a car to the movie table CLASSEX
+    // This method if Doc not ready on time  CLASSEX
+    //--------------------------------------------------------------------------------------------------
+    public int checkedDoc()
+    {
+        List<CritInDoc> allD = new List<CritInDoc>();
+        SqlConnection con = null;
+
+        try
+        {
+            con = connect("con15");
+            String selectSTR = @"select m.nameMetting,m.DateMeeting,d.totalW ,d.[status],m.NumDepartment,m.NumCourse ,d.NumDoc
+                                 from FeedBack_Doc d inner join FeedBack_Meet m on d.NumMeeting=m.NumMeeting
+                                 where CONVERT(varchar(20), m.DateMeeting,110) <=CONVERT(VARCHAR(20), GETDATE(), 101)
+                                 and d.totalW<100";
+
+
+            SqlCommand cmd = new SqlCommand(selectSTR, con);
+            SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dr.Read())
+            {
+                CritInDoc cd = new CritInDoc();
+                cd.Doc = new FeedBack_Doc();
+                cd.Doc.DetailsMeet = new FeedBack_Meeting();
+                cd.Doc.DetailsMeet.DetailsCourseDep = new CoursesAndDepartment();
+
+                cd.Doc.NumDoc = Convert.ToInt32(dr["NumDoc"]);
+                cd.Doc.TotalWeight = Convert.ToDouble(dr["totalW"]);
+                cd.Doc.NameDoc = (string)dr["nameMetting"];
+                cd.Doc.DetailsMeet.Date = (string)dr["DateMeeting"];
+                cd.Doc.DetailsMeet.DetailsCourseDep.NumCourse = Convert.ToInt32(dr["NumCourse"]);
+                cd.Doc.DetailsMeet.DetailsCourseDep.NumDepartment = Convert.ToInt32(dr["NumDepartment"]);
+                cd.Doc.Status = Convert.ToBoolean(dr["status"]);
+
+                allD.Add(cd);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+
+        }
+        int num = 0;
+        if (allD.Count > 0)
+        {
+            foreach (var item in allD)
+            {
+                num += allScoreGroup(item);
+            }
+
+        }
+
+        return num;
+    }
+    public int allScoreGroup(CritInDoc d)
+    {
+
+        List<Criterion> allC = new List<Criterion>();
+
+        SqlConnection con = null;
+
+        CoursesAndDepartment cd = d.Doc.DetailsMeet.DetailsCourseDep;
+
+
+        try
+        {
+            con = connect("con15");
+            String selectSTR = @"select c.* , ca.numScala,ca.WeightCrit from FeedBack_Doc d inner join FeedBack_Criteria ca on d.NumDoc=ca.NumDoc
+                               inner join FeedBack_Meet m on m.NumMeeting=d.NumMeeting inner join Criteria c on c.NumCrit=ca.NumCrit
+                               where m.NumDepartment=" + cd.NumDepartment + " and m.NumCourse=" + cd.NumCourse + " and d.NumDoc<>'" + d.Doc.NumDoc + "'";
+
+
+            SqlCommand cmd = new SqlCommand(selectSTR, con);
+            SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dr.Read())
+            {
+                Criterion c = new Criterion();
+
+                c.NumCrit = Convert.ToInt32(dr["NumCrit"]);
+                c.NameCrit = (string)dr["NameCrit"];
+                c.DescriptionCrit = (string)dr["DescriptionCrit"];
+                c.WeightCrit = Convert.ToDouble(dr["WeightCrit"]);
+                c.TypeCrit = Convert.ToInt32(dr["numScala"]);
+                c.Favorite = Convert.ToInt32(dr["Favorite"]);
+                allC.Add(c);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+
+        }
+        if (allC.Count > 0)
+        {
+            d.AllCrit = createNewListCrit(allC, d.Doc.TotalWeight);//(bank crit,total);
+            d.Doc.TotalWeight = 100;
+
+            insert(d, true);//BuildInsertCommand
+            d.Doc.Systemupdated = true;
+            ipdate(d);
+            return 1;
+        }
+
+        return 0;
+    }
+    public int ipdate(CritInDoc d)
+    {
+        int numEffected = 0;
+        SqlConnection con;
+        SqlCommand cmd;
+
+
+        try
+        {
+            con = connect("con15"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+
+        String cStr = BuildInsertCommandUpdate(d);
+        cmd = CreateCommand(cStr, con);
+
+        try
+        {
+            numEffected += cmd.ExecuteNonQuery(); // execute the command
+
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+
+
+        if (con != null)
+        {
+            // close the db connection
+            con.Close();
+        }
+        return numEffected;
+    }
+    private String BuildInsertCommandUpdate(CritInDoc d)
+    {
+        String command;
+
+        StringBuilder sb = new StringBuilder();
+
+
+        String prefix = " UPDATE FeedBack_Doc SET systemupdated = '" + d.Doc.Systemupdated + "', [totalW]='" + d.Doc.TotalWeight + "' WHERE [NumDoc] = '" + d.Doc.NumDoc + "'";
+        command = prefix + sb.ToString();
+
+        return command;
+    }
+    //--------------------------------------------------------------------------------------------------
+    // This method deletes  CLASSEX
     //--------------------------------------------------------------------------------------------------
 
-    //public int delete(int id)
-    //{
+    public int delete(int id)
+    {
+        int numEffected = 0;
+        SqlConnection con;
+        SqlCommand cmd;
 
-    //    SqlConnection con;
-    //    SqlCommand cmd;
-
-    //    try
-    //    {
-    //        con = connect("carsDBConnectionString"); // create the connection
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        // write to log
-    //        throw (ex);
-    //    }
-
-    //    String cStr = BuildDeleteCommand(id);      // helper method to build the insert string
-
-    //    cmd = CreateCommand(cStr, con);             // create the command
-
-    //    try
-    //    {
-    //        int numEffected = cmd.ExecuteNonQuery(); // execute the command
-    //        return numEffected;
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        return 0;
-    //        // write to log
-    //        throw (ex);
-    //    }
-
-    //    finally
-    //    {
-    //        if (con != null)
-    //        {
-    //            // close the db connection
-    //            con.Close();
-    //        }
-    //    }
-
-    //}
+        try
+        {
+            con = connect("con15"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
 
 
+        StringBuilder sb = new StringBuilder();
 
-    //--------------------------------------------------------------------------------------------------
-    // This method inserts a car to the movie table CLASSEX
-    //--------------------------------------------------------------------------------------------------
+
+        sb.AppendFormat("delete from FeedBack_Criteria where NumDoc ={0}", id);
+        String cStr = sb.ToString();
+        // helper method to build the insert string
+
+        cmd = CreateCommand(cStr, con);             // create the command
+
+        try
+        {
+            numEffected += cmd.ExecuteNonQuery(); // execute the command
+
+        }
+        catch (Exception ex)
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+
+
+        return numEffected;
+
+    }
+
+    public int delete(CritInDoc f)
+    {
+        int numEffected = 0;
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("con15"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        StringBuilder sb = new StringBuilder();
+
+        sb.AppendFormat("delete from FeedBack_Criteria where NumDoc ={0} and NumCrit={1}", f.Doc.NumDoc, f.AllCrit[0].NumCrit);
+        String cStr = sb.ToString();
+        // helper method to build the insert string
+
+        cmd = CreateCommand(cStr, con);             // create the command
+
+        try
+        {
+            numEffected += cmd.ExecuteNonQuery(); // execute the command
+
+        }
+        catch (Exception ex)
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+        }
+
+        numEffected += updateStatusDoc(f);
+        return numEffected;
+
+    }
+
+
+
     /*_________________________________________________________________*/
     /*-------------Insert Users-----------*/
     /*_________________________________________________________________*/
@@ -129,6 +373,7 @@ public class DBservices
 
         foreach (var item in users)
         {
+            item.Pass = GeneratePassword();
             String cStr = BuildInsertCommand(item);
             cmd = CreateCommand(cStr, con);
 
@@ -136,6 +381,12 @@ public class DBservices
             {
                 numEffected += cmd.ExecuteNonQuery(); // execute the command
 
+                string subject = "סיסמא חדשה למערכת MASHOV , ברוך הבא";
+                string body = "<div style='direction: rtl'>שלום , " + item.FirstName;
+                body += "<br><br>ברוך הבא למערכת MASHOV, ";
+                body += "<br>שם משתמש שלך הינו: " + item.Email + "<br> סיסמתך היא: " + item.Pass;
+                body += "<br><br>תודה , צוות MASHOV</div>";
+                SendEMail(item.Email, subject, body);
 
             }
 
@@ -269,9 +520,10 @@ public class DBservices
     {
         String command;
         StringBuilder sb = new StringBuilder();
+
         // use a string builder to create the dynamic string
         sb.AppendFormat("Values('{0}', '{1}','{2}','{3}')",
-          user.Email, user.FirstName, user.LastName, "");
+          user.Email, user.FirstName, user.LastName, user.Pass);
         String prefix = "INSERT INTO Users " + "(Email,FirstName,LastName,pass)";
         command = prefix + sb.ToString();
 
@@ -297,7 +549,7 @@ public class DBservices
         StringBuilder sb = new StringBuilder();
         // use a string builder to create the dynamic string
         sb.AppendFormat("Values('{0}', '{1}','{2}','{3}','{4}')",
-        s.Id, s.FirstName, s.LastName, s.Email, "");
+        s.Id, s.FirstName, s.LastName, s.Email, s.Id);
         String prefix = "INSERT INTO Student " + "(IDStudent,FirstName,LastNAme,Email,pass)";
         command = prefix + sb.ToString();
 
@@ -345,7 +597,7 @@ public class DBservices
             try
             {
                 numEffected += cmd.ExecuteNonQuery(); // execute the command
-               
+
 
             }
 
@@ -390,7 +642,7 @@ public class DBservices
                 }
             }
         }
-      
+
 
         if (con != null)
         {
@@ -624,9 +876,9 @@ public class DBservices
         String command;
         StringBuilder sb = new StringBuilder();
         // use a string builder to create the dynamic string
-        sb.AppendFormat("Values('{0}', '{1}','{2}', '{3}','{4}','{5}')",
-        g.NameGroup, g.NameProject, g.NameOrganization, g.ProjectType, g.Mentor.Email, g.Mentor.Type.NumType);
-        String prefix = "INSERT INTO Groups " + "(NameGroup,NameProject,NameOrganization,ProjectType,EmailMentor,utID)";
+        sb.AppendFormat("Values('{0}', '{1}','{2}', '{3}','{4}','{5}','{6}','{7}')",
+        g.NameGroup, g.NameProject, g.NameOrganization, g.ProjectType, g.Mentor.Email, g.Mentor.Type.NumType, 0, "");
+        String prefix = "INSERT INTO Groups " + "(NameGroup,NameProject,NameOrganization,ProjectType,EmailMentor,utID,finalScore,linkPP)";
         command = prefix + sb.ToString();
 
         return command;
@@ -802,8 +1054,6 @@ public class DBservices
                         throw (ex);
                     }
                 }
-
-
             }
         }
 
@@ -834,9 +1084,9 @@ public class DBservices
         String command;
         StringBuilder sb = new StringBuilder();
         // use a string builder to create the dynamic string
-        sb.AppendFormat("Values('{0}', '{1}','{2}','{3}','{4}')",
-        EJudge, gm.Group.NumGroup, 3, gm.StartTime, gm.EndTime);
-        String prefix = "INSERT INTO Judge_Groups " + "(EmailJudge,NumGroup,utID,startTime,endTime)";
+        sb.AppendFormat("Values('{0}', '{1}','{2}','{3}','{4}','{5}')",
+        EJudge, gm.Group.NumGroup, 3, 0, gm.StartTime, gm.EndTime);
+        String prefix = "INSERT INTO Judge_Groups " + "(EmailJudge,NumGroup,utID,sumScore,startTime,endTime)";
         command = prefix + sb.ToString();
 
         return command;
@@ -910,9 +1160,9 @@ public class DBservices
         String command;
         StringBuilder sb = new StringBuilder();
         // use a string builder to create the dynamic string
-        sb.AppendFormat("Values('{0}', '{1}')",
-        d.NameDoc, d.DetailsMeet.NumMeeting);
-        String prefix = "INSERT INTO FeedBack_Doc " + "(NameDoc,NumMeeting)";
+        sb.AppendFormat("Values('{0}', '{1}','{2}','{3}')",
+        d.NameDoc, d.DetailsMeet.NumMeeting, 0, 0);
+        String prefix = "INSERT INTO FeedBack_Doc " + "(NameDoc,NumMeeting,systemupdated,totalW)";
         command = prefix + sb.ToString();
 
         return command;
@@ -1023,20 +1273,24 @@ public class DBservices
 
         foreach (var item in allCrit)
         {
-
-            String cStr = BuildInsertCommand(item);
-            cmd = CreateCommand(cStr, con);
-            try
+            if (item.NumCrit == 0)
             {
-                numEffected += cmd.ExecuteNonQuery(); // execute the command
 
 
+                String cStr = BuildInsertCommand(item);
+                cmd = CreateCommand(cStr, con);
+                try
+                {
+                    numEffected += cmd.ExecuteNonQuery(); // execute the command
+
+
+                }
+                catch (Exception ex)
+                {
+                    throw (ex);
+                }
+                item.NumCrit = findkeyCrit(item);
             }
-            catch (Exception ex)
-            {
-                throw (ex);
-            }
-            item.NumCrit=findkeyCrit(item);
 
         }
 
@@ -1053,22 +1307,22 @@ public class DBservices
         String command;
         StringBuilder sb = new StringBuilder();
         // use a string builder to create the dynamic string
-        sb.AppendFormat("Values('{0}', '{1}')",
-        c.NameCrit, c.DescriptionCrit);
-        String prefix = "INSERT INTO Criteria " + "(NameCrit,DescriptionCrit)";
+        sb.AppendFormat("Values('{0}', '{1}','{2}')",
+        c.NameCrit, c.DescriptionCrit, 0);
+        String prefix = "INSERT INTO Criteria " + "(NameCrit,DescriptionCrit,counterScore)";
         command = prefix + sb.ToString();
 
         return command;
 
     }
     //----------insertCritINDoc-------------------//
-    public int insert(CritInDoc fullDoc)
+    public List<Criterion> insert(CritInDoc fullDoc, bool a = false)
     {
-        fullDoc.AllCrit = insert(fullDoc.AllCrit);
+        if (!a) { fullDoc.AllCrit = insert(fullDoc.AllCrit); }
+
         int numEffected = 0;
         SqlConnection con;
         SqlCommand cmd;
-
 
 
         try
@@ -1099,18 +1353,66 @@ public class DBservices
 
         }
 
+
         if (con != null)
         {
             // close the db connection
             con.Close();
         }
+        numEffected += updateStatusDoc(fullDoc);
+        return fullDoc.AllCrit;
+    }
+    //----------insertCritINDocLastDoc-------------------//
+    public int updateDocwithLastDoc(CritInDoc fullDoc)
+    {
+        delete(fullDoc.Doc.NumDoc);
+        int numEffected = 0;
+        SqlConnection con;
+        SqlCommand cmd;
+
+
+        try
+        {
+            con = connect("con15"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        foreach (var item in fullDoc.AllCrit)
+        {
+
+            String cStr = BuildInsertCommand(item, fullDoc.Doc.NumDoc);
+            cmd = CreateCommand(cStr, con);
+            try
+            {
+                numEffected += cmd.ExecuteNonQuery(); // execute the command
+
+
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+
+        }
+
+
+        if (con != null)
+        {
+            // close the db connection
+            con.Close();
+        }
+        numEffected += updateStatusDoc(fullDoc);
         return numEffected;
     }
     //----------------------updateStatus--------------//
 
     public int updateStatusDoc(CritInDoc fullDoc)
     {
-      
+
         int numEffected = 0;
         SqlConnection con;
         SqlCommand cmd;
@@ -1129,7 +1431,7 @@ public class DBservices
 
 
 
-        String cStr = BuildInsertCommandupdate( fullDoc.Doc);
+        String cStr = BuildInsertCommandupdate(fullDoc.Doc);
         cmd = CreateCommand(cStr, con);
         try
         {
@@ -1158,7 +1460,7 @@ public class DBservices
         StringBuilder sb = new StringBuilder();
         // use a string builder to create the dynamic string
         sb.AppendFormat("Values('{0}', '{1}','{2}','{3}')",
-        c.NumCrit, numDoc,c.WeightCrit,c.TypeCrit);
+        c.NumCrit, numDoc, c.WeightCrit, c.TypeCrit);
         String prefix = "INSERT INTO FeedBack_Criteria " + "(NumCrit,NumDoc,WeightCrit,numScala)";
         command = prefix + sb.ToString();
 
@@ -1171,14 +1473,15 @@ public class DBservices
         String command;
         StringBuilder sb = new StringBuilder();
         // use a string builder to create the dynamic string
-       
-        String prefix = "UPDATE FeedBack_Doc Set [status] = '"+f.Status+"' , totalW='"+f.TotalWeight+"'  where[NumDoc] = '"+f.NumDoc+"'";
+
+        String prefix = "UPDATE FeedBack_Doc Set [status] = '" + f.Status + "' , totalW='" + f.TotalWeight + "'  where[NumDoc] = '" + f.NumDoc + "'";
         command = prefix + sb.ToString();
 
         return command;
 
     }
-   
+
+
 
 
 
@@ -1187,33 +1490,36 @@ public class DBservices
     //----------------------------------------------------------------------------------------------//
 
 
-    public List<Users> checkingExistUser(Users u)
+    public Users checkingExistUser(Users u)
     {
 
-        List<Users> user = new List<Users>();
+        Users user = new Users();
+        user.Typesofuser = new List<Types>();
 
         SqlConnection con = null;
 
         try
         {
             con = connect("con15");
-            String selectSTR = "select u.FirstName , u.LastName ,u.Email ,u.pass ,tu.utID , t.TypeUser as TypeUser  from Users u inner join UsersType tu  on u.Email=tu.Email inner join [Type] t on tu.utID=t.utID where u.Email='" + u.Email + "'";
+            String selectSTR = @"select u.FirstName , u.LastName ,u.Email ,u.pass ,tu.utID , t.TypeUser as TypeUser  
+                                from Users u inner join UsersType tu  on u.Email=tu.Email inner join [Type] t on tu.utID=t.utID
+                                where u.Email='" + u.Email + "'";
 
             SqlCommand cmd = new SqlCommand(selectSTR, con);
             SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
             while (dr.Read())
             {
-                Users us = new Users();
-                us.Type = new Types();
-                us.Email = (string)dr["Email"];
-                us.Pass = (string)dr["pass"];
-                us.FirstName = (string)dr["FirstName"];
-                us.LastName = (string)dr["LastName"];
-                us.Type.Type = (string)dr["TypeUser"];
-                us.Type.NumType = Convert.ToInt32(dr["utID"]);
 
-                user.Add(us);
+                Types t = new Types();
+                user.Email = (string)dr["Email"];
+                user.Pass = (string)dr["pass"];
+                user.FirstName = (string)dr["FirstName"];
+                user.LastName = (string)dr["LastName"];
+                t.Type = (string)dr["TypeUser"];
+                t.NumType = Convert.ToInt32(dr["utID"]);
+                user.Typesofuser.Add(t);
+
 
             }
 
@@ -1245,7 +1551,7 @@ public class DBservices
         try
         {
             con = connect("con15");
-            String selectSTR = " select * from Users where IDStudent='" + u.Id + "'";
+            String selectSTR = " select * from Student where IDStudent='" + u.Id + "'";
 
             SqlCommand cmd = new SqlCommand(selectSTR, con);
             SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
@@ -1256,6 +1562,7 @@ public class DBservices
                 s.Pass = (string)dr["pass"];
                 s.FirstName = (string)dr["FirstName"];
                 s.LastName = (string)dr["LastName"];
+                s.Email = (string)dr["Email"];
 
             }
 
@@ -1379,11 +1686,70 @@ public class DBservices
         StringBuilder sb = new StringBuilder();
 
 
-        String prefix = " UPDATE [Student] SET pass = '" + s.Pass + "' WHERE Email = '" + s.Id + "'";
+        String prefix = " UPDATE [Student] SET pass = '" + s.Pass + "' WHERE IDStudent = '" + s.Id + "'";
         command = prefix + sb.ToString();
 
         return command;
     }
+
+    //-------------------updatemailStudent-----------------------------------------------------//
+    public Students updateEmailStudent(Students s)
+    {
+
+        SqlConnection con;
+        SqlCommand cmd;
+        int numEffected = 0;
+        try
+        {
+            con = connect("con15"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        String cStr = BuildInsertCommandUpdateEmail(s); // helper method to build the insert string
+        cmd = CreateCommand(cStr, con);
+        try
+        {
+            numEffected = cmd.ExecuteNonQuery(); // execute the command
+
+        }
+        catch (Exception ex)
+        {
+            if (con != null)
+            {
+                // close the db connection
+                con.Close();
+            }
+            // write to log
+            throw (ex);
+        }
+
+        // create the command 
+        if (con != null)
+        {
+            // close the db connection
+            con.Close();
+        }
+        return checkingExist(s);
+        ;
+    }
+    private String BuildInsertCommandUpdateEmail(Students s)
+    {
+        String command;
+
+        StringBuilder sb = new StringBuilder();
+
+
+        String prefix = " UPDATE [Student] SET Email = '" + s.Email + "' WHERE IDStudent = '" + s.Id + "'";
+        command = prefix + sb.ToString();
+
+        return command;
+    }
+
+
     //----------------------------------------------------------------------------------------------//
     //--------------------------------------------Get User Deatails---------------------------------//
     //----------------------------------------------------------------------------------------------//
@@ -1399,7 +1765,10 @@ public class DBservices
         try
         {
             con = connect("con15");
-            String selectSTR = "  select * from FeedBack_Doc d inner join FeedBack_Meet m on d.NumMeeting=m.NumMeeting inner join Manager_feedback a on a.NumDoc = d.NumDoc inner join Course c on c.NumCourse = m.NumCourse inner join Department de on de.NumDepartment = m.NumDepartment where a.EmailManager='" + u.Email + "' and a.utID='" + u.Type.NumType + "'";
+            String selectSTR = @"select * from FeedBack_Doc d inner join FeedBack_Meet m on 
+                               d.NumMeeting=m.NumMeeting inner join Manager_feedback a on a.NumDoc = d.NumDoc inner join Course c 
+                               on c.NumCourse = m.NumCourse inner join Department de on de.NumDepartment = m.NumDepartment 
+                               where a.EmailManager='" + u.Email + "' and a.utID='" + u.Type.NumType + "'";
 
             SqlCommand cmd = new SqlCommand(selectSTR, con);
             SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
@@ -1420,8 +1789,9 @@ public class DBservices
                 d.DetailsMeet.DetailsCourseDep.NumDepartment = Convert.ToInt32(dr["NumDepartment"]);
                 d.DetailsMeet.DetailsCourseDep.NameDepartment = (string)dr["NameDepartment"];
                 d.DetailsMeet.DetailsCourseDep.NameCourse = (string)dr["NameCourse"];
-                d.DetailsMeet.Date = (DateTime)dr["DateMeeting"];
+                d.DetailsMeet.Date = (string)dr["DateMeeting"];
                 d.Status = (bool)dr["status"];
+                d.Systemupdated = (bool)dr["systemupdated"];
                 d.TotalWeight = Convert.ToDouble(dr["totalW"]);
                 d.Manager.Add(u);
 
@@ -1458,8 +1828,11 @@ public class DBservices
         try
         {
             con = connect("con15");
-            
-            String selectSTR = "select cr.NumCrit,cr.NameCrit,cr.DescriptionCrit ,c.WeightCrit,c.numScala ,s.nameScala from FeedBack_Doc d inner join[dbo].[FeedBack_Criteria] c on d.NumDoc=c.NumDoc inner join[dbo].[Criteria] cr on cr.NumCrit=c.NumCrit inner join Scala s on c.numScala=s.numScala where d.NumDoc='" + d.NumDoc + "'";
+
+            String selectSTR = @"select cr.NumCrit,cr.NameCrit,cr.DescriptionCrit ,c.WeightCrit,c.numScala ,s.nameScala 
+                                from FeedBack_Doc d inner join[dbo].[FeedBack_Criteria] c on d.NumDoc=c.NumDoc 
+                                inner join[dbo].[Criteria] cr on cr.NumCrit=c.NumCrit inner join Scala s 
+                                on c.numScala=s.numScala where d.NumDoc='" + d.NumDoc + "'";
 
             SqlCommand cmd = new SqlCommand(selectSTR, con);
             SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
@@ -1473,8 +1846,8 @@ public class DBservices
                 c.TypeCrit = Convert.ToInt32(dr["numScala"]);
                 c.NameScala = (string)dr["nameScala"];
                 c.DescriptionCrit = (string)dr["DescriptionCrit"];
-                
-                
+
+
 
                 critList.AllCrit.Add(c);
 
@@ -1509,7 +1882,8 @@ public class DBservices
         try
         {
             con = connect("con15");
-            String selectSTR = "select NumDoc, NameDoc, NumMeeting, [status] from FeedBack_Doc where NumDoc = (select max([NumDoc]) from FeedBack_Doc)";
+            String selectSTR = @"select NumDoc, NameDoc, NumMeeting, [status] from FeedBack_Doc 
+                                 where NumDoc = (select max([NumDoc]) from FeedBack_Doc)";
 
             SqlCommand cmd = new SqlCommand(selectSTR, con);
             SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
@@ -1726,12 +2100,17 @@ public class DBservices
         try
         {
             con = connect("con15");
-            String selectSTR = "select g.NumGroup, g.NameGroup , g.NameProject,jg.startTime , jg.endTime from Groups g inner join[dbo].[FeedBack_Meet_Groups] n on g.NumGroup=n.NumGroup inner join [dbo].[FeedBack_Meet] m on n.NumMeeting=m.NumMeeting inner join[dbo].[FeedBack_Doc] d on d.NumMeeting=m.NumMeeting inner join Judge_Groups jg on jg.NumGroup=g.NumGroup where d.NumDoc='" + numMeet+"'";
-            
+            String selectSTR = @"select g.NumGroup, g.NameGroup , g.NameProject,jg.startTime , jg.endTime 
+                               from Groups g inner join[dbo].[FeedBack_Meet_Groups] n on g.NumGroup=n.NumGroup
+                               inner join [dbo].[FeedBack_Meet] m on n.NumMeeting=m.NumMeeting 
+                               inner join[dbo].[FeedBack_Doc] d on d.NumMeeting=m.NumMeeting 
+                               inner join Judge_Groups jg on jg.NumGroup=g.NumGroup 
+                               where d.NumDoc='" + numMeet + "'";
+
             SqlCommand cmd = new SqlCommand(selectSTR, con);
             SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
 
-           
+
             while (dr.Read())
             {
                 Group_Meeting gm = new Group_Meeting();
@@ -1842,9 +2221,9 @@ public class DBservices
                 Groups g = new Groups();
                 st.FirstName = (string)dr["FirstName"];
                 st.Id = (string)dr["IDStudent"];
-                st.LastName = (string)dr["LastName"];
-                g.NumGroup= Convert.ToInt32(dr["NumGroup"]);
-                g.NameProject= (string)dr["NameProject"];
+                st.LastName = (string)dr["LastNAme"];
+                g.NumGroup = Convert.ToInt32(dr["NumGroup"]);
+                g.NameProject = (string)dr["NameProject"];
 
 
                 st.GroupS.Add(g);
@@ -1921,12 +2300,12 @@ public class DBservices
     //-----------------insertNewJudgeToGroup-Setting------------------//
     public int insert(Group_Meeting group_Meet)
     {
-    
+
         int numEffected = 0;
         SqlConnection con;
         SqlCommand cmd1;
 
-      
+
         try
         {
             con = connect("con15"); // create the connection
@@ -1937,9 +2316,9 @@ public class DBservices
             throw (ex);
         }
 
-      
-            String cStr1 = BuildInsertCommand(group_Meet, group_Meet.JudgesGroup[0].Judge.Email);
-            cmd1 = CreateCommand(cStr1, con);
+
+        String cStr1 = BuildInsertCommand(group_Meet, group_Meet.JudgesGroup[0].Judge.Email);
+        cmd1 = CreateCommand(cStr1, con);
 
         try
         {
@@ -1956,7 +2335,7 @@ public class DBservices
             {
                 throw (ex);
             }
-        } 
+        }
 
         if (con != null)
         {
@@ -1968,9 +2347,9 @@ public class DBservices
     //-------------------------update  student in group---------------------//
     public int updateStudentInGroup(Students s)
     {
-       List<int> oldNumG= checkednameProject(s);
-       List<int> newNumG = neNumGroups(s);
-        
+        List<int> oldNumG = checkednameProject(s);
+        List<int> newNumG = neNumGroups(s);
+
 
         int numEffected = 0;
         SqlConnection con;
@@ -1990,28 +2369,28 @@ public class DBservices
         foreach (var item in oldNumG)
         {
 
-                String cStr1 = BuildInsertCommandupdate(item,newNumG[j],s.Id);//updet student in group 
-                cmd1 = CreateCommand(cStr1, con);
+            String cStr1 = BuildInsertCommandupdate(item, newNumG[j], s.Id);//updet student in group 
+            cmd1 = CreateCommand(cStr1, con);
 
 
-                try
+            try
+            {
+                numEffected += cmd1.ExecuteNonQuery();
+                j++;
+
+            }
+            catch (SqlException ex)
+            {
+                if (ex.Number == 2627)
                 {
-                    numEffected += cmd1.ExecuteNonQuery();
-                    j++;
-
+                    numEffected += 0;
                 }
-                catch (SqlException ex)
+                else
                 {
-                    if (ex.Number == 2627)
-                    {
-                        numEffected += 0;
-                    }
-                    else
-                    {
-                        throw (ex);
-                    }
+                    throw (ex);
                 }
-            
+            }
+
         }
         if (con != null)
         {
@@ -2021,17 +2400,17 @@ public class DBservices
         return numEffected;
     }
     /*-------------update studentInGroup-----------*/
-    private String BuildInsertCommandupdate(int oldNumGroup,int newNymGroup ,string idOfSelectedStudent)
+    private String BuildInsertCommandupdate(int oldNumGroup, int newNymGroup, string idOfSelectedStudent)
     {
         String command;
         StringBuilder sb = new StringBuilder();
-        String prefix = "update studentInGroup set NumGroup='"+ newNymGroup + "'where IDStudent='"+ idOfSelectedStudent + "'and NumGroup='"+ oldNumGroup + "'";
+        String prefix = "update studentInGroup set NumGroup='" + newNymGroup + "'where IDStudent='" + idOfSelectedStudent + "'and NumGroup='" + oldNumGroup + "'";
         command = prefix + sb.ToString();
 
         return command;
     }
     //------------get all old Id groups for student -------------------------//
-    private List<int> checkednameProject(Students  s)
+    private List<int> checkednameProject(Students s)
     {
         List<int> listOldIDG = new List<int>();
 
@@ -2040,7 +2419,7 @@ public class DBservices
         try
         {
             con = connect("con15");
-            String selectSTR = "select g.NumGroup  from Groups g inner join studentInGroup sg on g.NumGroup=sg.NumGroup inner join Student s on s.IDStudent=sg.IDStudent where s.IDStudent='"+s.Id+"' and g.NameProject='" + s.GroupS[0].NameProject+"'";
+            String selectSTR = "select g.NumGroup  from Groups g inner join studentInGroup sg on g.NumGroup=sg.NumGroup inner join Student s on s.IDStudent=sg.IDStudent where s.IDStudent='" + s.Id + "' and g.NameProject='" + s.GroupS[0].NameProject + "'";
 
             SqlCommand cmd = new SqlCommand(selectSTR, con);
             SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
@@ -2048,7 +2427,7 @@ public class DBservices
 
             while (dr.Read())
             {
-                int old= Convert.ToInt32(dr["NumGroup"]);
+                int old = Convert.ToInt32(dr["NumGroup"]);
 
                 listOldIDG.Add(old);
 
@@ -2070,7 +2449,7 @@ public class DBservices
 
         }
         return listOldIDG;
-       
+
     }
     //--------------------------get all new id groups fro student---------------------------------//
     private List<int> neNumGroups(Students s)
@@ -2082,7 +2461,7 @@ public class DBservices
         try
         {
             con = connect("con15");
-            String selectSTR = " select distinct  g.NumGroup from Groups g inner join studentInGroup sg on g.NumGroup = sg.NumGroupwhere g.NameOrganization = '"+s.GroupS[1].NameProject+"'";
+            String selectSTR = " select distinct  g.NumGroup from Groups g inner join studentInGroup sg on g.NumGroup = sg.NumGroupwhere g.NameOrganization = '" + s.GroupS[1].NameProject + "'";
 
             SqlCommand cmd = new SqlCommand(selectSTR, con);
             SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
@@ -2090,7 +2469,7 @@ public class DBservices
 
             while (dr.Read())
             {
-                int newid= Convert.ToInt32(dr["NumGroup"]);
+                int newid = Convert.ToInt32(dr["NumGroup"]);
 
 
                 listNewIDG.Add(newid);
@@ -2122,7 +2501,7 @@ public class DBservices
         int numEffected = 0;
         SqlConnection con;
         SqlCommand cmd;
-        int newID ;
+        int newID;
 
         bool isExisting = existingCrit(c.AllCrit[0]);
         if (!isExisting)//if not exist 
@@ -2164,7 +2543,7 @@ public class DBservices
         {
             newID = c.AllCrit[0].NumCrit;
         }
-        numEffected+= updateIDcritAndDoc(c,newID);
+        numEffected += updateIDcritAndDoc(c, newID);
         return newID;
     }
     public bool existingCrit(Criterion c1)
@@ -2174,7 +2553,7 @@ public class DBservices
         try
         {
             con = connect("con15");
-            String selectSTR = "select * from Criteria where NameCrit='"+c1.NameCrit+"' and DescriptionCrit='"+c1.DescriptionCrit+"'";
+            String selectSTR = "select * from Criteria where NameCrit='" + c1.NameCrit + "' and DescriptionCrit='" + c1.DescriptionCrit + "'";
 
             SqlCommand cmd = new SqlCommand(selectSTR, con);
             SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
@@ -2188,10 +2567,10 @@ public class DBservices
                 c.DescriptionCrit = (string)dr["DescriptionCrit"];
 
 
-                    yesOrNo = true;
-                
+                yesOrNo = true;
+
             }
-          
+
         }
         catch (Exception ex)
         {
@@ -2207,10 +2586,10 @@ public class DBservices
             }
 
         }
-      
+
         return yesOrNo;
     }
-    public int updateIDcritAndDoc(CritInDoc cd,int id)
+    public int updateIDcritAndDoc(CritInDoc cd, int id)
     {
         SqlConnection con;
         SqlCommand cmd;
@@ -2225,7 +2604,7 @@ public class DBservices
             throw (ex);
         }
 
-        String cStr = BuildInsertCommandUpdate(cd,id); // helper method to build the insert string
+        String cStr = BuildInsertCommandUpdate(cd, id); // helper method to build the insert string
         cmd = CreateCommand(cStr, con);
         try
         {
@@ -2250,14 +2629,14 @@ public class DBservices
             con.Close();
         }
         return numEffected;
-      
+
     }
-    private String BuildInsertCommandUpdate(CritInDoc cd,int id)
+    private String BuildInsertCommandUpdate(CritInDoc cd, int id)
     {
         String command;
 
         StringBuilder sb = new StringBuilder();
-        String prefix = "UPDATE FeedBack_Criteria Set [NumCrit] = '" + id + "' , [WeightCrit]='"+cd.AllCrit[0].WeightCrit+"' , [numScala]='"+cd.AllCrit[0].TypeCrit+"' where [NumDoc]='" + cd.Doc.NumDoc + "' AND [NumCrit]='"+cd.AllCrit[0].NumCrit+"'";
+        String prefix = "UPDATE FeedBack_Criteria Set [NumCrit] = '" + id + "' , [WeightCrit]='" + cd.AllCrit[0].WeightCrit + "' , [numScala]='" + cd.AllCrit[0].TypeCrit + "' where [NumDoc]='" + cd.Doc.NumDoc + "' AND [NumCrit]='" + cd.AllCrit[0].NumCrit + "'";
         command = prefix + sb.ToString();
 
         return command;
@@ -2274,7 +2653,7 @@ public class DBservices
         try
         {
             con = connect("con15");
-            String selectSTR = "select * from Criteria ";
+            String selectSTR = "SELECT a.* FROM Criteria a INNER JOIN (SELECT NameCrit,DescriptionCrit, MIN(NumCrit) as NumCrit FROM Criteria GROUP BY NameCrit,DescriptionCrit ) AS b ON a.NameCrit = b.NameCrit  AND a.NumCrit = b.NumCrit";
 
             SqlCommand cmd = new SqlCommand(selectSTR, con);
             SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
@@ -2285,11 +2664,8 @@ public class DBservices
                 Criterion c = new Criterion();
                 c.NumCrit = Convert.ToInt32(dr["NumCrit"]);
                 c.NameCrit = (string)dr["NameCrit"];
-                //c.WeightCrit = Convert.ToDouble(dr["WeightCrit"]);
-                //c.TypeCrit = Convert.ToInt32(dr["numScala"]);
-                //c.NameScala = (string)dr["nameScala"];
                 c.DescriptionCrit = (string)dr["DescriptionCrit"];
-               
+
                 listC.Add(c);
 
             }
@@ -2323,7 +2699,11 @@ public class DBservices
         try
         {
             con = connect("con15");
-            String selectSTR = " select distinct m.NumMeeting, m.DateMeeting,m.yearMeeting,m.nameMetting,d.NameDepartment,c.NameCourse,c.NumCourse,d.NumDepartment from Judge_Groups jg inner join FeedBack_Meet_Groups mg on jg.NumGroup=mg.NumGroup inner join FeedBack_Meet m on m.NumMeeting=mg.NumMeeting inner join Course c on c.NumCourse=m.NumCourse inner join Department d on d.NumDepartment=m.NumDepartment where jg.EmailJudge='" + u.Email+"' and jg.utID='"+u.Type.NumType+"'";
+            String selectSTR = @"select distinct m.NumMeeting, m.DateMeeting,m.yearMeeting,m.nameMetting,d.NameDepartment,
+                               c.NameCourse,c.NumCourse,d.NumDepartment from Judge_Groups jg inner join FeedBack_Meet_Groups mg 
+                               on jg.NumGroup=mg.NumGroup inner join FeedBack_Meet m on m.NumMeeting=mg.NumMeeting inner join
+                               Course c on c.NumCourse=m.NumCourse inner join Department d on d.NumDepartment=m.NumDepartment 
+                               where jg.EmailJudge='" + u.Email + "' and jg.utID='" + u.Type.NumType + "'";
 
             SqlCommand cmd = new SqlCommand(selectSTR, con);
             SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
@@ -2333,7 +2713,7 @@ public class DBservices
 
                 FeedBack_Meeting DetailsMeet = new FeedBack_Meeting();
                 DetailsMeet.DetailsCourseDep = new CoursesAndDepartment();
-            
+
                 DetailsMeet.NumMeeting = Convert.ToInt32(dr["NumMeeting"]);
                 DetailsMeet.NameMeeting = (string)dr["nameMetting"];
                 DetailsMeet.YearMeeting = (string)dr["yearMeeting"];
@@ -2341,8 +2721,8 @@ public class DBservices
                 DetailsMeet.DetailsCourseDep.NumDepartment = Convert.ToInt32(dr["NumDepartment"]);
                 DetailsMeet.DetailsCourseDep.NameDepartment = (string)dr["NameDepartment"];
                 DetailsMeet.DetailsCourseDep.NameCourse = (string)dr["NameCourse"];
-                DetailsMeet.Date = (DateTime)dr["DateMeeting"];
-          
+                DetailsMeet.Date = (string)dr["DateMeeting"];
+
 
                 doc.Add(DetailsMeet);
 
@@ -2365,7 +2745,7 @@ public class DBservices
         return doc;
     }
     //----------------------------------------GetAllGroupsByMetting---------------------------------------//
-    public List<Group_Meeting> getJudgeGroups(Users u , int numMeet)
+    public List<Group_Meeting> getJudgeGroups(Users u, int numMeet)
     {
 
 
@@ -2375,7 +2755,11 @@ public class DBservices
         try
         {
             con = connect("con15");
-            String selectSTR = "select distinct g.NumGroup,g.NameGroup,g.NameProject,g.NameOrganization ,u.FirstName,u.LastName,jg.startTime,jg.endTime ,jg.sumScore from Groups g inner join Judge_Groups jg on g.NumGroup=jg.NumGroup inner join  FeedBack_Meet_Groups mg on mg.NumGroup = jg.NumGroup inner join FeedBack_Meet m on m.NumMeeting = mg.NumMeeting inner join Users u on u.Email = g.EmailMentor where jg.EmailJudge = '" + u.Email+ "' and jg.utID='" + u.Type.NumType+"' and mg.NumMeeting = '"+ numMeet + "'";
+            String selectSTR = @"select distinct g.NumGroup,g.NameGroup,g.NameProject,g.NameOrganization ,u.FirstName,
+                               u.LastName,jg.startTime,jg.endTime ,jg.sumScore from Groups g inner join Judge_Groups jg on 
+                               g.NumGroup=jg.NumGroup inner join  FeedBack_Meet_Groups mg on mg.NumGroup = jg.NumGroup inner 
+                               join FeedBack_Meet m on m.NumMeeting = mg.NumMeeting inner join Users u on u.Email = g.EmailMentor
+                               where jg.EmailJudge = '" + u.Email + "' and jg.utID='" + u.Type.NumType + "' and mg.NumMeeting = '" + numMeet + "'";
 
 
             SqlCommand cmd = new SqlCommand(selectSTR, con);
@@ -2389,7 +2773,7 @@ public class DBservices
                 //  FeedBack_Meeting DetailsMeet = new FeedBack_Meeting();
                 //DetailsMeet.DetailsCourseDep = new CoursesAndDepartment();
 
-                gm.Group.NumGroup = Convert.ToInt32(dr["NumGroup"]); 
+                gm.Group.NumGroup = Convert.ToInt32(dr["NumGroup"]);
                 gm.Group.NameGroup = (string)dr["NameGroup"];
                 gm.Group.NameProject = (string)dr["NameProject"];
                 gm.Group.NameOrganization = (string)dr["NameOrganization"];
@@ -2397,7 +2781,7 @@ public class DBservices
                 gm.Group.Mentor.LastName = (string)dr["LastName"];
                 gm.StartTime = (string)dr["startTime"];
                 gm.EndTime = (string)dr["endTime"];
-                gm.Sum = Convert.ToDouble( dr["sumScore"]);
+                gm.Sum = Convert.ToDouble(dr["sumScore"]);
 
 
 
@@ -2419,23 +2803,28 @@ public class DBservices
             }
 
         }
-     
-       
-        return foundStudents(allGroup);
+        foreach (var item in allGroup)
+        {
+            item.Group.ListStudent= new List<Students>();
+            item.Group.ListStudent = foundStudents(item.Group);
+        }
+
+        return allGroup;
     }
     //---------------------------getAllStudentforGroup--------------------------//
-    public List<Group_Meeting> foundStudents(List<Group_Meeting> all)
+    public List<Students> foundStudents(Groups all)
     {
         // List<Group_Meeting> allGroup = new List<Group_Meeting>();
-        foreach (var g in all)
-        {
+       
             SqlConnection con = null;
-            g.Group.ListStudent = new List<Students>();
+            all.ListStudent = new List<Students>();
 
             try
             {
                 con = connect("con15");
-                String selectSTR = "select s.FirstName,s.LastNAme,s.IDStudent from Groups g inner join studentInGroup sg on g.NumGroup = sg.NumGroup  inner join Student s on s.IDStudent = sg.IDStudent inner join  FeedBack_Meet_Groups mg on mg.NumGroup = g.NumGroup where g.NumGroup = '" + g.Group.NumGroup + "'";
+                String selectSTR = @"select s.FirstName,s.LastNAme,s.IDStudent from Groups g inner join studentInGroup sg on 
+                                   g.NumGroup = sg.NumGroup  inner join Student s on s.IDStudent = sg.IDStudent inner join  
+                                   FeedBack_Meet_Groups mg on mg.NumGroup = g.NumGroup where g.NumGroup = '" + all.NumGroup + "'";
 
                 SqlCommand cmd = new SqlCommand(selectSTR, con);
                 SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
@@ -2448,7 +2837,7 @@ public class DBservices
                     s.LastName = (string)dr["LastNAme"];
                     s.Id = (string)dr["IDStudent"];
 
-                    g.Group.ListStudent.Add(s);
+                   all.ListStudent.Add(s);
 
 
 
@@ -2469,12 +2858,12 @@ public class DBservices
                 }
 
             }
-        }
-       
-        return all;
+        
+
+        return all.ListStudent;
     }
     ////-----------------------------if not edit in the first time-------------------//
-    public CritInDoc getMeetDocupdate(int numGroup,Users j)
+    public CritInDoc getMeetDocupdate(int numGroup, Users j)
     {
         CritInDoc testupdate = new CritInDoc();
         testupdate.Doc = new FeedBack_Doc();
@@ -2484,7 +2873,11 @@ public class DBservices
         try
         {
             con = connect("con15");
-            String selectSTR = " select c.NameCrit ,c.DescriptionCrit , c.NumCrit ,f.NumDoc ,f.Score ,f.Note , fc.WeightCrit , s.numScala,s.nameScala ,f.valueCrit from Criteria c inner join FeedBack_Criteria fc on c.NumCrit = fc.NumCrit inner join Full_feedback f on f.NumCrit = c.NumCrit inner join Judge_Groups jg on jg.NumGroup = f.NumGroup inner join Scala s on s.numScala = fc.numScala where jg.NumGroup = '" + numGroup+ "' and jg.EmailJudge = '"+j.Email+"'";
+            String selectSTR = @"select c.NameCrit ,c.DescriptionCrit , c.NumCrit ,f.NumDoc ,f.Score ,f.Note , fc.WeightCrit , 
+                                 s.numScala,s.nameScala ,f.valueCrit from Criteria c inner join FeedBack_Criteria fc on 
+                                 c.NumCrit = fc.NumCrit inner join Full_feedback f on f.NumCrit = c.NumCrit inner join 
+                                 Judge_Groups jg on jg.NumGroup = f.NumGroup inner join Scala s on s.numScala = fc.numScala 
+                                 where jg.NumGroup = '" + numGroup + "' and jg.EmailJudge = '" + j.Email + "'";
 
 
             SqlCommand cmd = new SqlCommand(selectSTR, con);
@@ -2500,9 +2893,9 @@ public class DBservices
                 c.WeightCrit = Convert.ToDouble(dr["WeightCrit"]);
                 c.TypeCrit = Convert.ToInt32(dr["numScala"]);
                 c.NameScala = (string)dr["nameScala"];
-                c.Note= (string)dr["Note"];
+                c.Note = (string)dr["Note"];
                 c.Score = Convert.ToDouble(dr["Score"]);
-                c.ValueCrit = Convert.ToInt32(dr["valueCrit"]);
+                c.ValueCrit = (string)dr["valueCrit"];
                 testupdate.Doc.NumDoc = Convert.ToInt32(dr["NumDoc"]);
                 testupdate.AllCrit.Add(c);
             }
@@ -2535,7 +2928,10 @@ public class DBservices
         try
         {
             con = connect("con15");
-            String selectSTR = " select d.NumDoc ,d.NumMeeting,c.NumCrit,c.numScala,s.nameScala, c.WeightCrit,ca.NameCrit,ca.DescriptionCrit from [FeedBack_Doc] d inner join FeedBack_Criteria c on d.NumDoc=c.NumDoc inner join Criteria ca on ca.NumCrit=c.NumCrit inner join Scala s on s.numScala=c.numScala where d.NumMeeting='" + indexMeet + "'";
+            String selectSTR = @"select d.NumDoc ,d.NumMeeting,c.NumCrit,c.numScala,s.nameScala, c.WeightCrit,ca.NameCrit,
+                               ca.DescriptionCrit from [FeedBack_Doc] d inner join FeedBack_Criteria c on d.NumDoc=c.NumDoc 
+                               inner join Criteria ca on ca.NumCrit=c.NumCrit inner join Scala s on s.numScala=c.numScala 
+                               where d.NumMeeting='" + indexMeet + "'";
 
 
             SqlCommand cmd = new SqlCommand(selectSTR, con);
@@ -2545,18 +2941,18 @@ public class DBservices
             {
                 Criterion c = new Criterion();
 
-                c.NumCrit = Convert.ToInt32(dr["NumCrit"]); 
-                c.NameCrit = (string)dr["NameCrit"]; 
-                c.DescriptionCrit = (string)dr["DescriptionCrit"]; 
-                c.WeightCrit = Convert.ToDouble(dr["WeightCrit"]); 
-                c.TypeCrit = Convert.ToInt32(dr["numScala"]); 
+                c.NumCrit = Convert.ToInt32(dr["NumCrit"]);
+                c.NameCrit = (string)dr["NameCrit"];
+                c.DescriptionCrit = (string)dr["DescriptionCrit"];
+                c.WeightCrit = Convert.ToDouble(dr["WeightCrit"]);
+                c.TypeCrit = Convert.ToInt32(dr["numScala"]);
                 c.NameScala = (string)dr["nameScala"];
-               test.Doc.NumDoc= Convert.ToInt32(dr["NumDoc"]);
+                test.Doc.NumDoc = Convert.ToInt32(dr["NumDoc"]);
                 test.AllCrit.Add(c);
 
             }
-            
-         
+
+
         }
         catch (Exception ex)
         {
@@ -2596,22 +2992,22 @@ public class DBservices
 
         foreach (var item in full.CritDoc.AllCrit)
         {
-            
-                String cStr = BuildInsertCommand(full, item, full.Judes);
-                cmd = CreateCommand(cStr, con);
+
+            String cStr = BuildInsertCommand(full, item, full.Judes);
+            cmd = CreateCommand(cStr, con);
 
 
-                try
-                {
-                    numEffected += cmd.ExecuteNonQuery(); // execute the command
+            try
+            {
+                numEffected += cmd.ExecuteNonQuery(); // execute the command
 
 
-                }
-                catch (Exception ex)
-                {
-                    throw (ex);
-                }
-            
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+
         }
 
         String cStr1 = BuildInsertCommandupdate(full);
@@ -2634,6 +3030,7 @@ public class DBservices
             // close the db connection
             con.Close();
         }
+        updateFinalGrade(full.GroupM.Group.NumGroup);
         return numEffected;
     }
     //-------------------insertAllCritwithAllScoreOfJudge----------------//
@@ -2642,9 +3039,9 @@ public class DBservices
         String command;
         StringBuilder sb = new StringBuilder();
         // use a string builder to create the dynamic string
-        sb.AppendFormat("Values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')",
-       c.NumCrit, full.CritDoc.Doc.NumDoc, j.Email,j.Type.NumType, full.GroupM.Group.NumGroup, c.Score, c.Note);
-        String prefix = "INSERT INTO Full_feedback " + "(NumCrit,NumDoc,EmailJudge,utID,NumGroup,Score,Note)";
+        sb.AppendFormat("Values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}','{7}')",
+       c.NumCrit, full.CritDoc.Doc.NumDoc, j.Email, j.Type.NumType, full.GroupM.Group.NumGroup, c.Score, c.Note, c.ValueCrit);
+        String prefix = "INSERT INTO Full_feedback " + "(NumCrit,NumDoc,EmailJudge,utID,NumGroup,Score,Note,valueCrit)";
         command = prefix + sb.ToString();
 
         return command;
@@ -2657,15 +3054,1115 @@ public class DBservices
         StringBuilder sb = new StringBuilder();
         // use a string builder to create the dynamic string
 
-        String prefix = "UPDATE [Judge_Groups] Set [sumScore] = '" + f.Sum + "' [statusFeed]='"+f.StatusFull+"'   where [NumGroup] = '" + f.GroupM.Group.NumGroup + "' and EmailJudge='"+f.Judes.Email+"'";
+        String prefix = "UPDATE [Judge_Groups] Set [sumScore] = '" + f.Sum + "' , [statusFeed]='" + f.StatusFull + "'   where [NumGroup] = '" + f.GroupM.Group.NumGroup + "' and EmailJudge='" + f.Judes.Email + "'";
         command = prefix + sb.ToString();
 
         return command;
 
     }
-    
+    //------------------------updateGrage----------------------------//
+    private int updateFinalGrade(int index)
+    {
+        List<int> sumAllJudge = allScoreGroup(index);
+        int numEffected = 0;
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("con15"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        float sum = 0;
+        foreach (var item in sumAllJudge)
+        {
+            sum += item;
+        }
+        sum /= sumAllJudge.Count;
+        String cStr = BuildInsertCommandupdateFinal(sum, index);
+        cmd = CreateCommand(cStr, con);
 
 
+        try
+        {
+            numEffected += cmd.ExecuteNonQuery(); // execute the command
+
+
+        }
+        catch (Exception ex)
+        {
+            throw (ex);
+        }
+
+        if (con != null)
+        {
+            // close the db connection
+            con.Close();
+        }
+        return numEffected;
+    }
+    //-------------------updateScoreForGroup----------------------------------//
+    private String BuildInsertCommandupdateFinal(double sum, int index)
+    {
+        String command;
+        StringBuilder sb = new StringBuilder();
+        // use a string builder to create the dynamic string
+
+        String prefix = "UPDATE [Groups] Set [finalScore] = '" + sum + "' where [NumGroup] = '" + index + "'";
+        command = prefix + sb.ToString();
+
+        return command;
+
+    }
+    //------------------------------------------//
+    private List<int> allScoreGroup(int idGroup)
+    {
+
+
+        List<int> sum = new List<int>();
+        SqlConnection con = null;
+
+        try
+        {
+            con = connect("con15");
+            String selectSTR = @"select sumScore from Judge_Groups where NumGroup='" + idGroup + "'";
+
+
+            SqlCommand cmd = new SqlCommand(selectSTR, con);
+            SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dr.Read())
+            {
+
+                int sumScoure = Convert.ToInt32(dr["sumScore"]);
+                sum.Add(sumScoure);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+
+        }
+        return sum;
+    }
+    //----------updateAllCritwithAllScoreOfJudge-------------------//
+    public int update(FullFeedback full)
+    {
+
+        int numEffected = 0;
+        SqlConnection con;
+        SqlCommand cmd;
+        SqlCommand cmd1;
+
+
+
+        try
+        {
+            con = connect("con15"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        foreach (var item in full.CritDoc.AllCrit)
+        {
+
+            String cStr = BuildInsertCommandupdateFull(full, item, full.Judes);
+            cmd = CreateCommand(cStr, con);
+
+
+            try
+            {
+                numEffected += cmd.ExecuteNonQuery(); // execute the command
+
+
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+
+        }
+
+        String cStr1 = BuildInsertCommandupdate(full);
+        cmd1 = CreateCommand(cStr1, con);
+
+
+        try
+        {
+            numEffected += cmd1.ExecuteNonQuery(); // execute the command
+
+
+        }
+        catch (Exception ex)
+        {
+            throw (ex);
+        }
+
+        if (con != null)
+        {
+            // close the db connection
+            con.Close();
+        }
+        updateFinalGrade(full.GroupM.Group.NumGroup);
+        return numEffected;
+    }
+    //-------------------updateScoreForGroup----------------------------------//
+    private String BuildInsertCommandupdateFull(FullFeedback f, Criterion c, Users j)
+    {
+        String command;
+        StringBuilder sb = new StringBuilder();
+        // use a string builder to create the dynamic string
+
+        String prefix = "UPDATE [Full_feedback] Set [Score] = '" + c.Score + "', [Note]='" + c.Note + "' , ValueCrit='" + c.ValueCrit + "'  where [NumGroup] = '" + f.GroupM.Group.NumGroup + "' and EmailJudge='" + f.Judes.Email + "' and  NumDoc='" + f.CritDoc.Doc.NumDoc + "' and NumCrit='" + c.NumCrit + "'";
+        command = prefix + sb.ToString();
+
+        return command;
+
+    }
+
+    //----------------------------------------Mentor---------------------------------------//
+    public List<FeedBack_Meeting> getMentorCourse(Users u)
+    {
+
+
+        List<FeedBack_Meeting> doc = new List<FeedBack_Meeting>();
+        SqlConnection con = null;
+
+        try
+        {
+            con = connect("con15");
+            String selectSTR = @"select distinct m.DateMeeting,m.nameMetting,m.NumMeeting,m.yearMeeting,c.NameCourse,c.NumCourse,
+                               d.NumDepartment,d.NameDepartment from FeedBack_Meet m inner join FeedBack_Meet_Groups f on 
+                               m.NumMeeting = f.NumMeeting inner join Groups g on g.NumGroup = f.NumGroup inner join Course c 
+                               on c.NumCourse = m.NumCourse inner join Department d on d.NumDepartment = m.NumDepartment 
+                               where g.EmailMentor = '" + u.Email + "' and g.utID = '" + u.Type.NumType + "'";
+
+
+            SqlCommand cmd = new SqlCommand(selectSTR, con);
+            SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dr.Read())
+            {
+
+                FeedBack_Meeting DetailsMeet = new FeedBack_Meeting();
+                DetailsMeet.DetailsCourseDep = new CoursesAndDepartment();
+
+                DetailsMeet.NumMeeting = Convert.ToInt32(dr["NumMeeting"]);
+                DetailsMeet.NameMeeting = (string)dr["nameMetting"];
+                DetailsMeet.YearMeeting = (string)dr["yearMeeting"];
+                DetailsMeet.DetailsCourseDep.NumCourse = Convert.ToInt32(dr["NumCourse"]);
+                DetailsMeet.DetailsCourseDep.NumDepartment = Convert.ToInt32(dr["NumDepartment"]);
+                DetailsMeet.DetailsCourseDep.NameDepartment = (string)dr["NameDepartment"];
+                DetailsMeet.DetailsCourseDep.NameCourse = (string)dr["NameCourse"];
+                DetailsMeet.Date = (string)dr["DateMeeting"];
+
+
+                doc.Add(DetailsMeet);
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+
+        }
+        return doc;
+    }
+    //----------------------------------------GetAllGroupsByMetting---------------------------------------//
+    public List<Group_Meeting> getMentorGroups(Users u, int numMeet)
+    {
+
+
+        List<Group_Meeting> allGroup = new List<Group_Meeting>();
+        SqlConnection con = null;
+
+        try
+        {
+            con = connect("con15");
+            String selectSTR = @"select g.* , m.NumMeeting from FeedBack_Meet m inner join FeedBack_Meet_Groups f on 
+                                m.NumMeeting = f.NumMeeting inner join Groups g on g.NumGroup = f.NumGroup 
+                                where g.EmailMentor = '" + u.Email + "' and g.utID = '" + u.Type.NumType + "' and m.NumMeeting = '" + numMeet + "'";
+
+
+
+            SqlCommand cmd = new SqlCommand(selectSTR, con);
+            SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dr.Read())
+            {
+                Group_Meeting gm = new Group_Meeting();
+                gm.Group = new Groups();
+                //gm.Group.Mentor = new Users();
+
+                gm.Group.NumGroup = Convert.ToInt32(dr["NumGroup"]);
+                gm.Group.NameGroup = (string)dr["NameGroup"];
+                gm.Group.NameProject = (string)dr["NameProject"];
+                gm.Group.NameOrganization = (string)dr["NameOrganization"];
+                gm.Group.ProjectType = (string)dr["ProjectType"];
+                gm.Sum = Convert.ToDouble(dr["finalScore"]);
+
+
+
+                allGroup.Add(gm);
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+
+        }
+        foreach (var item in allGroup)
+        {
+            item.JudgesGroup = new List<Judge_Group_Meeting>();
+            item.JudgesGroup = findJudgeList(item.Group.NumGroup, numMeet);
+        }
+        foreach (var item in allGroup)
+        {
+            item.Group.ListStudent = new List<Students>();
+            item.Group.ListStudent = foundStudents(item.Group);
+        }
+
+        return allGroup;
+    }
+    public List<Judge_Group_Meeting> findJudgeList(int numG, int numMeet)
+    {
+        List<Judge_Group_Meeting> listJ = new List<Judge_Group_Meeting>();
+        SqlConnection con = null;
+
+        try
+        {
+            con = connect("con15");
+            String selectSTR = @"select u.* , j.sumScore from FeedBack_Meet m inner join FeedBack_Meet_Groups f 
+                               on m.NumMeeting = f.NumMeeting inner join Groups g on g.NumGroup = f.NumGroup 
+                               inner join Judge_Groups j on j.NumGroup = g.NumGroup inner join Users u 
+                               on u.Email = j.EmailJudge where g.NumGroup = '" + numG + "' and m.NumMeeting = '" + numMeet + "'";
+
+
+            SqlCommand cmd = new SqlCommand(selectSTR, con);
+            SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dr.Read())
+            {
+                Judge_Group_Meeting jg = new Judge_Group_Meeting();
+                jg.Judge = new Users();
+
+                jg.Judge.FirstName = (string)dr["FirstName"];
+                jg.Judge.LastName = (string)dr["LastName"];
+                jg.Judge.Email = (string)dr["Email"];
+                jg.SumScore = Convert.ToInt32(dr["sumScore"]);
+
+                listJ.Add(jg);
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+
+        }
+        return listJ;
+    }
+    //--------------------------------------------student----------------------------------------------------//
+    public List<Group_Meeting> getStudentDocs(string id)
+    {
+
+
+        List<Group_Meeting> lm = new List<Group_Meeting>();
+
+        SqlConnection con = null;
+
+        try
+        {
+            con = connect("con15");
+            String selectSTR = @"select distinct m.yearMeeting, g.NameGroup,g.NameOrganization,g.NameProject,g.ProjectType,
+                               c.NumCourse,d.NumDepartment,d.NameDepartment,c.NameCourse from FeedBack_Meet m 
+                               inner join FeedBack_Meet_Groups f on m.NumMeeting = f.NumMeeting inner join Groups g 
+                               on g.NumGroup = f.NumGroup inner join Course c on c.NumCourse = m.NumCourse inner join 
+                               Department d on d.NumDepartment = m.NumDepartment inner join studentInGroup sg on 
+                               sg.NumGroup = g.NumGroup inner join Student s on s.IDStudent = sg.IDStudent 
+                               where s.IDStudent = '" + id + "'";
+
+
+            SqlCommand cmd = new SqlCommand(selectSTR, con);
+            SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dr.Read())
+            {
+                Group_Meeting gm = new Group_Meeting();
+                gm.Group = new Groups();
+                gm.FeedBackMeet = new FeedBack_Meeting();
+                gm.FeedBackMeet.DetailsCourseDep = new CoursesAndDepartment();
+
+
+
+                gm.Group.NameGroup = (string)dr["NameGroup"];
+                gm.Group.NameProject = (string)dr["NameProject"];
+                gm.Group.NameOrganization = (string)dr["NameOrganization"];
+                gm.Group.ProjectType = (string)dr["ProjectType"];
+
+                gm.FeedBackMeet.DetailsCourseDep.NumDepartment = Convert.ToInt32(dr["NumDepartment"]);
+                gm.FeedBackMeet.DetailsCourseDep.NumCourse = Convert.ToInt32(dr["NumCourse"]);
+                gm.FeedBackMeet.DetailsCourseDep.NameDepartment = (string)dr["NameDepartment"];
+                gm.FeedBackMeet.DetailsCourseDep.NameCourse = (string)dr["NameCourse"];
+                gm.FeedBackMeet.YearMeeting = (string)dr["yearMeeting"];
+
+                lm.Add(gm);
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+
+        }
+        foreach (var item in lm)
+        {
+            item.Group.ListStudent = findTeamGroup(id, item.Group.NameGroup);
+        }
+
+        return lm;
+    }
+    public List<Students> findTeamGroup(string id, string nameG)
+    {
+        List<Students> ls = new List<Students>();
+
+        SqlConnection con = null;
+
+        try
+        {
+            con = connect("con15");
+            String selectSTR = @"select distinct s.FirstName ,s.LastNAme from  Groups g inner join studentInGroup sg on 
+                               sg.NumGroup = g.NumGroup inner join Student s on s.IDStudent = sg.IDStudent 
+                               where s.IDStudent <> '" + id + "' and g.NameGroup = '" + nameG + "'";
+
+
+            SqlCommand cmd = new SqlCommand(selectSTR, con);
+            SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dr.Read())
+            {
+                Students s = new Students();
+                s.FirstName = (string)dr["FirstName"];
+                s.LastName = (string)dr["LastName"];
+
+                ls.Add(s);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+
+        }
+
+        return ls;
+    }
+
+    //--------------------------------get all doc for course---------------------------//
+    public List<Group_Meeting> getStudentDocsMeet(string id, Group_Meeting selectedCourse)
+    {
+
+
+        List<Group_Meeting> doc = new List<Group_Meeting>();
+        SqlConnection con = null;
+
+        try
+        {
+            con = connect("con15");
+            String selectSTR = @"select u.FirstName,u.LastName,u.Email,m.DateMeeting,m.nameMetting,m.NumMeeting,g.finalScore,g.NumGroup from FeedBack_Meet m 
+                              inner join FeedBack_Meet_Groups f on m.NumMeeting = f.NumMeeting inner join Groups g on g.NumGroup = f.NumGroup 
+                              inner join Course c on c.NumCourse = m.NumCourse inner join Department d on d.NumDepartment = m.NumDepartment 
+                              inner join studentInGroup sg on sg.NumGroup = g.NumGroup inner join Student s on s.IDStudent = sg.IDStudent 
+                              inner join Users u on u.Email = g.EmailMentor 
+                              where s.IDStudent = '" + id + "' and c.NumCourse = '" + selectedCourse.FeedBackMeet.DetailsCourseDep.NumCourse + "' and d.NumDepartment = '" + selectedCourse.FeedBackMeet.DetailsCourseDep.NumDepartment + "' and m.yearMeeting = '" + selectedCourse.FeedBackMeet.YearMeeting + "'";
+
+            SqlCommand cmd = new SqlCommand(selectSTR, con);
+            SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dr.Read())
+            {
+                Group_Meeting gm = new Group_Meeting();
+                gm.FeedBackMeet = new FeedBack_Meeting();
+
+
+                gm.Group = new Groups();
+                gm.Group.Mentor = new Users();
+
+                gm.FeedBackMeet.NumMeeting = Convert.ToInt32(dr["NumMeeting"]);
+                gm.FeedBackMeet.NameMeeting = (string)dr["nameMetting"];
+                gm.FeedBackMeet.Date = (string)dr["DateMeeting"];
+                gm.Group.FinalScore = Convert.ToInt32(dr["finalScore"]);
+                gm.Group.NumGroup = Convert.ToInt32(dr["NumGroup"]);
+                gm.Group.Mentor.FirstName = (string)dr["FirstName"];
+                gm.Group.Mentor.LastName = (string)dr["LastName"];
+                gm.Group.Mentor.Email = (string)dr["Email"];
+
+
+
+                doc.Add(gm);
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+
+        }
+        foreach (var item in doc)
+        {
+            item.JudgesGroup = new List<Judge_Group_Meeting>();
+            item.JudgesGroup = findJudgeList(item.Group.NumGroup, item.FeedBackMeet.NumMeeting);
+        }
+        return doc;
+    }
+
+    //-----------------------------------------------lastDoc--------------------------------------//
+
+    public List<CritInDoc> lastDoc(CoursesAndDepartment idCD)
+    {
+
+        List<CritInDoc> lastdoc = new List<CritInDoc>();
+        SqlConnection con = null;
+
+        try
+        {
+            con = connect("con15");
+            String selectSTR = @"select distinct d.NameDoc,m.yearMeeting ,d.NumDoc,d.totalW
+                                from  FeedBack_Doc d inner join FeedBack_Meet m on m.NumMeeting=d.NumMeeting
+                                where m.NumDepartment=" + idCD.NumDepartment + " and m.NumCourse=" + idCD.NumCourse + " and d.[status]=1";
+            SqlCommand cmd = new SqlCommand(selectSTR, con);
+            SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dr.Read())
+            {
+                CritInDoc cd = new CritInDoc();
+                cd.Doc = new FeedBack_Doc();
+                cd.Doc.DetailsMeet = new FeedBack_Meeting();
+
+
+                cd.Doc.NumDoc = Convert.ToInt32(dr["NumDoc"]);
+                cd.Doc.NameDoc = (string)dr["NameDoc"];
+                cd.Doc.TotalWeight = Convert.ToDouble(dr["totalW"]);
+                cd.Doc.DetailsMeet.YearMeeting = (string)dr["yearMeeting"];
+
+
+
+
+                lastdoc.Add(cd);
+
+            }
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+
+        }
+        foreach (var item in lastdoc)
+        {
+            CritInDoc temp = new CritInDoc();
+            temp = get(item.Doc);
+            item.AllCrit = temp.AllCrit;
+        }
+        return lastdoc;
+    }
+    //-------------------------------get all finalScore to Excel--------------------------//
+    public List<Students> getFinalScore(int idDoc)
+    {
+        List<Students> listS = new List<Students>();
+        SqlConnection con = null;
+
+        try
+        {
+            con = connect("con15");
+            String selectSTR = @"  select s.FirstName,s.LastNAme ,s.IDStudent ,g.finalScore 
+                                   from FeedBack_Meet  m inner join FeedBack_Doc d on 
+                                   m.NumMeeting=d.NumMeeting   inner join Course c on c.NumCourse=m.NumCourse
+                                   inner join Department de on de.NumDepartment=m.NumDepartment
+                                   inner join FeedBack_Meet_Groups mg 
+                                   on mg.NumMeeting=m.NumMeeting inner join Groups g on g.NumGroup=mg.NumGroup
+                                   inner join studentInGroup sg on sg.NumGroup=g.NumGroup
+                                   inner join Student s on s.IDStudent=sg.IDStudent
+                                    where d.NumDoc='" + idDoc + "'";
+
+            SqlCommand cmd = new SqlCommand(selectSTR, con);
+            SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dr.Read())
+            {
+                Students s = new Students();
+
+                s.FirstName = (string)dr["FirstName"];
+                s.LastName = (string)dr["LastName"];
+                s.Id = (string)dr["IDStudent"];
+                s.FinalScore = Convert.ToInt32(dr["finalScore"]);
+
+                listS.Add(s);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+
+        }
+
+        return listS;
+    }
+
+    //---------------------saveLink----------------------------------------//
+    public void savelink(string link, int idGroup)
+    {
+
+        int numEffected = 0;
+        SqlConnection con;
+        SqlCommand cmd;
+
+
+        try
+        {
+            con = connect("con15"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+
+        String cStr = BuildInsertCommandupda(link, idGroup);
+        cmd = CreateCommand(cStr, con);
+
+        try
+        {
+            numEffected += cmd.ExecuteNonQuery(); // execute the command
+
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        if (con != null)
+        {
+            // close the db connection
+            con.Close();
+        }
+
+    }
+    private String BuildInsertCommandupda(string link, int id)
+    {
+        String command;
+        StringBuilder sb = new StringBuilder();
+        // use a string builder to create the dynamic string
+
+        String prefix = "UPDATE [Groups] Set [linkPP] = '" + link + "'  where [NumGroup] = '" + id + "'";
+        command = prefix + sb.ToString();
+
+        return command;
+
+    }
+    public DBservices readFromDB()
+    {
+        SqlConnection con = null;
+
+        try
+        {
+            con = connect("con15");
+            da = new SqlDataAdapter("select * from Criteria", con);
+            SqlCommandBuilder builder = new SqlCommandBuilder(da);
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+            dt = ds.Tables[0];
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+
+        }
+        return this;
+    }
+    public void update()
+    {
+        da.Update(dt);
+    }
+
+    //updateUserDetails
+    public int updateUserDetails(Users u)
+    {
+
+        int numEffected = 0;
+        SqlConnection con;
+        SqlCommand cmd;
+        try
+        {
+            con = connect("con15"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+
+        String cStr = BuildInsertCommandupdateFull(u);
+        cmd = CreateCommand(cStr, con);
+
+
+        try
+        {
+            numEffected += cmd.ExecuteNonQuery(); // execute the command
+
+
+        }
+        catch (Exception ex)
+        {
+            throw (ex);
+        }
+
+
+
+        if (con != null)
+        {
+            // close the db connection
+            con.Close();
+        }
+
+        return numEffected;
+    }
+    //-------------------updateScoreForGroup----------------------------------//
+    private String BuildInsertCommandupdateFull(Users u)
+    {
+        String command;
+        StringBuilder sb = new StringBuilder();
+        // use a string builder to create the dynamic string
+
+        String prefix = "UPDATE [Users] Set [FirstName] = '" + u.FirstName + "', [LastName]='" + u.LastName + "' , [Email]='" + u.Updateemail + "' ,[pass]='" + u.Pass + "' where [Email] = '" + u.Email + "'";
+        command = prefix + sb.ToString();
+
+        return command;
+
+    }
+    //-----------------updateStudentDetails--------------------------//
+    public int updateStudentDetails(Students u)
+    {
+
+        int numEffected = 0;
+        SqlConnection con;
+        SqlCommand cmd;
+        try
+        {
+            con = connect("con15"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+
+        String cStr = BuildInsertCommandupdateFull(u);
+        cmd = CreateCommand(cStr, con);
+
+
+        try
+        {
+            numEffected += cmd.ExecuteNonQuery(); // execute the command
+
+
+        }
+        catch (Exception ex)
+        {
+            throw (ex);
+        }
+
+
+
+        if (con != null)
+        {
+            // close the db connection
+            con.Close();
+        }
+
+        return numEffected;
+    }
+    //-------------------updateScoreForGroup----------------------------------//
+    private String BuildInsertCommandupdateFull(Students u)
+    {
+        String command;
+        StringBuilder sb = new StringBuilder();
+        // use a string builder to create the dynamic string
+
+        String prefix = "UPDATE [Student] Set [FirstName] = '" + u.FirstName + "', [LastName]='" + u.LastName + "' , [Email]='" + u.Email + "' ,[pass]='" + u.Pass + "' where [IDStudent] = '" + u.Id + "'";
+        command = prefix + sb.ToString();
+
+        return command;
+
+    }
+
+    //======================================calendar=======================================//
+    //-----------------------by mentor---------------------------------------------------//
+    public List<Groups> getmentorG(Users u)
+    {
+        List<Groups> list = new List<Groups>();
+        SqlConnection con = null;
+
+        try
+        {
+            con = connect("con15");
+            String selectSTR = @"select distinct NameGroup, NameProject from Groups
+                                 where EmailMentor = '"+u.Email+"'";
+            SqlCommand cmd = new SqlCommand(selectSTR, con);
+            SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dr.Read())
+            {
+                Groups g = new Groups();
+          
+               // g.NumGroup = Convert.ToInt32(dr["NumGroup"]);
+                g.NameProject = (string)dr["NameProject"];
+                g.NameGroup= (string)dr["NameGroup"];
+
+                list.Add(g);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+
+        }
+
+        foreach (var item in list)
+        {
+            item.NumGroup = findkeyGroup(item);
+        }
+
+        return list;
+       
+    }
+    public List<calendarMeeting> GetCalendarMeetings(Users u)
+    {
+        List<calendarMeeting> list = new List<calendarMeeting>();
+        SqlConnection con = null;
+
+        try
+        {
+            con = connect("con15");
+            String selectSTR = @"  select*from calendarMeeting cm inner join Groups g on cm.NumGroup=g.NumGroup
+                                   where cm.email='"+u.Email+"' and cm.utID='"+u.Type.NumType+"'";
+            SqlCommand cmd = new SqlCommand(selectSTR, con);
+            SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dr.Read())
+            {
+                calendarMeeting cm = new calendarMeeting();
+                cm.Group = new Groups();
+                cm.Group.ListStudent = new List<Students>();
+                
+                cm.Id= Convert.ToInt32(dr["meetingID"]);
+                cm.DateSelected = (string)dr["dateM"];
+                cm.StartTime= (string)dr["starttime"];
+                cm.EndTime= (string)dr["endtime"];  
+                cm.PlaceMetting= (string)dr["placeMetting"];
+
+                cm.Group.NumGroup= Convert.ToInt32(dr["NumGroup"]);
+                cm.Group.NameProject= (string)dr["NameProject"];
+
+                list.Add(cm);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+
+        }
+
+        foreach (var item in list)
+        {
+            item.Group.ListStudent = foundStudents(item.Group);
+        }
+
+        return list;
+
+    }
+    public List<calendarTask> GetCalendarTask(Users u)
+    {
+        List<calendarTask> list = new List<calendarTask>();
+        SqlConnection con = null;
+
+        try
+        {
+            con = connect("con15");
+            String selectSTR = @"  select*from [calendarTasks] cm inner join Groups g on cm.NumGroup=g.NumGroup
+                                   where cm.email='" + u.Email + "' and cm.utID='" + u.Type.NumType + "'";
+            SqlCommand cmd = new SqlCommand(selectSTR, con);
+            SqlDataReader dr = cmd.ExecuteReader(CommandBehavior.CloseConnection);
+
+            while (dr.Read())
+            {
+                calendarTask cm = new calendarTask();
+                cm.Group = new Groups();
+                cm.Student = new Students();
+              
+
+                cm.Id = Convert.ToInt32(dr["TasksID"]);
+                cm.Student.Id = (string)dr["IDStudent"];
+                cm.NameTask = (string)dr["nameTask"];
+                cm.Complet = (DateTime)dr["taskcompletiondate"];
+               
+
+                cm.Group.NumGroup = Convert.ToInt32(dr["NumGroup"]);
+                cm.Group.NameProject = (string)dr["NameProject"];
+
+                list.Add(cm);
+            }
+
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+        finally
+        {
+            if (con != null)
+            {
+                con.Close();
+            }
+
+        }
+
+        return list;
+
+    }
+    //--------------------------insert calendar meeting----------------------//
+    public int insert(calendarMeeting cm)
+    {
+        int numEffected = 0;
+        SqlConnection con;
+        SqlCommand cmd;
+     
+        try
+        {
+            con = connect("con15"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+            String cStr = BuildInsertCommand(cm);
+            cmd = CreateCommand(cStr, con);
+
+
+            try
+            {
+                numEffected += cmd.ExecuteNonQuery(); // execute the command
+
+
+            }
+            catch (Exception ex)
+            {
+                throw (ex);
+            }
+
+        
+
+       
+        if (con != null)
+        {
+            // close the db connection
+            con.Close();
+        }
+       
+        return numEffected;
+    }
+    //-------------------insert calenderMeet----------------//
+    private String BuildInsertCommand(calendarMeeting cm)
+    {
+        String command;
+        StringBuilder sb = new StringBuilder();
+        // use a string builder to create the dynamic string
+        sb.AppendFormat("Values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')",
+       cm.Mentor.Email,cm.Mentor.Type.NumType,cm.Group.NumGroup, cm.StartTime, cm.EndTime, cm.DateSelected,cm.PlaceMetting);
+        String prefix = "INSERT INTO calendarMeeting " + "(Email,utID,NumGroup,starttime,endtime,dateM,placeMetting)";
+        command = prefix + sb.ToString();
+
+        return command;
+
+    }
+    //--------------------------insert calendar meeting----------------------//
+    public int insert(calendarTask ct)
+    {
+        int numEffected = 0;
+        SqlConnection con;
+        SqlCommand cmd;
+
+        try
+        {
+            con = connect("con15"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+
+        String cStr = BuildInsertCommand(ct);
+        cmd = CreateCommand(cStr, con);
+
+
+        try
+        {
+            numEffected += cmd.ExecuteNonQuery(); // execute the command
+
+
+        }
+        catch (Exception ex)
+        {
+            throw (ex);
+        }
+
+
+
+
+        if (con != null)
+        {
+            // close the db connection
+            con.Close();
+        }
+
+        return numEffected;
+    }
+    //-------------------insert calenderMeet----------------//
+    private String BuildInsertCommand(calendarTask cm)
+    {
+        String command;
+        StringBuilder sb = new StringBuilder();
+        // use a string builder to create the dynamic string
+        sb.AppendFormat("Values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')",
+       cm.Mentor.Email, cm.Mentor.Type.NumType, cm.Group.NumGroup, cm.Student.Id, cm.Complet, cm.NameTask);
+        String prefix = "INSERT INTO calendarTasks " + "(Email,utID,NumGroup,IDStudent,taskcompletiondate,nameTask)";
+        command = prefix + sb.ToString();
+
+        return command;
+
+    }
 }
-
 

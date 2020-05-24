@@ -14,6 +14,7 @@ namespace mashovFinal.Models
         string email;
         Types type;
         List<Types> typesofuser;
+        string updateemail;
 
         public string Pass { get => pass; set => pass = value; }
         public string FirstName { get => firstName; set => firstName = value; }
@@ -21,11 +22,12 @@ namespace mashovFinal.Models
         public string Email { get => email; set => email = value; }
         public Types Type { get => type; set => type = value; }
         public List<Types> Typesofuser { get => typesofuser; set => typesofuser = value; }
+        public string Updateemail { get => updateemail; set => updateemail = value; }
 
 
 
         public Users() { }
-        public Users( string p,string first, string last, string em, Types ty ,List<Types> list)
+        public Users( string p,string first, string last, string em, Types ty ,List<Types> list,string ue)
         {
             pass = p;
             firstName = first;
@@ -33,9 +35,10 @@ namespace mashovFinal.Models
             email = em;
             type = ty;
             typesofuser = list;
+            updateemail = ue;
           //  numGroup = ng;
         }
-        public List<Users> ifexist()
+        public Users ifexist()
         {
             DBservices dbs = new DBservices();
             
@@ -75,6 +78,37 @@ namespace mashovFinal.Models
         {
             DBservices dbs = new DBservices();
             return dbs.getJudgeGroups(this,index);
+        }
+        public List<FeedBack_Meeting> getMentor()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.getMentorCourse(this);
+        }
+        public List<Group_Meeting> getMentorGroup(int index)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.getMentorGroups(this, index);
+        }
+        public int updateUsers()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.updateUserDetails(this);
+        }
+
+        public List<calendarMeeting> getallcalendarMeetingByMentor()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetCalendarMeetings(this);
+        }
+        public List<calendarTask> getcalendarTaskbymentor()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetCalendarTask(this);
+        }
+        public List<Groups> getcalG()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.getmentorG(this);
         }
     }
 }

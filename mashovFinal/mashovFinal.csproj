@@ -64,6 +64,15 @@
     <Reference Include="NPOI.OpenXmlFormats, Version=2.5.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
       <HintPath>..\packages\NPOI.2.5.1\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
     </Reference>
+    <Reference Include="Syncfusion.Compression.Base, Version=18.1460.0.52, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Compression.Base.18.1.0.52\lib\net46\Syncfusion.Compression.Base.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.Licensing, Version=18.1460.0.52, Culture=neutral, PublicKeyToken=632609b4d040f6b4, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.Licensing.18.1.0.52\lib\net46\Syncfusion.Licensing.dll</HintPath>
+    </Reference>
+    <Reference Include="Syncfusion.XlsIO.Base, Version=18.1460.0.52, Culture=neutral, PublicKeyToken=3d67ed1f87d44c89, processorArchitecture=MSIL">
+      <HintPath>..\packages\Syncfusion.XlsIO.AspNet.18.1.0.52\lib\net46\Syncfusion.XlsIO.Base.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -179,17 +188,24 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
+    <Compile Include="Controllers\CalendarController.cs" />
+    <Compile Include="Controllers\CreateExcelController.cs" />
     <Compile Include="Controllers\CriteriaController.cs" />
     <Compile Include="Controllers\DocController.cs" />
     <Compile Include="Controllers\ExcelDocumentController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\PowerPointController.cs" />
     <Compile Include="Controllers\SettingController.cs" />
+    <Compile Include="Controllers\StudentController.cs" />
     <Compile Include="Controllers\UserController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\calendarMeeting.cs" />
+    <Compile Include="Models\calendarTask.cs" />
     <Compile Include="Models\Courses.cs" />
     <Compile Include="Models\CoursesAndDepartment.cs" />
+    <Compile Include="Models\CreateExcelFile.cs" />
     <Compile Include="Models\Criterion.cs" />
     <Compile Include="Models\CritInDoc.cs" />
     <Compile Include="Models\DAL\DBservices.cs" />
@@ -206,15 +222,25 @@
     <Compile Include="Models\Types.cs" />
     <Compile Include="Models\Users.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utilities\CritRanHelper.cs" />
+    <Compile Include="Utilities\MailHelper.cs" />
+    <Compile Include="Utilities\NpoiMemoryStream.cs" />
+    <Compile Include="Utilities\StringHelper.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Areas\HelpPage\HelpPage.css" />
+    <Content Include="assets\css\fullcalendar.css" />
+    <Content Include="assets\css\fullcalendar.print.css" />
+    <Content Include="assets\js\fullcalendar.min.js" />
+    <Content Include="assets\js\moment.min.js" />
+    <Content Include="calendar.html" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="css\bootstrap.css" />
     <Content Include="css\bootstrap.min.css" />
+    <Content Include="css\cssManger.css" />
     <Content Include="css\custom.css" />
     <Content Include="css\icon_fonts\css\all_icons.css" />
     <Content Include="css\icon_fonts\css\all_icons.min.css" />
@@ -235,6 +261,7 @@
     <Content Include="css\magnific-popup.css" />
     <Content Include="css\magnific-popup.min.css" />
     <Content Include="css\menu.css" />
+    <Content Include="css\mobiscroll.jquery.min.css" />
     <Content Include="css\owl.video.play.png" />
     <Content Include="css\roundslider.css" />
     <Content Include="css\roundslider.min.css" />
@@ -353,9 +380,12 @@
     <Content Include="css\skins\square\yellow.png" />
     <Content Include="css\skins\square\_all.css" />
     <Content Include="css\style.css" />
+    <Content Include="css\tipol_calendar.css" />
     <Content Include="css\vendors.css" />
     <Content Include="css\vendors.min.css" />
+    <Content Include="dataTable.html" />
     <Content Include="DB-Script\myText.txt" />
+    <Content Include="eventcalendar_google-calendar.html" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -381,6 +411,7 @@
     <Content Include="img\design_icon_2.svg" />
     <Content Include="img\design_icon_3.svg" />
     <Content Include="img\design_icon_4.svg" />
+    <Content Include="img\download.png" />
     <Content Include="img\fav.png" />
     <Content Include="img\favicon.ico" />
     <Content Include="img\gallery\large_1.jpg" />
@@ -393,6 +424,7 @@
     <Content Include="img\gallery\thumb_3.jpg" />
     <Content Include="img\gallery\thumb_4.jpg" />
     <Content Include="img\gallery\thumb_5.jpg" />
+    <Content Include="img\icons8-borrow-book-50.png" />
     <Content Include="img\loader.gif" />
     <Content Include="img\logo.png" />
     <Content Include="img\logo_2x.png" />
@@ -774,8 +806,16 @@
     <Content Include="img\web_development_icon_3.svg" />
     <Content Include="img\web_development_icon_4.svg" />
     <Content Include="index.html" />
-    <Content Include="index3 - Copy.html" />
     <Content Include="index3.html" />
+    <Content Include="index4.html" />
+    <Content Include="index5.html" />
+    <Content Include="js\CreateExcelJS.js" />
+    <Content Include="js\judgeJS.js" />
+    <Content Include="js\lastTimeDocJS.js" />
+    <Content Include="js\mentorJS.js" />
+    <Content Include="js\mobiscroll.jquery.min.js" />
+    <Content Include="js\searchJS.js" />
+    <Content Include="js\StudentJS.js" />
     <Content Include="setting.html" />
     <Content Include="index2.html" />
     <Content Include="js\common_scripts.min.js" />
@@ -873,6 +913,8 @@
     <Content Include="sass\style.scss" />
     <Content Include="sass\_mixin.scss" />
     <Content Include="sass\_variables.scss" />
+    <Content Include="css\icons_mobiscroll.ttf" />
+    <Content Include="css\icons_mobiscroll.woff" />
     <None Include="Properties\PublishProfiles\FolderProfile.pubxml" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
@@ -880,7 +922,10 @@
     <Content Include="Scripts\jquery-3.3.1.slim.js" />
     <Content Include="Scripts\jquery-3.3.1.slim.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
-    <Content Include="Web.config" />
+    <Content Include="updateUser.html" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -897,6 +942,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="PowerPoint\" />
     <Folder Include="uploadedFiles\" />
   </ItemGroup>
   <ItemGroup>

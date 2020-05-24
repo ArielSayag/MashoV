@@ -9,6 +9,7 @@ namespace mashovFinal.Models
     {
         
         int numMeeting;
+        FeedBack_Meeting feedBackMeet;
         Groups group;
         string startTime;
         string endTime;
@@ -16,6 +17,7 @@ namespace mashovFinal.Models
         double sum;
 
         public int NumMeeting { get => numMeeting; set => numMeeting = value; }
+        public FeedBack_Meeting FeedBackMeet { get => feedBackMeet; set => feedBackMeet = value; }
         public Groups Group { get => group; set => group = value; }
         public string StartTime { get => startTime; set => startTime = value; }
         public string EndTime { get => endTime; set => endTime = value; }
@@ -23,7 +25,7 @@ namespace mashovFinal.Models
         public double Sum { get => sum; set => sum = value; }
 
         public Group_Meeting() { }
-        public Group_Meeting(int n, Groups numG,  string time, string end , List<Judge_Group_Meeting> j,double f)
+        public Group_Meeting(int n, Groups numG,  string time, string end , List<Judge_Group_Meeting> j,double f,FeedBack_Meeting fm)
         {
             numMeeting = n;
             group = numG;
@@ -31,6 +33,7 @@ namespace mashovFinal.Models
             endTime = end;
             judgesGroup = j;
             sum = f;
+            feedBackMeet = fm;
         }
         public int insertjudgeInGroup()
         {

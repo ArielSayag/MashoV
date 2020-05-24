@@ -1,0 +1,542 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="STEPS | Multipurpose Working Wizard with Branches">
+    <meta name="author" content="Ansonika">
+    <title>Feedback Systems</title>
+    <!-- Favicons-->
+    <link rel="shortcut icon" href="img/fav.png" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon" href="img/apple-touch-icon-57x57-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="img/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="img/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="img/apple-touch-icon-144x144-precomposed.png">
+    <!-- GOOGLE WEB FONT -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- BASE CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.rtlcss.com/bootstrap/v4.1.3/css/bootstrap.min.css" integrity="sha384-Jt6Tol1A2P9JBesGeCxNrxkmRFSjWCBW1Af7CSQSKsfMVQCqnUVWhZzG0puJMCK6"
+          crossorigin="anonymous">
+    <link href="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/build/css/bootstrap-datetimepicker.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/menu.css" rel="stylesheet">
+    <link href="css/vendors.min.css" rel="stylesheet">
+    <link href="css/icon_fonts/css/all_icons.min.css" rel="stylesheet">
+    <link href="css/skins/square/grey.css" rel="stylesheet">
+    <!-- YOUR CUSTOM CSS -->
+    <link href="css/custom.css" rel="stylesheet">
+    <script src="js/modernizr.js"></script>
+    <!-- Modernizr -->
+    <script src="Scripts/ajaxCalls.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <script src="js/mentorJS.js"></script>
+    <script src="//cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script>
+
+</head>
+
+<body>
+
+    <div id="preloader">
+        <div data-loader="circle-side"></div>
+    </div>
+    <!-- /Preload -->
+
+    <div id="loader_form">
+        <div data-loader="circle-side-2"></div>
+    </div>
+    <!-- /loader_form -->
+
+    <header>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-3">
+                    <div id="logo_home">
+                        <h1><a href="index.html">&nbsp</a></h1>
+                    </div>
+                </div>
+                <div class="col-9">
+                    <div id="social" class="m-auto">
+                        <ul>
+                            <li><a href="index2.html">מנהל</a></li>
+                            <li><a href="index3.html">שופט</a></li>
+                            <li><a style="color: #89E894" href="index4.html">מנחה</a></li>
+                            <!--<li><a href="index5.html">Student</a></li>-->
+                        </ul>
+                    </div>
+                    <!-- /social -->
+                    <nav>
+                        <ul class="cd-primary-nav">
+                            <li><a href="calendar.html" class="animated_link">calendar</a></li>
+                            <li><a href="javascript:void(0)" class="animated_link">Menu</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <!-- /container -->
+    </header>
+    <!-- /Header -->
+
+    <main>
+        <div class="container">
+            <div id="wizard_container">
+                <form name="example-1" id="wrapped" method="POST">
+
+                    <!-- Leave for security protection, read docs for details -->
+                    <div id="middle-wizard">
+
+                        <div class="row">
+                            <div class="col-md-12">
+                                
+                                <div id="tabsJustifiedContent" class="tab-content">
+                                     <h2 id="helloMentor" class="text-center"></h2>
+
+                                        <!--1st slide star-->
+                                        <section id="first-slide" class="container py-4">
+                                            <div class="branch" id="Seo-Optimization">
+                                                <div class="step" data-state="budget">
+
+                                                    <div class="row">
+                                                        <div class="col-8 mx-auto">
+                                                            <div class="row">
+                                                                <div class="col-5">
+                                                                    <div class="form-group">
+                                                                        <select class="form-control" id="year">
+                                                                            <option>2012</option>
+                                                                            <option>2013</option>
+                                                                            <option>2014</option>
+
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="col-7">
+                                                                    <div class="form-group">
+                                                                        <select class="form-control" id="">
+                                                                            <option>Industrial engineering</option>
+                                                                            <option>Industrial engineering</option>
+                                                                            <option>Industrial engineering</option>
+
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <!-- Search form -->
+                                                            <div class="p-1 rounded shadow-sm mb-4">
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <button id="button-addon2" type="submit" class="btn btn-link text-info">
+                                                                            <i class="icon-search-8"></i></button>
+                                                                    </div>
+                                                                    <input type="search" placeholder="Search" aria-describedby="button-addon2" class="form-control border-0">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div id="result" class="row">
+                                                        <!--<div class="col-md-4 col-sm-6">
+                                                            <div class="service_box">
+                                                                <div class="service_icon">
+                                                                    9/9
+                                                                </div>
+                                                                <h3>Course Name</h3>
+                                                                <p><b>Presentation Date :</b> 12-2-2020</p>
+                                                                <p><b>Departure :</b> Industrial engineering</p>
+                                                                <p><b>Year :</b> 2012</p>
+
+                                                                 
+                                                                
+                                                            </div>
+                                                             
+                                                        </div>
+
+                                                        <div class="col-md-4 col-sm-6">
+                                                            <div class="service_box">
+                                                                <div class="service_icon">
+                                                                    9/3
+                                                                </div>
+                                                                <h3>Final project-part A</h3>
+                                                                <p><b>Presentation Date :</b> 12-2-2020</p>
+                                                                <p><b>Departure :</b> Industrial engineering</p>
+                                                                <p><b>Year :</b> 2012</p>
+
+                                                                 
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-md-4 col-sm-6">
+                                                            <div class="service_box">
+                                                                <div class="service_icon">
+                                                                    8/8
+                                                                </div>
+                                                                <h3>Course Name</h3>
+                                                                <p><b>Presentation Date :</b> 12-2-2020</p>
+                                                                <p><b>Departure :</b> Industrial engineering</p>
+                                                                <p><b>Year :</b> 2012</p>
+
+                                                                 
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4 col-sm-6">
+                                                            <div class="service_box">
+                                                                <div class="service_icon">
+                                                                    9/0
+                                                                </div>
+                                                                <h3>Course Name</h3>
+                                                                <p><b>Presentation Date :</b> 12-2-2020</p>
+                                                                <p><b>Departure :</b> Industrial engineering</p>
+                                                                <p><b>Year :</b> 2012</p>
+
+                                                                 
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4 col-sm-6">
+                                                            <div class="service_box">
+                                                                <div class="service_icon">
+                                                                    8/4
+                                                                </div>
+                                                                <h3>Course Name</h3>
+                                                                <p><b>Presentation Date :</b> 12-2-2020</p>
+                                                                <p><b>Departure :</b> Industrial engineering</p>
+                                                                <p><b>Year :</b> 2012</p>
+
+                                                                 
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-md-4 col-sm-6">
+                                                            <div class="service_box">
+                                                                <div class="service_icon">
+                                                                    8/3
+                                                                </div>
+                                                                <h3>Course Name</h3>
+                                                                <p><b>Presentation Date :</b> 12-2-2020</p>
+                                                                <p><b>Departure :</b> Industrial engineering</p>
+                                                                <p><b>Year :</b> 2012</p>
+
+                                                                 
+                                                            </div>
+                                                        </div>-->
+                                                    </div>
+
+                                                </div>
+
+                                            </div>
+                                        </section>
+                                        <!--1st slide end-->
+
+                                        <!--2st slide star-->
+
+                                        <section id="second-slide" class="container py-4">
+                                            <div class="row">
+                                                <div class="col-12 text-center">
+                                                    <h3><b>Groups</b></h3>
+                                                    <h4>Final project – part A</h4>
+                                                </div>
+                                            </div>
+
+                                            <div class="row pt-5">
+                                                <div class="col-8 mx-auto">
+                                                    <div class="row">
+                                                        <div class="col-sm-5">
+                                                            <div class="form-group">
+                                                                <select class="form-control" id="">
+                                                                    <option>judge name</option>
+                                                                    <option>judge name</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-sm-7">
+                                                            <div class="form-group">
+                                                                <select class="form-control" id="">
+                                                                    <option>Final project – part A</option>
+                                                                    <option>Final project – part A</option>
+
+                                                                </select>
+                                                            </div>
+
+                                                            <div class="p-1 rounded shadow-sm mb-4">
+                                                                <div class="input-group">
+                                                                    <div class="input-group-prepend">
+                                                                        <button id="button-addon2" type="submit" class="btn btn-link text-info">
+                                                                            <i class="icon-search-8"></i></button>
+                                                                    </div>
+                                                                    <input type="search" placeholder="Feedback name" aria-describedby="button-addon2" class="form-control border-0">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+
+                                            <div class="row justify-content-center" id="addGroups">
+                                                <!--<div class="col-md-3 col-sm-6">
+                                                    <div class="service_box">
+                                                        <div class="service_icon">
+                                                        </div>
+                                                        <h3>Project name</h3>
+                                                        <p><b>Group name:</b> </p>
+                                                        <p><b>Student name:</b></p>
+                                                        <p><b>Student name:</b></p>
+                                                        <p><b>Student name:</b></p>
+                                                        <hr>
+                                                        <p><b>Judge: name</b></p>
+                                                        <br>
+                                                        <a href="javascript:void(0)" class="btn btn-defult">See Presentation</a>
+
+                                                    </div>
+
+                                                </div>
+                                                <div class="col-md-3 col-sm-6">
+                                                    <div class="service_box">
+                                                        <div class="service_icon">
+                                                        </div>
+                                                        <h3>Project name</h3>
+                                                        <p><b>Group name:</b> </p>
+                                                        <p><b>Student name:</b></p>
+                                                        <p><b>Student name:</b></p>
+                                                        <p><b>Student name:</b></p>
+                                                        <hr>
+                                                        <p><b>Judge: name</b></p>
+                                                        <br>
+                                                        <a href="javascript:void(0)" class="btn btn-defult">See Presentation</a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 col-sm-6">
+                                                    <div class="service_box">
+                                                        <div class="service_icon">
+                                                        </div>
+                                                        <h3>Project name</h3>
+                                                        <p><b>Group name:</b> </p>
+                                                        <p><b>Student name:</b></p>
+                                                        <p><b>Student name:</b></p>
+                                                        <p><b>Student name:</b></p>
+                                                        <hr>
+                                                        <p><b>Judge: name</b></p>
+                                                        <br>
+                                                        <a href="javascript:void(0)" class="btn btn-defult">See Presentation</a>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 col-sm-6">
+                                                    <div class="service_box">
+                                                        <div class="service_icon">
+                                                        </div>
+                                                        <h3>Project name</h3>
+                                                        <p><b>Group name:</b> </p>
+                                                        <p><b>Student name:</b></p>
+                                                        <p><b>Student name:</b></p>
+                                                        <p><b>Student name:</b></p>
+                                                        <hr>
+                                                        <p><b>Judge: name</b></p>
+                                                        <br>
+                                                        <a href="javascript:void(0)" class="btn btn-defult">ראה מצגת</a>
+                                                    </div>
+                                                </div>-->
+
+                                            </div>
+
+                                            <div id="bottom-wizard">
+                                                <a class="btn btn-primary1 btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> Return</a>
+                                            </div>
+                                        </section>
+
+                                        <!--2st slide end-->
+
+                                        <!--3st slide star-->
+                                        <section id="third-slide" class="container py-4">
+
+                                            <div class="slide3">
+                                                <div class="row pt-5">
+                                                    <div class="col-12 text-center">
+                                                        <h3>Final project- part A</h3>
+                                                        <h5>Project name-group name-judge name</h5>
+                                                    </div>
+                                                </div>
+                                                <div class="row pt-5 ">
+                                                    <div class="col-sm-12 text-center">
+                                                        <a href="javascript:void(0)" class="btn btn-info m-2 bg-danger p-3 visibleElement">ציון השופט: 90%</a>
+                                                    </div>
+                                                </div>
+                                                <div id="allCrit"></div>
+                                                <!--<div class="row pt-4 ">
+                                                    <div class="col-sm-8 mx-auto text-right">
+                                                        <h5>1.Criteria name </h5>
+                                                        <h6>Descriptionא נא תאר את אופן ההצגה ואופיו<:</h6>
+                                                        <h5>Weight :  40%</h5>
+
+                                                    </div>
+                                                </div>
+
+                                                <div class="row pt-4 ">
+                                                         <div class="col-sm-8 mx-auto text-right">
+                                                            <div class="form-group">
+                                                                <textarea name="" id="" class="form-control" placeholder="write your comment here"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    
+                                                </div>
+
+                                                <div class="row pt-4 ">
+
+                                                    <div class="col-sm-8 mx-auto text-right">
+
+                                                        <h5>2.Criteria name </h5>
+                                                        <h6>Descriptionא נא תאר את אופן ההצגה ואופיו<:</h6>
+                                                        <h5>Weight :  60%</h5>
+                                                    </div>
+                                                </div>
+
+                                                    <div class="row pt-4 ">
+                                                        <div class="col-sm-8 mx-auto text-right">
+                                                            <div class="form-group">
+                                                                <textarea name="" id="" class="form-control" placeholder="write your comment here"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            </div>
+
+                                                <div class="row">
+                                                    <div class="col-sm-4 mx-auto text-right">
+                                                        <div class="custom-control custom-radio custom-control-inline">
+                                                            <input type="radio" id="customRadioInline1" name="customRadioInline1" class="custom-control-input">
+                                                            <label class="custom-control-label" for="customRadioInline1">No</label>
+                                                        </div>
+                                                        <div class="custom-control custom-radio custom-control-inline ">
+                                                            <input type="radio" id="customRadioInline2" name="customRadioInline1" class="custom-control-input selected">
+                                                            <label class="custom-control-label" for="customRadioInline2">Yes</label>
+                                                        </div>
+                                                    </div>
+                                                </div>-->
+
+                                               <div  class="row pt-3 ">
+                                                  <div class="col-sm-12 text-center mx-auto">
+                                                   <a class="btn btn-defult text-light m-3 visibleElement" href="javascript:void(0)">הרשאה לקבוצה</a>
+                                                  </div>
+                                               </div>
+                                             </div>
+
+                                            <div id="bottom-wizard">
+                                                <a class="btn btn-primary1 btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> חזור</a>
+                                            </div>
+                                       </section>
+                                        <!--3st slide end-->
+
+
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <!-- /middle-wizard -->
+                </form>
+            </div>
+            <!-- /Wizard container -->
+        </div>
+        <!-- /Container -->
+    </main>
+    <!-- /main -->
+
+    <footer>
+        <div class="container clearfix">
+            
+            <p>© 2020 | Feedback System</p>
+        </div>
+    </footer>
+    <!-- /footer -->
+
+    <div class="cd-overlay-nav">
+        <span></span>
+    </div>
+    <!-- /cd-overlay-nav -->
+
+    <div class="cd-overlay-content">
+        <span></span>
+    </div>
+    <!-- /cd-overlay-content -->
+
+    <a href="#0" class="cd-nav-trigger">Menu<span class="cd-icon"></span></a>
+    <!-- /cd-nav-trigger -->
+
+    <!-- Modal terms -->
+    <div class="modal fade" id="terms-txt" tabindex="-1" role="dialog" aria-labelledby="termsLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="termsLabel">Terms and conditions</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Lorem ipsum dolor sit amet, in porro albucius qui, in <strong>nec quod novum accumsan</strong>, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
+                    <p>Lorem ipsum dolor sit amet, in porro albucius qui, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus. Lorem ipsum dolor sit amet, <strong>in porro albucius qui</strong>, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
+                    <p>Lorem ipsum dolor sit amet, in porro albucius qui, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Modal terms -->
+
+    <!-- COMMON SCRIPTS -->
+    <script src="js/jquery-2.2.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
+    <script src="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js"></script>
+    <script src="js/common_scripts.min.js"></script>
+
+    <script src="js/menu.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/wizard_func_single_branch.js"></script>
+    <script type="text/javascript">
+        $(function() {
+
+            $('#datetimepicker3').datetimepicker({
+                format: 'LT'
+            });
+            $('#datetimepicker3').datetimepicker({
+                format: 'LT'
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            $("#second-slide").hide();
+            $("#third-slide").hide();
+
+            $("#first-slide .service_box").click(function() {
+                $("#first-slide").hide();
+                $("#second-slide").fadeIn();
+            });
+
+            $("#second-slide .prev").click(function() {
+                $("#second-slide").hide();
+                $("#first-slide").fadeIn();
+            });
+            $("#second-slide .service_box .service_icon,#second-slide .service_box h3,#second-slide .service_box p").click(function() {
+                $("#second-slide").hide();
+                $("#third-slide").fadeIn();
+            });
+
+            $("#third-slide .prev").click(function() {
+                $("#third-slide").hide();
+                $("#second-slide").fadeIn();
+            });
+            
+
+        });
+    </script>
+
+
+</body>
+
+</html>

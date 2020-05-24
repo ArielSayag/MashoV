@@ -49,8 +49,8 @@
             if (id == "" || password == "") {
                 swal('הכנס ערכים תקינים');
             }
-            else if (id.length < 8 || password.length < 4) {
-                swal('שם משתמש צריך 9 תווים ומעלה וסיסמא מעל 4 תווים');
+            else if (id.length < 9 || password.length < 9) {
+                swal('שם משתמש צריך 9 תווים ומעלה וסיסמא מעל 9 תווים');
             }
             else {
                 if (id.includes("@")) {
@@ -78,10 +78,10 @@
         $(document).ready(function () {
 
             $("#wrapped").submit(f1);
-
+            $("#mail").hide();
 
             $("#btn").click(submitUser);
-
+            $("#btn1").click(updatemail);
 
 
         });
@@ -90,18 +90,19 @@
 
             student = data;
 
-            if (student.length > 0) {
+            if (student.Pass.length > 0) {
 
-                if (student.Pass == "") {
-                    student2 = {
-                        "Pass": password,
-                        "Id": student.Id,
+                //if (student.Pass == "") {
+                //    student2 = {
+                //        "Pass": password,
+                //        "Id": student.Id,
 
-                    }
-                    ajaxCall("PUT", "./api/Login/PassStudent", JSON.stringify(student2), PUTSuccessPass, PUTErrorPass);
-                }
-                else if (student.Pass == password) {
-                    localStorage["Login"] = JSON.stringify(student);
+                //    }
+                //    ajaxCall("PUT", "./api/Login/PassStudent", JSON.stringify(student2), PUTSuccessPass, PUTErrorPass);
+                //}
+               // else
+                if (student.Pass == password) {
+                    localStorage["Student"] = JSON.stringify(student);
                     window.location.href = "index5.html";
                     //מעבר לדף הבא
                 }
@@ -121,20 +122,21 @@
         function GETSuccess(data) {
             console.log(data);
             usersList = data;
-            user = data[0];
+           // user = data[0];
 
-            if (usersList.length > 0) {
+            if (usersList.Email != "") {
 
-                if (user.Pass == "") {//insert first time to system 
-                    user2 = {
-                        "Pass": password,
-                        "Email": user.Email,
+                //if (user.Pass == "") {//insert first time to system
+                //    user2 = {
+                //        "Pass": password,
+                //        "Email": user.Email,
 
-                    }
-                    //update pass
-                    ajaxCall("PUT", "./api/Login/Pass", JSON.stringify(user2), PUTSuccessPass, PUTErrorPass);
-                }
-                else if (user.Pass == password) {
+                //    }
+                //    //update pass
+                //    ajaxCall("PUT", "./api/Login/Pass", JSON.stringify(user2), PUTSuccessPass, PUTErrorPass);
+                //}
+               // else
+                if (usersList.Pass == password) {
                     nextstep(usersList);
 
                     //מעבר לדף הבא
@@ -149,12 +151,7 @@
 
         }
         function GETError(err) { console.log(err); }
-        function PUTSuccessPass(data) {
-            console.log(data);
-            swal("סיסמתך עודכנה בהצלחה");
-            nextstep(user);
-        }
-        function PUTErrorPass(err) { console.log(err); }
+
 
         var isManager = false;
         var isMentor = false;
@@ -162,18 +159,19 @@
 
         function nextstep(userData) {
             localStorage["Login"] = JSON.stringify(userData);
-            if (usersList.length == 3) {
+            var listTT = userData.Typesofuser;
+            if (listTT.length == 3) {
                 window.location.href = "index2.html";
             }
             else {
-                for (i in usersList) {
-                    if (usersList[i].Type.Type == "Mentor") {
+                for (i in listTT) {
+                    if (listTT[i].Type.Type == "Mentor") {
                         isMentor = true;
                     }
-                    if (usersList[i].Type.Type == "Manager") {
+                    if (listTT[i].Type.Type == "Manager") {
                         isManager = true;
                     }
-                    if (usersList[i].Type.Type == "Judge") {
+                    if (listTT[i].Type.Type == "Judge") {
                         isJudge = true;
                     }
 
@@ -191,7 +189,80 @@
 
 
         }
+
+        function forgetPass() {
+            id = $("#username").val();
+            if (id == "") {
+                swal("הכנס שם משתמש");
+            }
+            else {
+                if (id.includes("@")) {
+                    user11 = {
+                        "Email": id,
+                    }
+                    ajaxCall("PUT", "./api/Login/Pass", JSON.stringify(user11), PUTSuccessPass, PUTErrorPass);
+                }
+                else {
+                    student22 = {
+                        
+                        "Id": id,
+
+                    }
+                     ajaxCall("PUT", "./api/Login/PassStudent", JSON.stringify(student22), PUTSuccessPass, PUTErrorPass);
+                }
+                
+            }
+
+        }
+        var idS = "";
+        function PUTSuccessPass(data) {
+            console.log(data);
+            if (data == "1") {
+                swal("סיסמתך נשלחה למייל האישי");
+            }
+            else if (data == "0") {
+                swal("אינך קיים במערכת");
+            }
+            else {
+                swal("נמצא שאתה אכן רשום במערכת ,אנא הכנס מייל");
+                $("#mail").show();
+                idS = data;
+
+            }
+          
+        }
+        function PUTErrorPass(err) { console.log(err); }
+
+
+        function updatemail() {
+            var email = $("#email").val();
+
+            if ((email == "") || (!email.includes('@'))){
+                swal('הכנס ערכים תקינים');
+            }
+            else {
+                emails = {
+                    "Id": idS,
+                    "Email": email,
+                }
+
+                ajaxCall("POST", "./api/Login/Email", JSON.stringify(emails), PUTSuccessEmail, PUTErrorEmail);
+            }
+        }
+        function PUTSuccessEmail(data) {
+            console.log(data);
+            swal("סיסמתך נשלחה למייל ");
+        }
+        function PUTErrorEmail(err) { console.log(err); }
     </script>
+    <style>
+        .a {
+            -webkit-text-decoration-line: underline; /* Safari */
+            text-decoration-line: underline;
+        }
+
+
+    </style>
 </head>
 
 <body>
@@ -252,9 +323,14 @@
 												<input type="password" id="password" name="password" class="required form-control" placeholder="סיסמא">
 											</div>
 
-											<div class="form-group pt-5">
-												<input type="submit"  id="btn"  class="button form-control" value="התחבר">
-											</div>
+                                            <div class="form-group pt-5">
+                                                <input type="submit" id="btn" class="button form-control" value="התחבר">
+                                                <a class="a" href="javascript:void(0)" onclick="forgetPass()">שכחתי סיסמא?</a>
+                                                <div id="mail" class="form-group">
+                                                    <input type="text" id="email" name="first_last_name" class="required form-control" placeholder="מייל">
+                                                    <input type="submit" id="btn1" class="button form-control" value="עדכן מייל">
+                                                </div>
+                                            </div>
 																						
 										</div>
 										<!-- /box_general -->

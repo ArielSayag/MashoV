@@ -24,414 +24,414 @@ namespace mashovFinal.Models
         public bool DialogResult { get; private set; }
         public object MessageBoxImage { get; private set; }
         //public int getExcelFile(string path, string nameOfDepartment ,string nameOfCourse/*, DateTime hebrewYear*/, string feedbackName)
-        public FeedBack_Doc getExcelFile(string[] path, string p)
-        {
-            //string p = @"D:\" + path[3];
+        //public FeedBack_Doc getExcelFile(string[] path, string p)
+        //{
+        //    //string p = @"D:\" + path[3];
 
-            //string fname = httpPostedFile.FileName.Split('\\').Last();
-            string fname = path[3];
-            //  var p = Path.Combine(HostingEnvironment.MapPath("~/uploadedFiles"), fname);
+        //    //string fname = httpPostedFile.FileName.Split('\\').Last();
+        //    string fname = path[3];
+        //    //  var p = Path.Combine(HostingEnvironment.MapPath("~/uploadedFiles"), fname);
 
-            // check if file exists
-            if (!File.Exists(p))
-                throw new FileNotFoundException();
+        //    // check if file exists
+        //    if (!File.Exists(p))
+        //        throw new FileNotFoundException();
 
-            //Create COM Objects. Create a COM object for everything that is referenced
-            Application xlApp;
-            Workbook xlWorkbook;
-            try
-            {
-                xlApp = new Excel.Application();
+        //    //Create COM Objects. Create a COM object for everything that is referenced
+        //    Application xlApp;
+        //    Workbook xlWorkbook;
+        //    try
+        //    {
+        //        xlApp = new Excel.Application();
 
-                xlWorkbook = xlApp.Workbooks.Open(p); // exception is thrown here
-                //  Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
-                //  Excel.Range xlRange = xlWorksheet.UsedRange;
-            }
-            catch (Exception e)
-            {
-                // can't load file to excel application :\
-                throw new Exception(e.Message + ", file path: " + p);
-
-            }
-
-            int numEffected = 0;
+        //        xlWorkbook = xlApp.Workbooks.Open(p); // exception is thrown here
+        //        //  Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[1];
+        //        //  Excel.Range xlRange = xlWorksheet.UsedRange;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        // can't load file to excel application :\
+        //        throw new Exception(e.Message + ", file path: " + p);
+
+        //    }
+
+        //    int numEffected = 0;
 
-            List<Users> allUsers = new List<Users>();
-            List<Students> allStudents = new List<Students>();
-            List<Groups> allGroups = new List<Groups>();
-            List<Group_Meeting> allmeetings = new List<Group_Meeting>();
+        //    List<Users> allUsers = new List<Users>();
+        //    List<Students> allStudents = new List<Students>();
+        //    List<Groups> allGroups = new List<Groups>();
+        //    List<Group_Meeting> allmeetings = new List<Group_Meeting>();
 
-
-            HebrewCalendar HebCal = new HebrewCalendar();
-            //string yearHeb = HebCal.GetYear(DateTime.Now.ToString(string));
-            //var currentCulture = CultureInfo.CurrentCulture; // just for reference
-            var culture = CultureInfo.CreateSpecificCulture("he-IL"); // proper "Hebrew" culture
-            culture.DateTimeFormat.Calendar = HebCal;
-            Thread.CurrentThread.CurrentCulture = culture;
-            string minYearHeb = HebCal.MinSupportedDateTime.ToString("yyyy"); // min supported year
-            string yearHeb = DateTime.Now.ToString("yyyy", culture); // current year
-            string heb = yearHeb.Replace("\"", "`");
+
+        //    HebrewCalendar HebCal = new HebrewCalendar();
+        //    //string yearHeb = HebCal.GetYear(DateTime.Now.ToString(string));
+        //    //var currentCulture = CultureInfo.CurrentCulture; // just for reference
+        //    var culture = CultureInfo.CreateSpecificCulture("he-IL"); // proper "Hebrew" culture
+        //    culture.DateTimeFormat.Calendar = HebCal;
+        //    Thread.CurrentThread.CurrentCulture = culture;
+        //    string minYearHeb = HebCal.MinSupportedDateTime.ToString("yyyy"); // min supported year
+        //    string yearHeb = DateTime.Now.ToString("yyyy", culture); // current year
+        //    string heb = yearHeb.Replace("\"", "`");
 
-            FeedBack_Meeting m = new FeedBack_Meeting
-            {
-                YearMeeting = heb,
-                NameMeeting = path[0]
+        //    FeedBack_Meeting m = new FeedBack_Meeting
+        //    {
+        //        YearMeeting = heb,
+        //        NameMeeting = path[0]
 
-            };
+        //    };
 
-            // m.DetailsCourseDep is null!
-            m.DetailsCourseDep = new CoursesAndDepartment();
-            m.DetailsCourseDep.NumDepartment = int.Parse(path[1]);
-            m.DetailsCourseDep.NumCourse = int.Parse(path[2]);
-
-            var connection = new Dictionary<double, string>();
-
-            FeedBack_Doc doc = new FeedBack_Doc();
-            doc.NameDoc = path[0];
-            doc.Manager = new List<Users>();
-
-            int sheetCount = xlWorkbook.Sheets.Count;
-            for (int a = 0; a < sheetCount; a++)
-            {
-                Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[a + 1];
-                Excel.Range xlRange = xlWorksheet.UsedRange;
-
-                int rowCount = xlRange.Rows.Count;
-                int colCount = xlRange.Columns.Count;
-
-
-
-                List<string> firstRow = new List<string>();
-
-                for (int fr = 1; fr <= colCount; fr++)
-                {
-                    if (xlRange.Cells[1, fr].Value2 != null)
-                        firstRow.Add(xlRange.Cells[1, fr].Value2.Trim());
-                }
-
-
-
-                string team = "";
-                bool emteyTeam = false;
-
-                bool oneDate = false;
-
-
-                for (int i = 2; i <= rowCount; i++)
-                {
-                    Students s = new Students();
-                    Users u = new Users();
-                    u.Type = new Types();
-                    Users manager = new Users();
-                    manager.Type = new Types();
-                    Users jug = new Users();
-                    jug.Type = new Types();
-
-
-                    Groups g = new Groups();
-                    g.Mentor = new Users();
-                    g.Mentor.Type = new Types();
-                    Group_Meeting jg = new Group_Meeting();
-                    jg.JudgesGroup = new List<Judge_Group_Meeting>();
-                    jg.Group = new Groups();
-                    DateTime thisdate = new DateTime();
-
-
-
-                    for (int j = 1; j <= colCount; j++)
-                    {
-                        if (xlRange.Cells[i, j] != null && xlRange.Cells[i, j].Value2 != null)
-                        {
-                            switch (firstRow[j - 1])
-                            {
-                                case "צוות מספר":
-                                    if (xlRange.Cells[i, j].Value2 == null)
-                                    {
-                                        emteyTeam = true;
-                                        s.GroupS = new List<Groups>();
-                                        Groups gs = new Groups();
-                                        gs.NameGroup = team;
-                                        s.GroupS.Add(gs);
-
-
-                                    }
-                                    else
-                                    {
-
-                                        emteyTeam = false;
-                                        g.NameGroup = xlRange.Cells[i, j].Value2.ToString();
-                                        team = g.NameGroup;
-
-                                        s.GroupS = new List<Groups>();
-                                        Groups gs = new Groups();
-                                        gs.NameGroup = team;
-                                        s.GroupS.Add(gs);
-                                        jg.Group = new Groups();
-                                        jg.Group.NameGroup = team;
-
-
-                                        // jg.NumGroup = team;
-                                        //s.NumGroup = team;
-
-                                    }
-                                    break;
-
-                                case "שם הסטודנט":
-                                    s.FirstName = xlRange.Cells[i, j].Value2.Trim();
-                                    var ifem = xlRange.Cells[i, 1].Value2;
-                                    if (ifem == null)
-                                    {
-                                        emteyTeam = true;
-                                        // s.NumGroup = team;
-                                        s.GroupS = new List<Groups>();
-                                        Groups gs = new Groups();
-                                        gs.NameGroup = team;
-                                        s.GroupS.Add(gs);
-                                    }
-
-                                    break;
-
-                                case "שם משפחה":
-                                    s.LastName = xlRange.Cells[i, j].Value2.ToString();
-                                    break;
-
-                                case "ת.ז":
-                                    s.Id = xlRange.Cells[i, j].Value2.ToString();
-                                    break;
-
-                                case "כתובת מייל":
-                                    u.Email = xlRange.Cells[i, j].Value2.ToString();
-                                    // u.Type.NumType = 4;
-                                    break;
-                                case "שם משתמש":
-                                    u.FirstName = xlRange.Cells[i, j].Value2.ToString();
-                                    break;
-                                case "שם משפחה משתמש":
-                                    u.LastName = xlRange.Cells[i, j].Value2.ToString();
-                                    break;
-
-                                case "מנהל":
-                                    if (xlRange.Cells[i, j].Value2.ToString() == "כן")
-                                    {
-                                        manager.FirstName = u.FirstName;
-                                        manager.LastName = u.LastName;
-                                        manager.Email = u.Email;
-                                        manager.Type.NumType = 2;
-                                        doc.Manager.Add(manager);
-
-                                    }
-
-                                    break;
-                                case "שופט":
-                                    if (xlRange.Cells[i, j].Value2.ToString() == "כן")
-                                    {
-
-                                        jug.FirstName = u.FirstName;
-                                        jug.LastName = u.LastName;
-                                        jug.Email = u.Email;
-                                        jug.Type.NumType = 3;
-
-
-                                    }
-
-                                    break;
-                                case "מנחה":
-                                    if (xlRange.Cells[i, j].Value2.ToString() == "כן")
-                                    {
-                                        u.Type.NumType = 4;
-
-                                    }
-
-                                    break;
-
-
-                                case "מס מנחה":
-                                    if (emteyTeam == false)
-                                    {
-                                        var key = xlRange.Cells[i, j].Value2;
-                                        if (connection.ContainsKey(key))
-                                        {
-                                            g.Mentor.Email = connection[key];
-                                            g.Mentor.Type.NumType = 4;
-                                        }
-
-
-                                    }
-                                    break;
-
-
-                                case "מס שופט":
-                                    if (emteyTeam == false)
-                                    {
-
-                                        Judge_Group_Meeting ju = new Judge_Group_Meeting();
-                                        ju.Judge = new Users();
-                                        ju.Judge.Type = new Types();
-                                        var key = xlRange.Cells[i, j].Value2;
-                                        if (connection.ContainsKey(key))
-                                        {
-                                            ju.Judge.Email = connection[key];
-                                            ju.Judge.Type.NumType = 3;
-                                            jg.JudgesGroup.Add(ju);
-                                            int coun = 1;
-                                            while (xlRange.Cells[i + coun, j].Value2 != null)
-                                            {
-                                                if (xlRange.Cells[i + coun, j].Value2 != null && xlRange.Cells[i + coun, 1].Value2 == null)
-                                                {
-                                                    if (connection.ContainsKey(key))
-                                                    {
-                                                        ju.Judge.Email = connection[key];
-                                                        ju.Judge.Type.NumType = 3;
-                                                        jg.JudgesGroup.Add(ju);
-                                                    }
-
-                                                }
-                                                coun++;
-                                            }
-                                        }
-
-                                    }
-                                    break;
-
-                                case "שם הפרויקט":
-                                    if (emteyTeam == false)
-                                    {
-                                        string name = xlRange.Cells[i, j].Value2.ToString();
-                                        string newName = name.Replace("\"", "`");
-                                        g.NameProject = newName;
-
-
-                                    }
-                                    break;
-
-                                case "ארגון":
-                                    if (emteyTeam == false)
-                                    {
-                                        string name = xlRange.Cells[i, j].Value2.ToString();
-                                        string newName = name.Replace("\"", "`");
-                                        g.NameOrganization = newName;
-                                    }
-                                    break;
-
-                                case "סוג הפרויקט":
-                                    if (emteyTeam == false)
-                                    {
-                                        g.ProjectType = xlRange.Cells[i, j].Value2.ToString();
-                                    }
-                                    break;
-
-                                case "שעת התחלה":
-                                    if (emteyTeam == false)
-                                    {
-                                        jg.StartTime = DateTime.FromOADate(xlRange.Cells[i, j].Value2).ToString("HH:mm");
-                                        // jg.StartTime = (DateTime)xlRange.Cells[i, j].Value2;
-                                    }
-                                    break;
-                                case "שעת סיום":
-                                    if (emteyTeam == false)
-                                    {
-                                        jg.EndTime = DateTime.FromOADate(xlRange.Cells[i, j].Value2).ToString("HH:mm");
-                                    }
-                                    break;
-                                case "מס רץ":
-                                    double x = xlRange.Cells[i, j].Value2;
-                                    string y = xlRange.Cells[i, j + 1].Value2.ToString();
-                                    connection.Add(x, y);
-
-                                    break;
-                                case "תאריך":
-                                    if (oneDate == false)
-                                    {
-                                        Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-IL");
-                                        DateTime date = DateTime.FromOADate(xlRange.Cells[i, j].Value2);
-                                        //  date.ToString("dd/MM/yyyy");
-
-                                        m.Date = date;
-                                        thisdate = m.Date;
-                                        oneDate = true;
-
-                                    }
-                                    else
-                                    {
-                                        Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-IL");
-                                        DateTime date1 = DateTime.FromOADate(xlRange.Cells[1, 13].Value2);
-                                        m.Date = date1;
-                                    }
-                                    break;
-                            }
-                        }
-                    }
-                    //ברגע שסיימתי לעבור על שורה
-                    if (s.Id != null)
-                    {
-                        allStudents.Add(s);
-                    }
-                    if (u.Type.NumType != 0)
-                    {
-                        allUsers.Add(u);
-                    }
-                    if (jug.Email != null)
-                    {
-                        allUsers.Add(jug);
-                    }
-                    if (manager.Email != null)
-                    {
-                        allUsers.Add(manager);
-                    }
-                    if (g.NameGroup != null)
-                    {
-                        allGroups.Add(g);
-                    }
-                    if (jg.Group.NameGroup != null)
-                    {
-                        allmeetings.Add(jg);
-                    }
-                }
-
-                //cleanup
-                GC.Collect();
-                GC.WaitForPendingFinalizers();
-
-                //rule of thumb for releasing com objects:
-                //  never use two dots, all COM objects must be referenced and released individually
-                //  ex: [somthing].[something].[something] is bad
-
-                //release com objects to fully kill excel process from running in the background
-                Marshal.ReleaseComObject(xlRange);
-                Marshal.ReleaseComObject(xlWorksheet);
-
-            }
-            //close and release
-            xlWorkbook.Close();
-            Marshal.ReleaseComObject(xlWorkbook);
-
-            //quit and release
-            xlApp.Quit();
-            Marshal.ReleaseComObject(xlApp);
-
-            DBservices dbs = new DBservices();
-            if (allUsers.Count > 0)
-            {
-                numEffected += dbs.insert(allUsers);
-            }
-            if (allGroups.Count > 0)
-            {
-                numEffected += dbs.insert(allGroups);
-            }
-            if (allStudents.Count > 0)
-            {
-                numEffected += dbs.insert(allStudents);
-            }
-            if (allmeetings.Count > 0)
-            {
-                numEffected += dbs.insert(allmeetings, m, doc);
-            }
-
-            FeedBack_Doc d = dbs.getDoc();
-            return d;
-            // return numEffected;
-
-        }
+        //    // m.DetailsCourseDep is null!
+        //    m.DetailsCourseDep = new CoursesAndDepartment();
+        //    m.DetailsCourseDep.NumDepartment = int.Parse(path[1]);
+        //    m.DetailsCourseDep.NumCourse = int.Parse(path[2]);
+
+        //    var connection = new Dictionary<double, string>();
+
+        //    FeedBack_Doc doc = new FeedBack_Doc();
+        //    doc.NameDoc = path[0];
+        //    doc.Manager = new List<Users>();
+
+        //    int sheetCount = xlWorkbook.Sheets.Count;
+        //    for (int a = 0; a < sheetCount; a++)
+        //    {
+        //        Excel._Worksheet xlWorksheet = xlWorkbook.Sheets[a + 1];
+        //        Excel.Range xlRange = xlWorksheet.UsedRange;
+
+        //        int rowCount = xlRange.Rows.Count;
+        //        int colCount = xlRange.Columns.Count;
+
+
+
+        //        List<string> firstRow = new List<string>();
+
+        //        for (int fr = 1; fr <= colCount; fr++)
+        //        {
+        //            if (xlRange.Cells[1, fr].Value2 != null)
+        //                firstRow.Add(xlRange.Cells[1, fr].Value2.Trim());
+        //        }
+
+
+
+        //        string team = "";
+        //        bool emteyTeam = false;
+
+        //        bool oneDate = false;
+
+
+        //        for (int i = 2; i <= rowCount; i++)
+        //        {
+        //            Students s = new Students();
+        //            Users u = new Users();
+        //            u.Type = new Types();
+        //            Users manager = new Users();
+        //            manager.Type = new Types();
+        //            Users jug = new Users();
+        //            jug.Type = new Types();
+
+
+        //            Groups g = new Groups();
+        //            g.Mentor = new Users();
+        //            g.Mentor.Type = new Types();
+        //            Group_Meeting jg = new Group_Meeting();
+        //            jg.JudgesGroup = new List<Judge_Group_Meeting>();
+        //            jg.Group = new Groups();
+        //            DateTime thisdate = new DateTime();
+
+
+
+        //            for (int j = 1; j <= colCount; j++)
+        //            {
+        //                if (xlRange.Cells[i, j] != null && xlRange.Cells[i, j].Value2 != null)
+        //                {
+        //                    switch (firstRow[j - 1])
+        //                    {
+        //                        case "צוות מספר":
+        //                            if (xlRange.Cells[i, j].Value2 == null)
+        //                            {
+        //                                emteyTeam = true;
+        //                                s.GroupS = new List<Groups>();
+        //                                Groups gs = new Groups();
+        //                                gs.NameGroup = team;
+        //                                s.GroupS.Add(gs);
+
+
+        //                            }
+        //                            else
+        //                            {
+
+        //                                emteyTeam = false;
+        //                                g.NameGroup = xlRange.Cells[i, j].Value2.ToString();
+        //                                team = g.NameGroup;
+
+        //                                s.GroupS = new List<Groups>();
+        //                                Groups gs = new Groups();
+        //                                gs.NameGroup = team;
+        //                                s.GroupS.Add(gs);
+        //                                jg.Group = new Groups();
+        //                                jg.Group.NameGroup = team;
+
+
+        //                                // jg.NumGroup = team;
+        //                                //s.NumGroup = team;
+
+        //                            }
+        //                            break;
+
+        //                        case "שם הסטודנט":
+        //                            s.FirstName = xlRange.Cells[i, j].Value2.Trim();
+        //                            var ifem = xlRange.Cells[i, 1].Value2;
+        //                            if (ifem == null)
+        //                            {
+        //                                emteyTeam = true;
+        //                                // s.NumGroup = team;
+        //                                s.GroupS = new List<Groups>();
+        //                                Groups gs = new Groups();
+        //                                gs.NameGroup = team;
+        //                                s.GroupS.Add(gs);
+        //                            }
+
+        //                            break;
+
+        //                        case "שם משפחה":
+        //                            s.LastName = xlRange.Cells[i, j].Value2.ToString();
+        //                            break;
+
+        //                        case "ת.ז":
+        //                            s.Id = xlRange.Cells[i, j].Value2.ToString();
+        //                            break;
+
+        //                        case "כתובת מייל":
+        //                            u.Email = xlRange.Cells[i, j].Value2.ToString();
+        //                            // u.Type.NumType = 4;
+        //                            break;
+        //                        case "שם משתמש":
+        //                            u.FirstName = xlRange.Cells[i, j].Value2.ToString();
+        //                            break;
+        //                        case "שם משפחה משתמש":
+        //                            u.LastName = xlRange.Cells[i, j].Value2.ToString();
+        //                            break;
+
+        //                        case "מנהל":
+        //                            if (xlRange.Cells[i, j].Value2.ToString() == "כן")
+        //                            {
+        //                                manager.FirstName = u.FirstName;
+        //                                manager.LastName = u.LastName;
+        //                                manager.Email = u.Email;
+        //                                manager.Type.NumType = 2;
+        //                                doc.Manager.Add(manager);
+
+        //                            }
+
+        //                            break;
+        //                        case "שופט":
+        //                            if (xlRange.Cells[i, j].Value2.ToString() == "כן")
+        //                            {
+
+        //                                jug.FirstName = u.FirstName;
+        //                                jug.LastName = u.LastName;
+        //                                jug.Email = u.Email;
+        //                                jug.Type.NumType = 3;
+
+
+        //                            }
+
+        //                            break;
+        //                        case "מנחה":
+        //                            if (xlRange.Cells[i, j].Value2.ToString() == "כן")
+        //                            {
+        //                                u.Type.NumType = 4;
+
+        //                            }
+
+        //                            break;
+
+
+        //                        case "מס מנחה":
+        //                            if (emteyTeam == false)
+        //                            {
+        //                                var key = xlRange.Cells[i, j].Value2;
+        //                                if (connection.ContainsKey(key))
+        //                                {
+        //                                    g.Mentor.Email = connection[key];
+        //                                    g.Mentor.Type.NumType = 4;
+        //                                }
+
+
+        //                            }
+        //                            break;
+
+
+        //                        case "מס שופט":
+        //                            if (emteyTeam == false)
+        //                            {
+
+        //                                Judge_Group_Meeting ju = new Judge_Group_Meeting();
+        //                                ju.Judge = new Users();
+        //                                ju.Judge.Type = new Types();
+        //                                var key = xlRange.Cells[i, j].Value2;
+        //                                if (connection.ContainsKey(key))
+        //                                {
+        //                                    ju.Judge.Email = connection[key];
+        //                                    ju.Judge.Type.NumType = 3;
+        //                                    jg.JudgesGroup.Add(ju);
+        //                                    int coun = 1;
+        //                                    while (xlRange.Cells[i + coun, j].Value2 != null)
+        //                                    {
+        //                                        if (xlRange.Cells[i + coun, j].Value2 != null && xlRange.Cells[i + coun, 1].Value2 == null)
+        //                                        {
+        //                                            if (connection.ContainsKey(key))
+        //                                            {
+        //                                                ju.Judge.Email = connection[key];
+        //                                                ju.Judge.Type.NumType = 3;
+        //                                                jg.JudgesGroup.Add(ju);
+        //                                            }
+
+        //                                        }
+        //                                        coun++;
+        //                                    }
+        //                                }
+
+        //                            }
+        //                            break;
+
+        //                        case "שם הפרויקט":
+        //                            if (emteyTeam == false)
+        //                            {
+        //                                string name = xlRange.Cells[i, j].Value2.ToString();
+        //                                string newName = name.Replace("\"", "`");
+        //                                g.NameProject = newName;
+
+
+        //                            }
+        //                            break;
+
+        //                        case "ארגון":
+        //                            if (emteyTeam == false)
+        //                            {
+        //                                string name = xlRange.Cells[i, j].Value2.ToString();
+        //                                string newName = name.Replace("\"", "`");
+        //                                g.NameOrganization = newName;
+        //                            }
+        //                            break;
+
+        //                        case "סוג הפרויקט":
+        //                            if (emteyTeam == false)
+        //                            {
+        //                                g.ProjectType = xlRange.Cells[i, j].Value2.ToString();
+        //                            }
+        //                            break;
+
+        //                        case "שעת התחלה":
+        //                            if (emteyTeam == false)
+        //                            {
+        //                                jg.StartTime = DateTime.FromOADate(xlRange.Cells[i, j].Value2).ToString("HH:mm");
+        //                                // jg.StartTime = (DateTime)xlRange.Cells[i, j].Value2;
+        //                            }
+        //                            break;
+        //                        case "שעת סיום":
+        //                            if (emteyTeam == false)
+        //                            {
+        //                                jg.EndTime = DateTime.FromOADate(xlRange.Cells[i, j].Value2).ToString("HH:mm");
+        //                            }
+        //                            break;
+        //                        case "מס רץ":
+        //                            double x = xlRange.Cells[i, j].Value2;
+        //                            string y = xlRange.Cells[i, j + 1].Value2.ToString();
+        //                            connection.Add(x, y);
+
+        //                            break;
+        //                        case "תאריך":
+        //                            if (oneDate == false)
+        //                            {
+        //                                Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-IL");
+        //                                DateTime date = DateTime.FromOADate(xlRange.Cells[i, j].Value2);
+        //                                //  date.ToString("dd/MM/yyyy");
+
+        //                                m.Date = date;
+        //                                thisdate = m.Date;
+        //                                oneDate = true;
+
+        //                            }
+        //                            else
+        //                            {
+        //                                Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-IL");
+        //                                DateTime date1 = DateTime.FromOADate(xlRange.Cells[1, 13].Value2);
+        //                                m.Date = date1;
+        //                            }
+        //                            break;
+        //                    }
+        //                }
+        //            }
+        //            //ברגע שסיימתי לעבור על שורה
+        //            if (s.Id != null)
+        //            {
+        //                allStudents.Add(s);
+        //            }
+        //            if (u.Type.NumType != 0)
+        //            {
+        //                allUsers.Add(u);
+        //            }
+        //            if (jug.Email != null)
+        //            {
+        //                allUsers.Add(jug);
+        //            }
+        //            if (manager.Email != null)
+        //            {
+        //                allUsers.Add(manager);
+        //            }
+        //            if (g.NameGroup != null)
+        //            {
+        //                allGroups.Add(g);
+        //            }
+        //            if (jg.Group.NameGroup != null)
+        //            {
+        //                allmeetings.Add(jg);
+        //            }
+        //        }
+
+        //        //cleanup
+        //        GC.Collect();
+        //        GC.WaitForPendingFinalizers();
+
+        //        //rule of thumb for releasing com objects:
+        //        //  never use two dots, all COM objects must be referenced and released individually
+        //        //  ex: [somthing].[something].[something] is bad
+
+        //        //release com objects to fully kill excel process from running in the background
+        //        Marshal.ReleaseComObject(xlRange);
+        //        Marshal.ReleaseComObject(xlWorksheet);
+
+        //    }
+        //    //close and release
+        //    xlWorkbook.Close();
+        //    Marshal.ReleaseComObject(xlWorkbook);
+
+        //    //quit and release
+        //    xlApp.Quit();
+        //    Marshal.ReleaseComObject(xlApp);
+
+        //    DBservices dbs = new DBservices();
+        //    if (allUsers.Count > 0)
+        //    {
+        //        numEffected += dbs.insert(allUsers);
+        //    }
+        //    if (allGroups.Count > 0)
+        //    {
+        //        numEffected += dbs.insert(allGroups);
+        //    }
+        //    if (allStudents.Count > 0)
+        //    {
+        //        numEffected += dbs.insert(allStudents);
+        //    }
+        //    if (allmeetings.Count > 0)
+        //    {
+        //        numEffected += dbs.insert(allmeetings, m, doc);
+        //    }
+
+        //    FeedBack_Doc d = dbs.getDoc();
+        //    return d;
+        //    // return numEffected;
+
+        //}
         public Dictionary<string,string> ReadWorkbook(string[] path, string p) ///using NOPI 
         {
             IWorkbook book;
@@ -475,13 +475,15 @@ namespace mashovFinal.Models
             try
             {
                 FileStream fs = new FileStream(p, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
+                string nameSheet = "";
 
                 // Try to read workbook as XLSX:
                 try
                 {
                     book = new XSSFWorkbook(fs);
+                  
 
-                    
+
                     int sheetCount = 0;
                     sheetCount = book.NumberOfSheets;
                   
@@ -490,7 +492,7 @@ namespace mashovFinal.Models
 
                         ISheet sheet = book.GetSheetAt(a);
 
-                        string nameSheet = book.GetSheetName(a);
+                         nameSheet = book.GetSheetName(a);
 
                         int colRange = 0;
                         Dictionary<string, int> firstRow = new Dictionary<string, int>();
@@ -528,7 +530,7 @@ namespace mashovFinal.Models
                             {
                                 int errRow = row + 1;
                                 string errCol = j.Key;
-                                string errMsg = " בגיליון '" + nameSheet + "', שגיאה בעמודה:  '" + errCol + "' :בשורה " + errRow;
+                                string errMsg = " בגיליון '" + nameSheet + "', שגיאה בעמודה:  '" + errCol + "' בשורה: " + errRow;
 
                                 switch (j.Key)
                                 {
@@ -837,7 +839,7 @@ namespace mashovFinal.Models
                                             ju.Judge = new Users();
                                             ju.Judge.Type = new Types();
                                             var key = Convert.ToDouble(sheet.GetRow(row).GetCell(j.Value).ToString());
-                                            //var key = sheet.GetRow(row).GetCell(j.Value); ///???////
+                                           
                                             if (connection.ContainsKey(key))
                                             {
                                                 ju.Judge.Email = connection[key];
@@ -1010,9 +1012,9 @@ namespace mashovFinal.Models
                                                 Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-IL");
                                                 DateTime date = Convert.ToDateTime(sheet.GetRow(row).GetCell(j.Value).ToString());
                                                 // DateTime date = DateTime.FromOADate(Convert.ToDouble(sheet.GetRow(row).GetCell(j.Value).ToString()));
-                                                //  date.ToString("dd/MM/yyyy");
+                                               
 
-                                                m.Date = date;
+                                                m.Date = date.ToString("MM/dd/yyyy");
                                                 thisdate = date;
                                                 oneDate = true;
                                             }
@@ -1061,6 +1063,12 @@ namespace mashovFinal.Models
 
 
                 }
+                catch (NullReferenceException ex)
+                {
+                    result.Add("msg"," הקובץ אינו תקין ,אנא בדוק שאין שורות מיותרות בגיליון "+ nameSheet);
+                    return result;
+                   
+                }
                 catch (Exception ex)
                 {
                     throw (ex);
@@ -1088,11 +1096,11 @@ namespace mashovFinal.Models
             }
             if (allGroups.Count > 0)
             {
-                numEffected += dbs.insert(allGroups);
+               numEffected += dbs.insert(allGroups);
             }
             if (allStudents.Count > 0)
             {
-                numEffected += dbs.insert(allStudents);
+               numEffected += dbs.insert(allStudents);
             }
             if (allmeetings.Count > 0)
             {

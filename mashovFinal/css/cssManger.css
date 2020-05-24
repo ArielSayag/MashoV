@@ -1,0 +1,837 @@
+﻿
+@font-face {
+    font-family: FbSpacer;
+    src: url(FbSpacer-Regular.ttf);
+}
+
+body {
+    margin-top: 0px;
+    font-family: FbSpacer;
+}
+
+header {
+    display: block;
+    width: 100%;
+    height: 50px;
+    padding: 0;
+    margin: 0;
+    background: #6C7187;
+}
+
+    header:after {
+        content: " ";
+        display: table;
+        clear: both;
+    }
+
+div#content {
+    width: 100%;
+    display: block;
+    float: right;
+    margin: 0 auto;
+}
+
+div#ContentPlaceHolder1_filters {
+    display: inline-block;
+    float: right;
+    width: 20%;
+    padding-right: 50px;
+}
+
+#calendar {
+    float: right;
+    display: inline-block;
+    width: 70%;
+}
+
+.fc-view, .fc-view > table {
+    border: 2px solid #6C7187;
+}
+
+table, .fc-row:first-child table {
+    margin: 0 !important;
+}
+
+div#content h3, div#content h1, div#content h2 {
+    margin: 0 auto;
+    width: 960px;
+    text-align: center;
+    margin-top: 8px;
+    color: #6C7187;
+}
+/*תפריט עליון- קטגוריות*/
+.element_general_prime_categories {
+    width: 86%;
+    height: 50px;
+    position: static;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    z-index: 99;
+    right: 0;
+    display: inline-block;
+    float: left;
+}
+
+    .element_general_prime_categories > .store_categories {
+        width: 83%;
+        background: none;
+        height: 100%;
+        margin: 0 auto;
+        display: inline-block;
+        padding-left: 0;
+        margin-right: 0;
+        float: right;
+    }
+
+    .element_general_prime_categories > ul > li {
+        background: none;
+        padding: 0;
+        height: 100%;
+        width: 130px;
+        display: table;
+        float: left;
+        position: relative;
+        line-height: 45px;
+    }
+
+        .element_general_prime_categories > ul > li > a {
+            display: table-cell;
+            vertical-align: middle;
+            padding: 0px 8px;
+            color: #fff;
+            font-size: 18px;
+            line-height: 16px;
+            width: auto;
+            font-weight: normal;
+            text-align: center;
+            -webkit-transition: all .25s ease;
+            -moz-transition: all .25s ease;
+            -ms-transition: all .25s ease;
+            -o-transition: all .25s ease;
+            transition: all .25s ease;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+            text-decoration: none;
+        }
+
+    .element_general_prime_categories .store_categories .store_categories {
+        display: none;
+        position: absolute;
+        background: #DEDAD6;
+        border: 1px solid;
+        padding-top: 0;
+        width: 100%;
+        top: 100%;
+        right: 0px;
+        z-index: 30;
+        padding: 10px;
+        -webkit-box-shadow: 0 0 5px rgba(0,0,0,.15);
+        -moz-box-shadow: 0 0 5px rgba(0,0,0,.15);
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+        -moz-border-radius: 0px 0px 3px 3px;
+        -webkit-border-radius: 0px 0px 3px 3px;
+        border-radius: 0px 0px 3px 3px;
+    }
+
+        .element_general_prime_categories .store_categories .store_categories li {
+            background: none;
+            width: auto;
+            min-width: 100%;
+            line-height: 26px;
+            overflow: hidden;
+            height: 26px;
+            font-weight: bold;
+        }
+
+            .element_general_prime_categories .store_categories .store_categories li a {
+                line-height: 26px;
+                display: block;
+                text-align: center;
+                font-weight: normal;
+                color: #6C7187;
+                font-size: 17px;
+                width: auto;
+                text-decoration: none;
+            }
+
+    .element_general_prime_categories > ul > li:hover a {
+        color: #000;
+    }
+
+    .element_general_prime_categories > ul > li:hover {
+        background: #eee;
+    }
+
+    .element_general_prime_categories .store_categories .store_categories li:hover a {
+        color: #fff;
+        text-decoration: underline;
+    }
+
+    .element_general_prime_categories .store_categories li:hover .store_categories {
+        display: block;
+    }
+
+    .element_general_prime_categories .logoImg {
+        width: 130px;
+        float: left;
+        display: inline-block;
+        margin-top: 5px;
+    }
+/* תפריט עליון- איקונים*/
+
+.navbar-custom-menu {
+    display: inline-block;
+    width: 14%;
+    height: 100%;
+    position: static;
+    float: right;
+}
+
+.navbar-nav {
+    float: right;
+    padding-right: 0px;
+}
+
+    .navbar-nav > li > a {
+        color: #fff;
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+ul.nav.navbar-nav > li > a > .label {
+    position: absolute;
+    top: 9px;
+    right: 7px;
+    text-align: center;
+    font-size: 9px;
+    padding: 2px 3px;
+    line-height: .9;
+}
+
+.fa-home:before {
+    font-size: 20px;
+}
+
+.fa {
+    padding-left: 5px;
+}
+
+li.dropdown.tasks-menu a.dropdown-toggle {
+    height: 50px;
+}
+
+.navbar-custom-menu > .navbar-nav > li > .dropdown-menu, .navbar-nav > .user-menu > .dropdown-menu > .user-footer {
+    background: #DEDAD6;
+}
+
+span.hidden-xs {
+    font-size: 16px;
+}
+
+.navbar-nav > .user-menu > .dropdown-menu > li.user-header > img {
+    display: block;
+    margin: 0 auto;
+}
+
+.navbar-nav > .user-menu > .dropdown-menu > li.user-header {
+    height: 125px;
+}
+/* תפריט עליון סיום*/
+
+/*דף טיפול בכוכבים- הגדרות לגבי טבלאות*/
+table#ContentPlaceHolder1_GridView1 th:last-child {
+    width: 200px;
+}
+
+table#ContentPlaceHolder1_GridView1 td {
+    font-size: 17px;
+    font-weight: normal;
+    padding-right: 10px;
+}
+
+table#ContentPlaceHolder1_GridView1 tr:first-child > th {
+    text-align: center !important;
+    background-color: rgb(153, 125, 158);
+    color: #fff;
+    font-size: 18px;
+    height: 28px;
+    font-weight: normal;
+}
+
+
+table#ContentPlaceHolder1_GridView1 a {
+    color: #5C3E77;
+}
+
+    table#ContentPlaceHolder1_GridView1 a:focus, a:hover {
+        color: #5C3E77;
+        text-decoration: none;
+        font-weight: bold;
+    }
+/*סיום דף טיפול בכוכבים- הגדרות לגבי טבלאות*/
+
+
+
+/*טיפול בבאלגן של הטיימפליט*/
+.nav > li > a:hover, .nav > li > a:active, .nav > li > a:focus {
+    color: #444;
+    background: #f7f7f7;
+    height: auto;
+}
+
+.navbar-custom-menu > .navbar-nav > li {
+    position: relative;
+}
+
+.navbar-nav > .user-menu .user-image {
+    float: left;
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    margin-right: 10px;
+    margin-top: -2px;
+}
+
+.navbar-nav > .user-menu > .dropdown-menu {
+    border-top-right-radius: 0;
+    border-top-left-radius: 0;
+    padding: 1px 0 0 0;
+    border-top-width: 0;
+    width: 280px;
+}
+
+.navbar-nav .dropdown-menu {
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+}
+
+.navbar-nav > .user-menu > .dropdown-menu > li.user-header {
+    height: 125px;
+    padding: 10px;
+    text-align: center;
+}
+
+    .navbar-nav > .user-menu > .dropdown-menu > li.user-header > img {
+        z-index: 5;
+        height: 90px;
+        width: 90px;
+        border: 3px solid;
+        border-color: transparent;
+        border-color: rgba(255,255,255,0.2);
+    }
+
+.navbar-custom-menu > .navbar-nav > li > .dropdown-menu, .navbar-nav > .user-menu > .dropdown-menu > .user-footer {
+    background: #DEDAD6;
+}
+
+    .navbar-nav > .user-menu > .dropdown-menu > .user-footer:before, .navbar-nav > .user-menu > .dropdown-menu > .user-footer:after {
+        content: " ";
+        display: table;
+    }
+
+    .navbar-nav > .user-menu > .dropdown-menu > .user-footer:after {
+        clear: both;
+    }
+
+    .navbar-nav > .user-menu > .dropdown-menu > .user-footer:before, .navbar-nav > .user-menu > .dropdown-menu > .user-footer:after {
+        content: " ";
+        display: table;
+    }
+
+.navbar-nav > .user-menu > .dropdown-menu > .user-footer {
+    background-color: #DEDAD6;
+    padding: 10px;
+}
+
+menu > .dropdown-menu > li.user-header {
+    height: 175px;
+    padding: 10px;
+    text-align: center;
+}
+
+.navbar-custom-menu > .navbar-nav > li > .dropdown-menu {
+    position: absolute;
+    right: 0;
+    left: auto;
+}
+
+.navbar-nav > .user-menu > .dropdown-menu > .user-body {
+    padding: 15px;
+    border-bottom: 1px solid #f4f4f4;
+    border-top: 1px solid #dddddd;
+}
+
+.navbar-nav > .user-menu > .dropdown-menu, .navbar-nav > .user-menu > .dropdown-menu > .user-body {
+    border-bottom-right-radius: 4px;
+    border-bottom-left-radius: 4px;
+}
+
+    .navbar-nav > .user-menu > .dropdown-menu > .user-body:before, .navbar-nav > .user-menu > .dropdown-menu > .user-body:after {
+        content: " ";
+        display: table;
+    }
+
+    .navbar-nav > .user-menu > .dropdown-menu > .user-body a {
+        color: #444 !important;
+    }
+
+    .navbar-nav > .user-menu > .dropdown-menu > .user-body:after {
+        clear: both;
+    }
+
+    .navbar-nav > .user-menu > .dropdown-menu > .user-body:before, .navbar-nav > .user-menu > .dropdown-menu > .user-body:after {
+        content: " ";
+        display: table;
+    }
+/*סיום*/
+
+.excelDIV {
+    position: absolute;
+    top: 80px;
+    right: 20px;
+}
+
+form#form2 div#content {
+    width: 100% !important;
+    display: block;
+    float: none;
+    margin: 0 auto;
+}
+
+div#content h2 {
+    text-align: center;
+    font-weight: normal;
+    color: #7F4789;
+    margin-bottom: 20px;
+}
+
+/*grid_view1*/
+table#ContentPlaceHolder1_GridView1 {
+    width: 960px;
+    margin: 0 auto !important;
+}
+
+    table#ContentPlaceHolder1_GridView1 th:last-child {
+        width: 200px;
+    }
+
+    table#ContentPlaceHolder1_GridView1 td {
+        font-size: 17px;
+        font-weight: normal;
+        padding-right: 10px;
+    }
+
+    table#ContentPlaceHolder1_GridView1 tr:first-child > th {
+        text-align: center !important;
+        background-color: rgb(153, 125, 158);
+        color: #fff;
+        font-size: 18px;
+        height: 28px;
+        font-weight: normal;
+    }
+
+
+    table#ContentPlaceHolder1_GridView1 a {
+        color: #5C3E77;
+    }
+
+        table#ContentPlaceHolder1_GridView1 a:focus, a:hover {
+            color: #5C3E77;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+/*farmgridView*/
+
+table#ContentPlaceHolder1_FarmGridView {
+    width: 960px;
+    margin: 0 auto !important;
+}
+
+    table#ContentPlaceHolder1_FarmGridView th:last-child {
+        width: 200px;
+    }
+
+    table#ContentPlaceHolder1_FarmGridView td {
+        font-size: 17px;
+        font-weight: normal;
+        padding-right: 10px;
+    }
+
+    table#ContentPlaceHolder1_FarmGridView tr:first-child > th {
+        text-align: center !important;
+        background-color: rgb(153, 125, 158);
+        color: #fff;
+        font-size: 18px;
+        height: 28px;
+        font-weight: normal;
+    }
+
+
+    table#ContentPlaceHolder1_FarmGridView a {
+        color: #5C3E77;
+    }
+
+        table#ContentPlaceHolder1_FarmGridView a:focus, a:hover {
+            color: #5C3E77;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+/*עיצוב כפתור לחיצה להוספה*/
+table#ContentPlaceHolder1_Farm_FormView a {
+    margin: 0 auto;
+    display: inline-block;
+}
+
+ttable#ContentPlaceHolder1_Farm_FormView a#ContentPlaceHolder1_Farm_FormView_NewButton {
+    padding-right: 0px;
+}
+
+table#ContentPlaceHolder1_Farm_FormView a#ContentPlaceHolder1_Farm_FormView_NewButton {
+    margin-top: 20px;
+    background: rgb(108, 113, 135);
+    border: none;
+    color: white;
+    padding: 8px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    position: relative;
+}
+
+    table#ContentPlaceHolder1_Farm_FormView a#ContentPlaceHolder1_Farm_FormView_NewButton:after {
+        content: "";
+        display: block;
+        position: absolute;
+        border: 1px solid #fff;
+        width: 94%;
+        height: 80%;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        margin: auto;
+    }
+
+/*manger*/
+table#ContentPlaceHolder1_GridView1 tr > th:last-child {
+    width: 60px;
+}
+
+table#ContentPlaceHolder1_tableM {
+    width: 820px;
+    margin: 0 auto !important;
+    margin-top: 20px !important;
+}
+
+table#ContentPlaceHolder1_GridView1 {
+    width: 960px;
+    margin: 0 auto !important;
+}
+
+table#ContentPlaceHolder1_DetailsView1 {
+    position: absolute;
+    top: 120px;
+    left: 54px;
+}
+
+    table#ContentPlaceHolder1_DetailsView1 tr > td:first-child {
+        font-weight: bold;
+        font-size: 15px;
+    }
+
+table#ContentPlaceHolder1_table1 {
+    width: 850px;
+    margin: 0 auto !important;
+    margin-top: 20px !important;
+}
+/*עיצוב כפתור לחיצה להוספה*/
+table#ContentPlaceHolder1_MembersManager_FormView a {
+    margin: 0 auto;
+    display: inline-block;
+}
+
+ttable#ContentPlaceHolder1_MembersManager_FormView a#ContentPlaceHolder1_MembersManager_FormView_NewButton {
+    padding-right: 0px;
+}
+
+table#ContentPlaceHolder1_MembersManager_FormView a#ContentPlaceHolder1_MembersManager_FormView_NewButton {
+    margin-top: 20px;
+    background: rgb(108, 113, 135);
+    border: none;
+    color: white;
+    padding: 8px 10px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    position: relative;
+}
+
+    table#ContentPlaceHolder1_MembersManager_FormView a#ContentPlaceHolder1_MembersManager_FormView_NewButton:after {
+        content: "";
+        display: block;
+        position: absolute;
+        border: 1px solid #fff;
+        width: 94%;
+        height: 80%;
+        top: 0;
+        bottom: 0;
+        right: 0;
+        left: 0;
+        margin: auto;
+    }
+
+/*guard*/
+table#ContentPlaceHolder1_Guard_GridView tr > th:last-child {
+    width: 60px;
+}
+
+table#ContentPlaceHolder1_Guard_GridView {
+    margin: 0 auto !important;
+    width: 850px;
+}
+
+.optionsDiv {
+    width: 400px;
+    display: inline-block;
+    padding-right: 15px;
+}
+
+table#ContentPlaceHolder1_Guard_GridView tr:first-child > th {
+    text-align: center !important;
+    background-color: rgb(153, 125, 158);
+    color: #fff;
+    font-size: 18px;
+    height: 28px;
+    font-weight: normal;
+}
+
+table#ContentPlaceHolder1_Guard_GridView {
+    margin: 0 auto !important;
+    width: 850px;
+}
+
+    table#ContentPlaceHolder1_Guard_GridView td {
+        font-size: 17px;
+        font-weight: normal;
+        padding-right: 10px;
+    }
+
+table#ContentPlaceHolder1_DetailsView1 {
+    position: absolute;
+    top: 160px;
+    left: 33px;
+    width: 200px !important;
+}
+
+    table#ContentPlaceHolder1_DetailsView1 tr > td:first-child {
+        font-weight: bold;
+        font-size: 15px;
+    }
+/*עיצוב כפתור לחיצה להוספה*/
+table#ContentPlaceHolder1_Guard_FormView a {
+    margin: 0 auto;
+    display: inline-block;
+}
+
+    table#ContentPlaceHolder1_Guard_FormView a#ContentPlaceHolder1_Guard_FormView_NewButton {
+        padding-right: 0px;
+    }
+
+    table#ContentPlaceHolder1_Guard_FormView a#ContentPlaceHolder1_Guard_FormView_NewButton {
+        margin-top: 20px;
+        background: rgb(108, 113, 135);
+        border: none;
+        color: white;
+        padding: 8px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        position: relative;
+    }
+
+        table#ContentPlaceHolder1_Guard_FormView a#ContentPlaceHolder1_Guard_FormView_NewButton:after {
+            content: "";
+            display: block;
+            position: absolute;
+            border: 1px solid #fff;
+            width: 94%;
+            height: 80%;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            margin: auto;
+        }
+
+/*contacts*/
+table#ContentPlaceHolder1_contactsGridView {
+    width: 960px;
+    margin: 0 auto !important;
+}
+
+    table#ContentPlaceHolder1_contactsGridView th:last-child {
+        width: 200px;
+    }
+
+    table#ContentPlaceHolder1_contactsGridView td {
+        font-size: 17px;
+        font-weight: normal;
+        padding-right: 10px;
+    }
+
+    table#ContentPlaceHolder1_contactsGridView tr:first-child > th {
+        text-align: center !important;
+        background-color: rgb(153, 125, 158);
+        color: #fff;
+        font-size: 18px;
+        height: 28px;
+        font-weight: normal;
+    }
+
+
+    table#ContentPlaceHolder1_contactsGridView a {
+        color: #5C3E77;
+    }
+
+        table#ContentPlaceHolder1_contactsGridView a:focus, a:hover {
+            color: #5C3E77;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+/*Question*/
+table#ContentPlaceHolder1_Question_grid {
+    width: 960px;
+    margin: 0 auto !important;
+}
+
+    table#ContentPlaceHolder1_Question_grid th:last-child {
+        width: 200px;
+    }
+
+    table#ContentPlaceHolder1_Question_grid td {
+        font-size: 17px;
+        font-weight: normal;
+        padding-right: 10px;
+    }
+
+    table#ContentPlaceHolder1_Question_grid tr:first-child > th {
+        text-align: center !important;
+        background-color: rgb(153, 125, 158);
+        color: #fff;
+        font-size: 18px;
+        height: 28px;
+        font-weight: normal;
+    }
+
+
+    table#ContentPlaceHolder1_Question_grid a {
+        color: #5C3E77;
+    }
+
+        table#ContentPlaceHolder1_Question_grid a:focus, a:hover {
+            color: #5C3E77;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+
+
+/*עיצוב כפתור לחיצה להוספה*/
+table#ContentPlaceHolder1_addQuesFormView a {
+    margin: 0 auto;
+    display: inline-block;
+}
+
+    table#ContentPlaceHolder1_addQuesFormView a#ContentPlaceHolder1_addQuesFormView_NewButton {
+        padding-right: 0px;
+    }
+
+    table#ContentPlaceHolder1_addQuesFormView a#ContentPlaceHolder1_addQuesFormView_NewButton {
+        margin-top: 20px;
+        background: rgb(108, 113, 135);
+        border: none;
+        color: white;
+        padding: 8px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        position: relative;
+    }
+
+        table#ContentPlaceHolder1_addQuesFormView a#ContentPlaceHolder1_addQuesFormView_NewButton:after {
+            content: "";
+            display: block;
+            position: absolute;
+            border: 1px solid #fff;
+            width: 94%;
+            height: 80%;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            margin: auto;
+        }
+
+input#ContentPlaceHolder1_M_DateOfBirthTBX {
+    width: 169px;
+    height: 23px;
+}
+
+input#ContentPlaceHolder1_M_JoinDateTBX {
+    width: 169px;
+    height: 23px;
+}
+
+input#ContentPlaceHolder1_JoinDateTBX {
+    width: 169px;
+    height: 23px;
+}
+
+
+select#ContentPlaceHolder1_M_City_DDL {
+    width: 169px;
+    height: 23px;
+    margin-bottom: 2px;
+}
+
+select#ContentPlaceHolder1_M_statusDDL {
+    width: 169px;
+    height: 23px;
+}
+
+select#ContentPlaceHolder1_genderDDL {
+    width: 169px;
+    height: 23px;
+    margin-bottom: 2px;
+}
+
+
+select#ContentPlaceHolder1_carCB {
+    width: 169px;
+    height: 23px;
+}
+
+select#ContentPlaceHolder1_JobIDDDL {
+    width: 169px;
+    height: 23px;
+}
+
+select#ContentPlaceHolder1_M_FarmDDL {
+    width: 169px;
+    height: 23px;
+}
+
+
+/*tipolevents*/

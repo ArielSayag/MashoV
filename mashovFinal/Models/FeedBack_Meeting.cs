@@ -11,17 +11,17 @@ namespace mashovFinal.Models
         int numMeeting;
         string nameMeeting;
         string yearMeeting;
-        DateTime date;
+        string date;
         CoursesAndDepartment detailsCourseDep;
 
         public int NumMeeting { get => numMeeting; set => numMeeting = value; }
         public string NameMeeting { get => nameMeeting; set => nameMeeting = value; }
         public string YearMeeting { get => yearMeeting; set => yearMeeting = value; }
-        public DateTime Date { get => date; set => date = value; }
+        public string Date { get => date; set => date = value; }
         public CoursesAndDepartment DetailsCourseDep { get => detailsCourseDep; set => detailsCourseDep = value; }
 
         public FeedBack_Meeting() { }
-        public FeedBack_Meeting(int n, string name,string year, DateTime dateDay, CoursesAndDepartment candD)
+        public FeedBack_Meeting(int n, string name,string year, string dateDay, CoursesAndDepartment candD)
         {
             numMeeting = n;
             nameMeeting = name;
