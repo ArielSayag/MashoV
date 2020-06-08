@@ -550,14 +550,22 @@ namespace mashovFinal.Models
                                             
                                             emteyTeam = false;
                                             g.NameGroup = sheet.GetRow(row).GetCell(j.Value).ToString();
-                                            team = g.NameGroup;
+                                            if (g.NameGroup.Length > 9)
+                                            {
+                                                result.Add("msg", errMsg + " רשאי עד 9 תווים");
+                                                return result;
+                                            }
+                                            else
+                                            {
+                                                team = g.NameGroup;
 
-                                            s.GroupS = new List<Groups>();
-                                            Groups gs = new Groups();
-                                            gs.NameGroup = team;
-                                            s.GroupS.Add(gs);
-                                            jg.Group = new Groups();
-                                            jg.Group.NameGroup = team;
+                                                s.GroupS = new List<Groups>();
+                                                Groups gs = new Groups();
+                                                gs.NameGroup = team;
+                                                s.GroupS.Add(gs);
+                                                jg.Group = new Groups();
+                                                jg.Group.NameGroup = team;
+                                            }
 
                                         }
                                         break;
@@ -866,6 +874,7 @@ namespace mashovFinal.Models
                                                             ju.Judge.Email = connection[key1];
                                                             ju.Judge.Type.NumType = 3;
                                                             jg.JudgesGroup.Add(ju);
+                                                          
                                                         }
 
                                                     }
@@ -897,10 +906,32 @@ namespace mashovFinal.Models
                                     case "שם הפרויקט":
                                         if (emteyTeam == false)
                                         {
-                                            string name = sheet.GetRow(row).GetCell(j.Value).ToString();
-                                            string newName = stringValidation(name);
-                                            //string newName = name.Replace("\"", "`");
-                                            g.NameProject = newName;
+                                            string name = "";
+                                            if (sheet.GetRow(row).GetCell(j.Value) == null)
+                                            {
+                                                name = "-";
+                                            }
+                                            else if (sheet.GetRow(row).GetCell(j.Value).ToString() == "")
+                                            {
+                                                name = "-";
+                                            }
+                                            else
+                                            {
+                                                name = sheet.GetRow(row).GetCell(j.Value).ToString();
+                                                string newName = stringValidation(name);
+
+                                                if (newName.Length > 90)
+                                                {
+                                                    result.Add("msg", errMsg + " שם הפרויקט לא תקין.רשאי עד 90 תווים");
+                                                    return result;
+                                                }
+                                                else
+                                                {
+                                                    g.NameProject = newName;
+                                                }
+
+                                               
+                                            }
 
 
                                         }
@@ -909,10 +940,32 @@ namespace mashovFinal.Models
                                     case "ארגון":
                                         if (emteyTeam == false)
                                         {
-                                            string name = sheet.GetRow(row).GetCell(j.Value).ToString();
-                                            string newName = stringValidation(name);
-                                            //string newName = name.Replace("\"", "`");
-                                            g.NameOrganization = newName;
+                                            string name = "";
+                                            if (sheet.GetRow(row).GetCell(j.Value) == null)
+                                            {
+                                                name = "-";
+                                            }
+                                            else if (sheet.GetRow(row).GetCell(j.Value).ToString() == "")
+                                            {
+                                                name = "-";
+                                            }
+                                            else
+                                            {
+                                                name = sheet.GetRow(row).GetCell(j.Value).ToString();
+                                                string newName = stringValidation(name);
+
+                                                if (newName.Length > 90)
+                                                {
+                                                    result.Add("msg", errMsg + " שם הארגון לא תקין.רשאי עד 90 תווים");
+                                                    return result;
+                                                }
+                                                else
+                                                {
+                                                    g.NameOrganization = newName;
+                                                }
+                                            }
+                                            
+                                               
                                         }
                                         break;
 

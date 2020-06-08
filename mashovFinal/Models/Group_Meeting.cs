@@ -41,5 +41,12 @@ namespace mashovFinal.Models
             DBservices dbs = new DBservices();
             return dbs.insert(this);
         }
+
+        public int updateGroupDetails()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.update(this);
+
+        }
     }
 }

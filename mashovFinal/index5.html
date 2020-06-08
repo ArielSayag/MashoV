@@ -42,9 +42,58 @@
 
     <script src="js/StudentJS.js"></script>
     <script src="//cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $("#myinputinS").on("keyup", function () {
+                var value = $(this).val();
+             
+                $('#resultS > div').hide();
+
+                $('#resultS > div > div > h3:contains("' + value + '")').closest('#resultS > div').show();
+                $('#resultS > div > div > p:contains("' + value + '")').closest('#resultS > div').show();
+
+            });
+
+            $("#myinputin1").on("keyup", function () {
+                var value = $(this).val();
+           
+                $('#allMeet > div').hide();
+
+                $('#allMeet > div > div > h3:contains("' + value + '")').closest('#allMeet > div').show();
+                $('#allMeet > div > div > p:contains("' + value + '")').closest('#allMeet > div').show();
+                $('#allMeet > div > div > div > div> p > b:contains("' + value + '")').closest('#allMeet > div').show();
+
+
+            });
+
+
+            $("#Department").on("change", function () {
+                var value = $(this).val();
+             
+                $('#resultS > div').hide();
+
+                $('#resultS > div > div > h3:contains("' + value + '")').closest('#resultS > div').show();
+                $('#resultS > div > div > p:contains("' + value + '")').closest('#resultS > div').show();
+
+
+            });
+
+            $("#year").on("change", function () {
+                var value = $(this).val();
+                
+                $('#resultS > div').hide();
+
+                $('#resultS > div > div > h3:contains("' + value + '")').closest('#resultS > div').show();
+                $('#resultS > div > div > p:contains("' + value + '")').closest('#resultS > div').show();
+
+
+            });
+        });
+    </script>
 </head>
 
-<body>
+<body style="font-family:FbSpacer;">
 
     <div id="preloader">
         <div data-loader="circle-side"></div>
@@ -75,7 +124,8 @@
                     <nav>
                         <ul class="cd-primary-nav">
                             <li><a href="updateUser.html" class="animated_link">עדכון פרטים</a></li>
-                            <li><a href="javascript:void(0)" class="animated_link">Menu</a></li>
+                            <li><a href="calendarStudent.html" class="animated_link">לוח זמנים</a></li>
+                            <li><a href="javascript:void(0)" onclick="window.open('LiveChatStudent.html')" class="animated_link">צ'אט</a></li>
                         </ul>
                     </nav>
                 </div>
@@ -111,18 +161,14 @@
                                                             <div class="col-6">
                                                                 <div class="form-group">
                                                                     <select class="form-control" id="year">
-                                                                        <option>2020</option>
-                                                                        <option>2020</option>
-                                                                        <option>2020</option>
+    
                                                                     </select>
                                                                 </div>
                                                             </div>
                                                             <div class="col-6">
                                                                 <div class="form-group">
-                                                                    <select class="form-control" id="">
-                                                                        <option>Industrial engineering</option>
-                                                                        <option>Industrial engineering</option>
-                                                                        <option>Industrial engineering</option>
+                                                                    <select class="form-control" id="Department">
+      
                                                                     </select>
                                                                 </div>
                                                             </div>
@@ -135,12 +181,12 @@
                                                                         <i class="icon-search-8"></i>
                                                                     </button>
                                                                 </div>
-                                                                <input type="search" placeholder="Feedback name" aria-describedby="button-addon2" class="form-control border-0">
+                                                                <input type="search" id="myinputinS" placeholder="חיפוש" aria-describedby="button-addon2" class="form-control border-0">
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div class="row justify-content-center" id="result">
+                                                <div class="row justify-content-center" id="resultS">
                                                     <!--<div class="col-md-4 col-sm-6">
                         <div class="service_box">
                             <div class="service_icon">
@@ -235,28 +281,29 @@
                                     <!--2st slide star-->
                                     <section id="second-slide" class="container py-4">
                                         <div class="row">
-                                            <!--<div class="col-12 text-center">                                                
-                                                <h4>Final project – part A</h4>
-                                            </div>-->
+                                            <div class="col-12 text-center">                                                
+                                                <h4 class="namep"></h4>
+                                            </div>
                                         </div>
                                         <div class="row pt-5">
                                             <div class="col-8 mx-auto">
-                                                <div class="row">
-                                                    <div class="col-sm-5">
+                                               
+                                                    <!--<div class="col-sm-5">
                                                         <div class="form-group">
                                                             <select class="form-control" id="">
                                                                 <option>judge name</option>
                                                                 <option>judge name</option>
                                                             </select>
                                                         </div>
-                                                    </div>
-                                                    <div class="col-sm-7">
+                                                    </div>-->
+                                                    <!--<div class="col-sm-7">
                                                         <div class="form-group">
                                                             <select class="form-control" id="">
                                                                 <option>Final project – part A</option>
                                                                 <option>Final project – part A</option>
                                                             </select>
-                                                        </div>
+                                                        </div>-->
+
                                                         <div class="p-1 rounded shadow-sm mb-4">
                                                             <div class="input-group">
                                                                 <div class="input-group-prepend">
@@ -264,11 +311,11 @@
                                                                         <i class="icon-search-8"></i>
                                                                     </button>
                                                                 </div>
-                                                                <input type="search" placeholder="Feedback name" aria-describedby="button-addon2" class="form-control border-0">
+                                                                <input id="myinputin1" type="search" placeholder="חיפוש" aria-describedby="button-addon2" class="form-control border-0">
                                                             </div>
                                                         </div>
-                                                    </div>
-                                                </div>
+                                                    <!--</div>-->
+                                               
                                             </div>
                                         </div>
                                         <div class="row justify-content-center" id="allMeet">
@@ -336,7 +383,7 @@
             </div>-->
                                         </div>
                                         <div id="bottom-wizard">
-                                            <a class="btn btn-primary1 btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> Return</a>
+                                            <a class="btn btn-primary1 btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> חזור</a>
                                         </div>
                                     </section>
                                     <!--2st slide end-->
@@ -348,12 +395,12 @@
                                             <div class="row pt-5">
                                                 <div class="col-12 text-center">
                                                     <h3 id="nameDoc"></h3>
-                                                    <h5 id="judgeAndProject">Project name-group name-judge name</h5>
+                                                    <h5 id="judgeAndProject"></h5>
                                                 </div>
                                             </div>
                                             <div class="row pt-5 ">
                                                 <div class="col-sm-12 text-center">
-                                                    <a href="javascript:void(0)" class="btn btn-info m-2 bg-danger p-3 visibleElement">ציון השופט: 90%</a>
+                                                    <a href="javascript:void(0)" id="viewGrade" class="btn btn-info m-2 bg-danger p-3 visibleElement"></a>
                                                 </div>
                                             </div>
                                             <div id="allCrit"></div>
@@ -462,7 +509,7 @@
 
         });
     </script>
-
+    <script src="js/searchJS.js"></script>
 </body>
 
 </html>

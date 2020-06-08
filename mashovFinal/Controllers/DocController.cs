@@ -41,7 +41,7 @@ namespace mashovFinal.Controllers
         }
         [HttpPost]
         [Route("api/Doc/UpdateCrit")]
-        public int PostUpdateCrit([FromBody] CritInDoc c)
+        public Criterion PostUpdateCrit([FromBody] CritInDoc c)
         {
 
             return c.updateAndinsertCrit();

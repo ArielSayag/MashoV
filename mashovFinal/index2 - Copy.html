@@ -1,0 +1,1806 @@
+﻿<!DOCTYPE html>
+<html lang="en" >
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="STEPS | Multipurpose Working Wizard with Branches">
+    <meta name="author" content="Ansonika">
+    <meta name="author" content="Ansonika">
+    <title>Feedback Systems</title>
+    <!-- Favicons-->
+    <link rel="shortcut icon" href="img/fav.png" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon" href="img/apple-touch-icon-57x57-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="img/apple-touch-icon-72x72-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="img/apple-touch-icon-114x114-precomposed.png">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="img/apple-touch-icon-144x144-precomposed.png">
+
+
+    <!-- GOOGLE WEB FONT -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto+Condensed:300,400,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- BASE CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.rtlcss.com/bootstrap/v4.1.3/css/bootstrap.min.css" integrity="sha384-Jt6Tol1A2P9JBesGeCxNrxkmRFSjWCBW1Af7CSQSKsfMVQCqnUVWhZzG0puJMCK6"
+          crossorigin="anonymous">
+    <link href="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/build/css/bootstrap-datetimepicker.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <link href="css/menu.css" rel="stylesheet">
+    <link href="css/vendors.min.css" rel="stylesheet">
+    <link href="css/icon_fonts/css/all_icons.min.css" rel="stylesheet">
+    <link href="css/skins/square/grey.css" rel="stylesheet">
+    <!-- YOUR CUSTOM CSS -->
+    <link href="css/custom.css" rel="stylesheet">
+    <script src="js/modernizr.js"></script>
+    <!-- Modernizr -->
+    <script src="Scripts/ajaxCalls.js"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
+    <!--<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">-->
+    <script src="//cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <script src='https://kit.fontawesome.com/a076d05399.js'></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
+    <script>
+
+
+        function f1() {
+            return false;
+        }
+
+        var str = "";
+        var localData;
+        //-------------dashboard(getUser)-----------------------------------//
+        function dashboard(getuser) {
+
+            document.getElementById("results").innerHTML = "";
+            ajaxCall("PUT", "./api/User", JSON.stringify(getuser), GETSuccessUser, GETErrorUsere); // show all ready feeds
+        }
+
+        var filesName = "";
+        var x = "";
+        /////---------------------select excel file--------------------------///
+        function processSelectedFiles(fileInput) {
+            x = fileInput;
+            var files = fileInput.files;
+
+            for (var i = 0; i < files.length; i++) {
+                filesName = files[i].name;
+            }
+            $("#extractFile").val(filesName);
+            //$("#extractFile").val(fileInput);
+        }
+
+        //-----------------------------------------------ready-----------------------------------------//
+        //-----------------------------------------------ready-----------------------------------------//
+        //-----------------------------------------------ready-----------------------------------------//
+        var getuser = "";
+        var selectCours = "";
+        var selectDep = "";
+        var newDocFromExcel = 0;
+        $(document).ready(function () {
+
+            $("#myInput").on("keyup", function () {
+                var value = $(this).val();
+
+                $('#results > div').hide();
+
+                $('#results > div > div > h3:contains("' + value + '")').closest('#results > div').show();
+                $('#results > div > div > p:contains("' + value + '")').closest('#results > div').show();
+
+
+            });
+
+            $("#myInput1").on("keyup", function () {//search for bank crit
+                var value = $(this).val();
+
+                $('#sixth > div').hide();
+
+                $('#sixth > div > div > h5:contains("' + value + '")').closest('#sixth > div').show();
+                $('#sixth > div > div > h6:contains("' + value + '")').closest('#sixth > div').show();
+
+
+            });
+
+            $("#browsers1").on("change", function () {
+                var value = $(this).val();
+
+                $('#results > div').hide();
+
+                $('#results > div > div > h3:contains("' + value + '")').closest('#results > div').show();
+                $('#results > div > div > p:contains("' + value + '")').closest('#results > div').show();
+
+
+            });
+
+            $("#year").on("change", function () {
+                var value = $(this).val();
+
+                $('#results > div').hide();
+
+                $('#results > div > div > h3:contains("' + value + '")').closest('#results > div').show();
+                $('#results > div > div > p:contains("' + value + '")').closest('#results > div').show();
+
+
+            });
+
+
+            $("#wrapped").submit(f1);
+
+            loginUser = JSON.parse(localStorage["Login"]); //user from login page
+
+            //check if manager
+            var listTT = loginUser.Typesofuser
+            for (i in listTT) {
+                if (listTT[i].NumType == 2) {
+                    t = {
+                        "Type": listTT[i].Type,
+                        "NumType": listTT[i].NumType,
+                    }
+                    loginUser.Type = t;
+
+                    getuser = loginUser;
+                    localStorage["update"] = JSON.stringify(loginUser);
+                }
+            }
+            console.log(loginUser);
+            $("#helloAdmin").append("שלום, " + getuser.FirstName);
+
+            dashboard(getuser);
+            ajaxCall("Get", "./api/Criteria", "", GETSuccessBankCrit, GETErrorBankCrit); // take all bank crit if will be necessary
+
+
+            $("#done-btn").click(function () {     //step-2- button add from excel//
+                var bool = false;
+
+                var arry = [];
+                arry[0] = filesName.split(".")[0];
+                // arry[0] = $("#extractFile").val().split(".")[0];
+                arry[1] = $("#Department").val();
+                arry[2] = $("#Course").val();
+                arry[3] = filesName;
+
+                selectCours = arry[2];//for exsit doc --->step 4.4
+                selectDep = arry[1];
+
+
+                for (k in arry) {
+                    if (arry[k] == "") {
+                        bool = true;
+
+                    }
+                }
+                if (bool) {
+                    swal("אחד הפרמטרים לא תקינים ,נסה שנית");
+                }
+                else {
+                    for (k in arry) {
+                        if (arry[k].indexOf("'") > -1) {
+                            arry[k] = arry[k].replace("'", "`");
+                        }
+                    }
+
+                    var data = new FormData();
+                    var file = $("#files").get(0).files[0];
+                    data.append("UploadedFile", file);
+
+                    for (var i = 0; i < arry.length; i++) {
+                        data.append("arr" + i, arry[i]);
+                    }
+
+
+                    $.ajax({
+                        type: "POST",
+                        url: "./api/ExcelDocument",
+                        contentType: false,
+                        processData: false,
+                        data: data,
+                        success: GETSuccess,
+                        error: GETError
+                    });
+                }
+
+            });
+
+        });
+        function createExcel(eval) {
+
+            var excelIdDoc = localData[eval];
+            var x = excelIdDoc.NumDoc;
+            localStorage["DataT"] = JSON.stringify(excelIdDoc);
+            window.location.href = 'dataTable.html';
+
+
+
+        }
+        //------------------------------------------------------------------------------//
+        //-------------------started dash for admin---------------------------------//
+        function GETSuccessUser(data) {
+           
+            localStorage["AllDoc"] = JSON.stringify(data);
+            localData = data;
+            str = "";
+            if (data == "") { return; }
+            else {
+                document.getElementById("results").innerHTML = "";
+                console.log(data);
+                console.log(data[0].DetailsMeet.Date.split("T")[0].split("-").reverse());
+
+                for (i in data) {
+
+                    if (!data[i].Status) {
+                        if (data[i].TotalWeight == 0) {
+                            str += `<div id="${i}" class="col-md-4 col-sm-6 search " style="direction:rtl" title="המשוב 0% קריטריונים ,לחץ לעדכון" onclick="showFeed(this.id)"><div class="service_box2 content">
+                                                                        <div class="service_icon" ></div>`;
+                        }
+                        else if (data[i].TotalWeight == 100) {
+                            str += `<div id="${i}" class="col-md-4 col-sm-6 search" style="direction:rtl" onclick="showFeed(this.id)"><div class="service_box content">
+                                                                    <div class="service_icon" ></div>`;
+                        }
+                        else {
+                            str += `<div id="${i}" class="col-md-4 col-sm-6 search " style="direction:rtl" title="המשוב אינו מוכן ,לחץ לעדכון" onclick="showFeed(this.id)"><div class="service_box1 content">
+                                                                    <div class="service_icon"></div>`;
+                        }
+                    }
+                    else if (data[i].Status) {
+
+                        str += `<div id="${i}" class="col-md-4 col-sm-6 search" style="direction:rtl" onclick="showFeed(this.id)"><div class="service_box content">
+                                        <div class="service_icon"><img src="img/icons8-borrow-book-50.png"  onclick="createExcel(this.parentNode.parentNode.parentNode.id)" /></div>`;
+
+                    }
+
+                    str += `<h3>
+                                     ${data[i].DetailsMeet.NameMeeting}</h3><p><b>תאריך הצגה :</b>
+                                     ${data[i].DetailsMeet.Date.split("T")[0]}</p><p id="numCourse" name="${data[i].DetailsMeet.DetailsCourseDep.NumCourse}"><b>שם הקורס :</b>
+                                     ${data[i].DetailsMeet.DetailsCourseDep.NameCourse}</p><p id="numDep" name="${data[i].DetailsMeet.DetailsCourseDep.NumDepartment}"><b>מחלקה :</b>
+                                     ${data[i].DetailsMeet.DetailsCourseDep.NameDepartment}</p><p><b>שנה :</b>
+                                     ${data[i].DetailsMeet.YearMeeting}</p></div></div>`;
+
+                }
+
+                $('#results').append(str);
+            }
+           
+        }
+        function GETErrorUsere(err) { console.log(err); }
+        var bankCrit = [];
+
+        //--------------------------------uploading bankCrit ------------------------------//
+
+        function GETSuccessBankCrit(data) { //bank Crit
+            console.log(data);
+            bankCrit = data;
+            console.log(bankCrit);
+
+            for (i in bankCrit) {
+                idCritDiv = 'crit' + i;
+                //#sixth>div > div >h5
+                //#sixth>div > div >h6
+                str2 += `<div id="${idCritDiv}" class="row pt-4">
+                                                                        <div class="col-sm-3"></div>
+                                                                        <div id="idC" value="${bankCrit[i].NumCrit}" class="col-sm-5">
+                                                                        <h5 id="fdataname1" class="feedback1-show" value="${bankCrit[i].NameCrit}">${numbering++})${bankCrit[i].NameCrit}</h5>
+                                                                        <h6 id="fdatadec1" class="feedback1-show" value="${bankCrit[i].DescriptionCrit}">תיאור:${bankCrit[i].DescriptionCrit}</h6>
+
+                                                                        <div class="col-sm-12 p-0">
+                                                                        <div class="form-group">
+
+                                                                        </div>
+                                                                        </div>
+                                                                        </div>
+                                                                        <div class="col-sm-1">
+                                                                        <a href="javascript:void(0)" class="btn btn-defult m-2" onclick=add(${idCritDiv})>הוסף<i class="icon-plus-circled"></i></a>
+                                                                        </div>
+                                                                        </div>`;
+
+
+
+            }
+            $('#sixth').append(str2);
+        }
+
+        function GETErrorBankCrit(err) { console.log(err); }
+        //---------------------------
+        var str1 = "";
+        var critFdata = "";
+        var countFeedName = 1;
+        var totalW = 0;
+        var totalWeight = 0;
+        var IdDoc = "";
+
+        function GETSuccess(data) { //step-3- upload new excel//
+            console.log(data);
+
+
+            if (data.id == null) {
+
+                var errStr1 = data["msg"].split(",")[0];
+                var errStr2 = data["msg"].split(",")[1];
+
+
+                swal(errStr1, errStr2).then(function () {
+                    location.reload();
+                });
+
+
+
+            }
+            else {
+                newDoc = {
+                    "NumDoc": parseInt(data["id"]),
+                    "NameDoc": filesName.split(".")[0],
+                }
+
+                swal("הנתונים הועלו בהצלחה");
+
+                document.getElementById("addHere").innerHTML = "";
+                document.getElementById("nameFeed1").innerHTML = "";
+                $('.nameFeed1').html(newDoc.NameDoc);
+                $("#second-slide").hide();
+                $("#third-slide").fadeIn();
+                $("#fourth-slide").fadeIn();
+
+                totalWeight = 0;
+                totalW = 0;
+                newDocFromExcel = 1;
+            }
+
+
+
+        }
+
+        function GETError(err) { console.log(err); }
+
+
+        //-----------------STEP 4 - CREATE A FEEDBACK DOC !!! --------------------------------------//
+
+        var strButtonFinish = "";
+        var ex = false;
+        var arrExist = [];
+
+
+        function showTotalWeight(val) {  //show present of weight
+
+            var k = $(val).attr('id');  //save id of selected div
+
+            var weight1 = parseInt($(val).find("#weight").val());  // save selecte weight
+
+            if (weight1 != 0) {
+                for (var j in arrExist) {
+                    if (k == arrExist[j].key) {  //check if is the same Anat[id]
+                        ex = true;
+                        totalWeight -= arrExist[j].weigh;
+                        arrExist[j].weigh = weight1;
+                        break;
+                    }
+
+                }
+                console.log("weigh:" + arrExist);
+                if (!ex) {
+                    var e = {
+                        "key": k,
+                        "weigh": weight1,
+                    }
+                    arrExist.push(e);
+                    console.log(arrExist);
+                }
+
+
+                if ((totalWeight + weight1) <= 100) {
+                    totalWeight += weight1;
+                    document.getElementById("aria-valuenow").innerHTML = "";
+                    $("#aria-valuenow").append(totalWeight);
+                    $("#aria-valuenow").progressbar({ value: totalWeight });
+                    $("#aria-valuenow").css({ "width": totalWeight + "%" });
+
+
+                }
+                else {
+                    swal("עברת את ה100% ,אנא בחר משקל אחד");
+                    $(val).find("#weight").prop("selectedIndex", 0).val();
+
+                    for (var j in arrExist) {
+                        if (k == arrExist[j].key) {  //check if is the same Anat[id]
+                            arrExist[j].weigh = 0;
+                            break;
+                        }
+
+                    }
+                }
+            }
+
+
+        }
+        var listCrit = [];
+        function addSecendTime(a) {
+
+            var criteria = $(a).find("#add-criteria-btn").val();
+            if (criteria != undefined) {
+
+                if (criteria == "Choose From List") {
+                    if (totalWeight == 100) {
+                        swal("הגעת ל100% , לחיצה על סיים לא תאפשר שינויים.");
+
+                    }
+                    else {
+
+                        bankCriteria();
+                    }
+
+                }
+                else if (criteria == "New") {
+                    CritLS();
+                }
+            }
+            else { return; }
+        }
+        function CritLS() {
+
+            if (totalWeight == 100) {
+                swal("הגעת ל100% , לחיצה על סיים לא תאפשר שינויים.");
+
+            }
+            else {
+
+                showDivNewCrit();
+            }
+
+        }
+
+        var listDiv = [];
+
+        function saveToData(indexBoll) {
+      
+            if ((indexBoll && totalWeight == 100) || (!indexBoll)) {
+                console.log(listDiv);
+                var tempArr = [];
+                for (var i = 0; i < listDiv.length; i++) {
+
+
+                    var index = parseInt(i) + 1;
+                    var temp = document.getElementById(listDiv[i]);
+
+                    tempArr[0] = temp.querySelector("#critname").value;
+           
+                    var editor = "ckeditor" + index;
+                  
+                    //tempArr[1] = CKEDITOR.instances.editor1.getData();
+                    tempArr[1] = CKEDITOR.instances[editor].getData();
+        
+                  
+                    var weight = temp.querySelector("#weight").value;
+                    var scala = temp.querySelector("#scala").value;
+                    var idc = $(temp).find("#idc").attr('value');
+
+                    for (k in tempArr) {
+                        tempArr[k] = tempString(tempArr[k]);
+                    }
+
+                    if ((weight != 0) && (scala != 0)) {
+
+                        if ((tempArr[0].length > 100) || (tempArr[0] == "")) {
+                            swal("בקריטריון מספר " + index + "כותרת הקריטריון צריך להיות מ1-100 תויים");
+                            return false;
+                        }
+                        else if ((tempArr[1].length > 4000) || (tempArr[1] == "")) {
+                            swal("בקריטריון מספר " + index + "תיאור הקריטריון צריך להיות מ 1-4000 תווים");
+                            return false;
+                        } else {
+                            crit = {
+                                "NumCrit": idc,
+                                "NameCrit": tempArr[0],
+                                "DescriptionCrit": tempArr[1],
+                                "WeightCrit": weight,
+                                "typeCrit": scala,
+                            }
+                            listCrit.push(crit);
+                        }
+
+                    }
+                    else {
+
+                        swal("בקריטריון מספר " + index + " לא בחרת משקל/סקלה ");
+                        return false;
+                    }
+
+                }
+
+
+                newDoc.Status = indexBoll; // if clicked 'סיים' status=true ..if  'שמור' status=false
+                newDoc.TotalWeight = totalWeight;
+                critsInDoc = {
+                    "AllCrit": listCrit,
+                    "Doc": newDoc,
+
+                }
+
+                ajaxCall("POST", "./api/Criteria", JSON.stringify(critsInDoc), GETSuccessCrit, GETErrorCrit);
+            }
+            else {
+                swal("לא ניתן לסיים משוב שלא הגיע ל100%🤷‍♂️");
+            }
+        }
+        var strLScrit = "";
+        function GETSuccessCrit(data) {
+
+            Swal.fire(
+                'בוצע!',
+                'המסמך עודכן בהצלחה',
+                'success'
+            ).then(function () {
+                location.reload(true);
+            });
+
+        }
+        function GETErrorCrit(err) {
+            console.log(err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'המשוב לא הועלה בהצלחה',
+              
+            })
+        }
+
+        var strNewCrit = "";
+        var strAnat = "";
+        var count = 0;
+
+
+        function showDivNewCrit() {
+            var i = count;
+            strAnat = 'anat' + count++;
+       
+            strNewCrit = `<div class="box" id="${strAnat}">
+                                                                <div class="row pt-5">
+                                                                <div class="col-sm-6 mx-auto">
+                                                                <div id="idc" value="0" class="form-group">קריטריון מס ${count})
+                                                                <input type="text" class="form-control" id="critname" placeholder="שם קריטריון" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                <textarea type="text" class="form-control ckeditor${i} cke_rtl"  style="width:100%" id="ckeditor${i}"></textarea>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                <div class="row pt-4">
+                                                                <div class="col-sm-5 offset-6 m-auto ">
+                                                                <div class="form-group">
+                                                                <select class="form-control" id="weight" onchange="showTotalWeight(${strAnat})">
+                                                                <option value="0">בחר משקל</option>
+                                                                <option value="5">5%</option>
+                                                                <option value="10">10%</option>
+                                                                <option value="15">15%</option>
+                                                                <option value="20">20%</option>
+                                                                <option value="25">25%</option>
+                                                                <option value="30">30%</option>
+                                                                <option value="35">35%</option>
+                                                                <option value="40">40%</option>
+                                                                <option value="45">45%</option>
+                                                                <option value="50">50%</option>
+                                                                </select>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                <select class="form-control" id="scala">
+                                                                <option value="0">בחר סקאלה</option>
+                                                                <option value="1">כן/לא</option>
+                                                                <option value="2">בוצע/לא בוצע</option>
+                                                                <option value="3">רציף 1-100</option>
+                                                                <option value="4">1-10 רציף</option>
+                                                                <option value="5">1-5 בדיד</option>
+                                                                <option value="6">1-10 בדיד</option>
+                                                                </select>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                <div class="row pt-3">
+                                                                <div class="col-sm-4 m-auto">
+                                                                <a class="btn btn-defult text-light m-3 fourth-slide-hide-btn"  onclick="deleteCrit(${strAnat})" href="javascript:void(0)"> מחק</a>
+                                                                </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                <div class="col-sm-6 mx-auto">
+                                                                <div class="form-group">
+                                                                <select class="form-control" onclick="addSecendTime(${strAnat})" id="add-criteria-btn">
+                                                                <option selected disabled>הוסף קריטריון </option>
+                                                                <option value="Choose From List">בחר מרשימה</option>
+                                                                <option value="New">חדש</option>
+                                                                </select>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                </div>`;
+
+            $("#addHere").append(strNewCrit);
+            // $("#five").append(strNewCrit);
+            ckReplace(strAnat);
+            console.log(strAnat);
+            listDiv.push(strAnat);
+
+
+        }
+        var ckEd = [];
+        function ckReplace(index) {
+        
+            //var y = ".ckeditor" + x;
+            if (index != undefined) {
+                var x = index.charAt(index.length - 1)
+                var areas = $("#" + index + ` #ckeditor${x}`);
+                $.each(areas, function (i, area) {
+                    CKEDITOR.replace(area, {
+                        customConfig: '/Scripts/ckeditor/config.mini.js'
+                    });
+                });
+            }
+            else {
+                //connect all text area to CKeditor;
+                for (i in listLastCrit) {
+                    var areas = $(`#ckeditor${i}`);
+                    $.each(areas, function (i, area) {
+                        CKEDITOR.replace(area, {
+                            customConfig: '/Scripts/ckeditor/config.mini.js'
+                        });
+                    });
+                }
+            }
+        }
+        function deleteCrit(del) {
+
+            var k = $(del).attr('id');
+            listDiv.push(listDiv.splice(listDiv.indexOf(k), 1)[0]);
+            listDiv.pop();
+            console.log(listDiv);
+            $(del).remove();
+
+
+
+
+        }
+        function deleteCritfromdata(del, int) {
+
+            var w = $(del).find("#weight").attr('value');
+            $(del).remove();
+
+            critEditExist.push(critEditExist.splice(critEditExist.indexOf(k), 1)[0]);
+            critEditExist.pop();
+
+            /////delete crit from data
+            console.log(listDiv);
+            listdelete = [];
+
+            crit = {
+                "NumCrit": int,
+            }
+            listdelete.push(crit);
+            newDoc.TotalWeight = totalWeight - w;
+            critsInDoc = {
+                "AllCrit": listdelete,
+                "Doc": newDoc,
+
+            }
+            totalWeight = totalWeight - w;
+            document.getElementById("aria-valuenow").innerHTML = "";
+            $("#aria-valuenow").append(totalWeight);
+            $("#aria-valuenow").progressbar({ value: totalWeight });
+            $("#aria-valuenow").css({ "width": totalWeight + "%" });
+
+            ajaxCall("POST", "./api/Criteria/delete", JSON.stringify(critsInDoc), deleteSuccessCrit, deleteErrorCrit);
+
+        }
+
+        function deleteSuccessCrit(data) {
+            console.log(data);
+        }
+        function deleteErrorCrit(err) {
+            console.log(err);
+        }
+        function tempString(tempp) {
+            if (tempp.includes("'")) {
+                tempp = tempp.replace("'", "`");
+            }
+            if (tempp.includes("\"")) {
+                tempp = tempp.replace("\"", "`");
+            }
+            return tempp;
+        }
+        var numbering = 1;
+        var str2 = "";
+        var idCritDiv = "";
+        function bankCriteria() {
+
+            $("#third-slide").hide();
+            $("#fourth-slide").hide();
+            $("#add-criteria-btn").prop('selectedIndex', 0);
+            $("#sixth-slide").fadeIn();
+
+
+
+        }
+        addCrit = [];
+        var straddCrit = "";
+        var exist = false;
+        function add(oneCrit) {
+            var temp1 = $(oneCrit).find("#idC").attr('value');
+            for (c in listCrit) {
+                var temp = document.getElementById(listDiv[c]);
+                var idc2 = $(temp).find("#idc").attr('value');
+                if (temp1 == idc2) {
+                    exist = true;
+                    break;
+                }
+            }
+            for (c1 in critEditExist) {
+                var temp3 = document.getElementById(critEditExist[c1]);
+                var idc3 = $(temp3).find("#idC").attr('value');
+                if (temp1 == idc3) {
+                    exist = true;
+                    break;
+                }
+            }
+            if (!exist) {
+
+                addCrit[0] = $(oneCrit).find("#fdataname1").attr('value');
+                addCrit[1] = $(oneCrit).find("#fdatadec1").attr('value');
+                var idc = $(oneCrit).find("#idC").attr('value');
+
+                var z = count;
+                strAnat = 'anat' + count++;
+
+                straddCrit = `<div class="box" id="${strAnat}">
+                                                                <div class="row pt-5">
+                                                                <div class="col-sm-6 mx-auto">
+                                                                <div id="idc" value="${idc}" class="form-group">קריטריון מס ${count})
+                                                                <input type="text" class="form-control" id="critname" value="${addCrit[0]}" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                <textarea type="text" class="form-control ckeditor" style="height:100%"  id="ckeditor${z}" >${addCrit[1]}</textarea>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                <div class="row pt-4">
+                                                                <div class="col-sm-5 offset-6 m-auto ">
+                                                                <div class="form-group">
+                                                                <select class="form-control" id="weight" onchange="showTotalWeight(${strAnat})">
+                                                                <option value="0">בחר משקל</option>
+                                                                <option value="5">5%</option>
+                                                                <option value="10">10%</option>
+                                                                <option value="15">15%</option>
+                                                                <option value="20">20%</option>
+                                                                <option value="25">25%</option>
+                                                                <option value="30">30%</option>
+                                                                <option value="35">35%</option>
+                                                                <option value="40">40%</option>
+                                                                <option value="45">45%</option>
+                                                                <option value="50">50%</option>
+                                                                </select>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                <select class="form-control" id="scala">
+                                                                <option value="0">בחר סקאלה</option>
+                                                                <option value="1">כן/לא</option>
+                                                                <option value="2">בוצע/לא בוצע</option>
+                                                                <option value="3">רציף 1-100</option>
+                                                                <option value="4">1-10 רציף</option>
+                                                                <option value="5">1-5 בדיד</option>
+                                                                <option value="6">1-10 בדיד</option>
+                                                                </select>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                <div class="row pt-3">
+                                                                <div class="col-sm-4 m-auto">
+                                                                <a class="btn btn-defult text-light m-3 fourth-slide-hide-btn"  onclick="deleteCrit(${strAnat})" href="javascript:void(0)"> מחק</a>
+                                                                </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                <div class="col-sm-6 mx-auto">
+                                                                <div class="form-group">
+                                                                <select class="form-control" onclick="addSecendTime(${strAnat})" id="add-criteria-btn">
+                                                                <option selected disabled>הוסף קריטריון </option>
+                                                                <option value="Choose From List">בחר מרשימה</option>
+                                                                <option value="New">חדש</option>
+                                                                </select>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                </div>`;
+
+
+                $("#fourth-slide").fadeIn();
+                $("#sixth-slide").hide();
+                $("#addHere").append(straddCrit);
+                listDiv.push(strAnat);
+                ckReplace(strAnat);
+            }
+            else {
+                swal("קריטריון זה כבר קיים במסמך הנ`ל");
+            }
+        }
+
+
+        //----------------------------------when I want to watch on ready or need to update FeedBack-------/
+        var newDoc = "";
+        var selectDocID = "";
+        function showFeed(id) {
+            newDocFromExcel = 0;
+            var temp = document.getElementById(id);
+            selectCours = $(temp).find("#numCourse").attr('name');
+            selectDep = $(temp).find("#numDep").attr('name');
+
+
+            console.log(localData[id]);
+            newDoc = localData[id];
+            $("#first-slide").hide();
+            $("#fourth-slide").fadeIn();
+            // $("#third-slide").fadeIn();
+            document.getElementById("addHere").innerHTML = "";
+            ajaxCall("PUT", "./api/Criteria", JSON.stringify(localData[id]), GETSuccessDoc, GETErrorDoc);
+
+
+        }
+
+        var critEditExist = [];
+        function GETSuccessDoc(data) {
+            totalWeight = 0;
+            totalW = 0;
+            str1 = "";
+            countFeedName = 0;
+            console.log(data);
+            console.log(data.AllCrit);
+            document.getElementsByClassName("nameFeed").innerHTML = "";
+            // document.getElementById("five").innerHTML = "";
+            console.log(data);
+            console.log(data.AllCrit);
+            listCritEdit = data.AllCrit;
+            IdDoc = data.Doc;
+
+
+            $('.nameFeed').html(data.Doc.NameDoc);
+
+            for (i in listCritEdit) {
+                critFdata = 'fdata' + i;
+                critEditExist.push(critFdata);
+                totalWeight += parseInt(listCritEdit[i].WeightCrit);
+                var idC = listCritEdit[i].NumCrit;
+                str1 += `<div id="${critFdata}" class="row pt-4 box">
+                                                                        <div class="col-sm-3"></div>
+                                                                        <div id="idC" value="${listCritEdit[i].NumCrit}" class="col-sm-5">
+                                                                        <h5 id="fdataname" class="feedback1-show" value="${listCritEdit[i].NameCrit}">${++countFeedName})${listCritEdit[i].NameCrit}</h5>
+                                                                        <h6 id="fdatadec" class="feedback1-show" value="${listCritEdit[i].DescriptionCrit}">תיאור:${listCritEdit[i].DescriptionCrit}</h6>
+                                                                        <h7 id="weight" class="feedback1-show" value="${listCritEdit[i].WeightCrit}" >משקל: ${listCritEdit[i].WeightCrit}</h7>
+                                                                        <div class="col-sm-12 p-0">
+                                                                        <div class="form-group">
+                                                                        <h7 id="scala" name="${listCritEdit[i].TypeCrit}" class="feedback1-show" value="${listCritEdit[i].NameScala}" >סקאלה: ${listCritEdit[i].NameScala}</h7>
+                                                                        </div>
+                                                                        </div>
+                                                                        </div>
+                                                                        <div class="col-sm-1 btndeledit">
+                                                                        <a href="javascript:void(0)" class="btn btn-defult m-2 feedback1-edit-btn" onclick="crit_edit_btn(${critFdata})">ערוך<i class="icon-edit"></i></a>
+                                                                        <a href="javascript:void(0)" class="btn btn-defult m-2 feedback1-edit-btn" onclick="deleteCritfromdata(${critFdata},${idC})">מחק<i class="fa fa-trash"></i></a>
+                                                                        </div>
+                                                                        </div>`;
+
+            }
+
+            document.getElementById("aria-valuenow").innerHTML = "";
+            $("#aria-valuenow").append(totalWeight);
+            $("#aria-valuenow").progressbar({ value: totalWeight });
+            $("#aria-valuenow").css({ "width": totalWeight + "%" });
+
+            //if (totalWeight < 100) {
+            str1 += `<div class="row pt-4" >
+                                     <div class="col-sm-3"></div>
+                                     <div class="col-sm-5"><div id="newFor"><div class="form-group">
+                                     <select class="form-control" onclick="addSecendTime(newFor)" id="add-criteria-btn">
+                                     <option selected disabled>הוסף קריטריון</option>
+                                     <option value="Choose From List">בחר מרשימה</option>
+                                     <option value="New">חדש</option>
+                                     </select>
+                                     </div></div>`;
+            //}
+            $('#addHere').append(str1);
+
+            if (newDoc.Status) {
+                $(".btndeledit").hide();
+                $("#btnDropdown").hide();
+                $("#exist-edit-btn").hide();
+                $("#newFor").hide();
+
+            }
+            else {
+                $(".btndeledit").show();
+                $("#btnDropdown").show();
+                $("#exist-edit-btn").show();
+                $("#newFor").show();
+
+            }
+        }
+        function GETErrorDoc(err) { console.log(err); }
+        var sreEdit = "";
+        var countEditCrit = "";
+        var scala1 = '';
+        var critArr = [];
+
+        function crit_edit_btn(critId) {
+
+            countEditCrit = $(critId).attr('id');
+
+            critArr[0] = $(critId).find("#fdataname").attr('value');
+
+            critArr[1] = $(critId).find("#fdatadec").attr('value');
+            critArr[2] = $(critId).find("#weight").attr('value');
+            critArr[3] = $(critId).find("#scala").attr('name');
+            critArr[4] = $(critId).find("#scala").attr('value');
+            critArr[5] = $(critId).find("#idC").attr('value');
+
+
+            sreEdit = `<div id="${countEditCrit}" class="row pt-4 box">
+                                                                <div class="col-sm-3"></div>
+                                                                  <div id="idcrit" value="${critArr[5]}" class="col-sm-5">
+                                                                      <input id="critname1" type="text" class="form-control feedback1-edit" value="${critArr[0]}">
+                                                                      <textarea id="description1" type="text"  style="width:100%" class="form-control feedback1-edit ckeditor">${critArr[1]}</textarea>
+                                                                      <input id="weight1" type="text" class="form-control feedback1-edit" value="${critArr[2]}">
+                                                                       <div class="col-sm-12 p-0">
+                                                                          <div class="form-group">
+                                                                             <select class="form-control"  id="scala1">
+                                                                             <option  value="${critArr[3]}">${critArr[4]}</option>
+                                                                                <option value="1">כן/לא</option>
+                                                                <option value="2">בוצע/לא בוצע</option>
+                                                                <option value="3">רציף 1-100</option>
+                                                                <option value="4">1-10 רציף</option>
+                                                                <option value="5">1-5 בדיד</option>
+                                                                <option value="6">1-10 בדיד</option>
+                                                                             </select>
+                                                                           </div>
+
+                                                                       </div>
+                                                                      <div class=row>
+                                                                     <a class="btn btn-defult text-light m-3 feedback1-show-btn feedback1-edit" onclick="saveThisCrit(${countEditCrit},1)" href="javascript:void(0)"> שמור</a>
+                                                                     <a class="btn btn-defult text-light m-3 feedback1-show-btn feedback1-edit" onclick="saveThisCrit(${countEditCrit},0)" href="javascript:void(0)"> בטל</a>
+                                                                        </div>
+                                                                   </div>
+                                                                 </div>`;
+
+            $(critId).replaceWith(sreEdit);
+            ckReplace(countEditCrit);
+        }
+
+
+        var thiscrit = null;
+        var thisEditCrit1 = "";
+        var critnam = "";
+        var dec = "";
+        var weight = "";
+        var scalaid = "";
+        function saveThisCrit(thisEditCrit, saveORnot) {
+
+            critEditExist.push(thisEditCrit);
+            thisEditCrit1 = thisEditCrit;
+            thiscrit = $(thisEditCrit).attr('id');
+            var temp = document.getElementById(thiscrit);
+
+
+            critnam = temp.querySelector("#critname1").value;
+            dec = CKEDITOR.instances[$("#" + thiscrit + " #description1").attr('id')].getData();
+            weight = temp.querySelector("#weight1").value;
+            id = $(thisEditCrit).find("#idcrit").attr('value');
+
+            critnam = tempString(critnam);
+            dec = tempString(dec);
+            scalaid = temp.querySelector("#scala1").value;
+
+
+
+
+            if (!saveORnot) {
+                scalaid = critArr[3];
+                critnam = critArr[0];
+                dec = critArr[1];
+                weight = critArr[2];
+
+
+                strthis = foo(id, thiscrit, scalaid, critnam, dec, weight);
+
+                $(thisEditCrit).replaceWith(strthis);
+
+            }
+            else {
+
+
+                var newW = parseInt(weight);
+                var oldW = parseInt(critArr[2]);
+                var sum = totalWeight - oldW + newW;
+
+                if (sum <= 100) {
+                    totalWeight -= oldW;
+                    totalWeight += newW;
+
+
+
+                    if (critnam.length > 100) {
+                        swal("שם הקריטריון צריך להיות עד 100 תווים");
+                    }
+                    else if (dec.length > 4000) {
+                        swal("תיאור הקריטריון צריך להיות עד 100 תווים");
+                    } else {
+
+                        document.getElementById("aria-valuenow").innerHTML = "";
+                        $("#aria-valuenow").append(totalWeight);
+                        $("#aria-valuenow").progressbar({ value: totalWeight });
+                        $("#aria-valuenow").css({ "width": totalWeight + "%" });
+
+                        c = {
+                            "NumCrit": id,
+                            "NameCrit": critnam,
+                            "DescriptionCrit": dec,
+                            "WeightCrit": weight,
+                            "TypeCrit": scalaid,
+                        }
+                        var lis = [];
+                        lis.push(c);
+                        cd = {
+                            "Doc": IdDoc,
+                            "AllCrit": lis,
+
+                        }
+
+
+                        ajaxCall("POST", "./api/Doc/UpdateCrit", JSON.stringify(cd), POSTSuccessC, POSTErrorC);
+                    }
+
+                }
+                else {
+                    swal("עברת את ה100% ,אנא בחר משקל אחד");
+                }
+
+                //insert new crit , update his ID  and replace  it from the list<Crit> of the doc...
+            }
+
+        }
+
+
+        function foo(id, thiscrit, scalaid, critnam, dec, weight) {
+
+
+            for (i in listScal) {
+                if (scalaid == listScal[i].NumScala) {
+                    var scala = listScal[i].NameScala;
+                }
+            }
+            return `<div id="${thiscrit}" class="row pt-4 box">
+                                            <div class="col-sm-3"></div>
+                                            <div id="idcrit" value="${id}" class="col-sm-5">
+                                            <h5 id="fdataname" class="feedback1-show" value="${critnam}">${critnam}</h5>
+                                            <h6 id="fdatadec" class="feedback1-show" value="${dec}">תיאור:${dec}</h6>
+                                            <h7 id="weight" class="feedback1-show" value="${weight}" >משקל: ${weight}</h7>
+                                            <div class="col-sm-12 p-0">
+                                            <div class="form-group">
+                                            <h7 id="scala" name="${scalaid}" class="feedback1-show" value="${scala}" >סקאלה: ${scala}</h7>
+                                            </div>
+                                            </div>
+                                            </div>
+                                            <div class="col-sm-1 btndeledit">
+                                            <a href="javascript:void(0)" class="btn btn-defult m-2 feedback1-edit-btn" onclick="crit_edit_btn(${thiscrit})">ערוך<i class="icon-edit"></i></a>
+                                            <a href="javascript:void(0)" class="btn btn-defult m-2 feedback1-edit-btn" onclick="deleteCritfromdata(${thiscrit},${id})">מחק<i class="fa fa-trash"></i></a>
+                                            </div>
+                                            </div>`;
+
+        }
+        var idnew = "";
+        function POSTSuccessC(data) {
+            console.log(data);
+
+
+            strthis = foo(data.NumCrit, thiscrit, data.TypeCrit, data.NameCrit, data.DescriptionCrit, data.WeightCrit);
+
+            $(thisEditCrit1).replaceWith(strthis);
+            thiscrit = null;
+            thisEditCrit1 = null;
+        }
+        function POSTErrorC(err) { console.log(err); }
+
+        function checkTotalw(total, newOrnot) {
+
+            if (!newOrnot) {
+
+            }
+            else {
+                totalW += total;
+            }
+            document.getElementById("aria-valuenow1").innerHTML = "";
+            $("#aria-valuenow1").append(totalW + '%');
+            $("#aria-valuenow1").progressbar({ value: totalW });
+            $("#aria-valuenow1").css({ "width": totalW + "%" });
+        }
+
+
+    </script>
+
+</head>
+
+<body ng-app="HebrewDate" style="font-family:FbSpacer;">
+    <div id="preloader">
+        <div data-loader="circle-side"></div>
+    </div>
+    <!-- /Preload -->
+    <div id="loader_form">
+        <div data-loader="circle-side-2"></div>
+    </div>
+    <!-- /loader_form -->
+    <header>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-3">
+                    <div id="logo_home">
+                        <h1><a href="index.html">&nbsp</a></h1>
+                    </div>
+                </div>
+                <div class="col-9">
+                    <div id="social" class="m-auto">
+                        <ul>
+                            <li><a style="color: #89E894" href="javascript:void(0)" onclick="goNextPage(2)">מנהל</a></li>
+                            <li><a href="javascript:void(0)" onclick="goNextPage(3)">שופט</a></li>
+                            <li><a href="javascript:void(0)" onclick="goNextPage(4)">מנחה</a></li>
+                            <!--<li><a href="index5.html">סטודנט</a></li>-->
+                        </ul>
+                    </div>
+                    <!-- /social -->
+                    <nav>
+                        <ul class="cd-primary-nav">
+                            <li><a href="javascript:void(0)" class="animated_link">הגדרות</a></li>
+                            <li><a href="javascript:void(0)" class="animated_link">Menu</a></li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <!-- /container -->
+    </header>
+    <!-- /Header -->
+    <main>
+        <div class="container">
+            <div id="wizard_container">
+                <form name="example-1" id="wrapped">
+                    <!-- Leave for security protection, read docs for details -->
+                    <div id="middle-wizard">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="tabsJustifiedContent" class="tab-content">
+                                    <h2 id="helloAdmin" class="text-center"></h2>
+                                    <br/>
+                                    <br/>
+                                    <!-- 1st-slide start -->
+                                    <section id="first-slide" class="container py-4">
+                                        <div class="branch" id="Seo-Optimization">
+                                            <div class="step" data-state="budget">
+                                                <div class="row">
+                                                    <div class="col-4 text-center">
+                                                        <a id="new-feedback-btn" class="btn btn-defult p-lg-3 p-sm-2" href="javascript:void(0)">צור חדש</a>
+                                                        <br />
+                                                        <a href="setting.html">
+                                                            <i class="material-icons" style="font-size:48px;color:#5a5a5a;padding:15px">settings</i>
+                                                        </a>
+                                                        <a href="updateUser.html">
+                                                            <span class='far fa-id-badge' style='font-size:48px;color:#5a5a5a;padding:15px'></span>
+                                                        </a>
+                                                    </div>
+                                                    <div class="col-8">
+                                                        <div class="row">
+                                                            <div class="col-5">
+                                                                <div class="form-group">
+                                                                    <select class="form-control" id="year"></select>
+                                                                </div>
+                                                            </div>
+                                                            <div class="col-7">
+                                                                <div class="form-group">
+                                                                    <select class="form-control" id="browsers1"></select>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <!-- Search form -->
+                                                        <div class="p-1 rounded shadow-sm mb-4">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <button id="button-addon2" type="submit" class="btn btn-link text-info">
+                                                                        <i class="icon-search-8"></i>
+                                                                    </button>
+                                                                </div>
+                                                                <input id="myInput" type="search" placeholder="חיפוש" aria-describedby="button-addon2" class="form-control border-0">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="excel" class="row row-space" style="margin-top:10%">
+                                                    <div class="col-2">
+                                                        <div>
+                                                            <label class="text-center">משקל הקורס:</label>
+                                                            <div class="col"><input type="text" id="index" name="admin-user" required="required"></div>
+                                                            <div class="col"><a href="javascript:void(0)" onclick="sentDetails()"><i class="fa fa-download"></i></a></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="results" class="row rowStyle" style="direction:rtl">
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </section>
+                                    <!-- 1st-slide end -->
+                                    <!--2nd slide start-->
+                                    <section id="second-slide" class="container py-4">
+                                        <div class="row">
+                                            <div class="col-6 col-sm-6 offset-3 offset-sm-3">
+                                                <br />
+                                                <!--<a id="done-btn" class="btn btn-defult p-3 w-100" href="javascript:void(0)"> <i class="icon-ok"></i> DONE</a>-->
+                                            </div>
+                                        </div>
+                                        <div class="row pt-5 justify-content-center">
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <select class="form-control" id="Department" autocomplete="on"></select>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <select class="form-control" id="Course" autocomplete="on"></select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row pt-5 justify-content-center">
+                                            <div class="col-5">
+                                                <div class="form-group">
+                                                    <input type="text" id="extractFile" class="form-control" disabled style="text-align:right" placeholder="שם הקובץ">
+                                                </div>
+                                            </div>
+                                            <div class="upload-btn-wrapper text-center">
+                                                <a href="javascript:void(0)" class="btn1 btn-defult m-3"><i class="fa fa-paperclip"></i>          בחר קובץ</a>
+                                                <input type="file" id="files" onchange="processSelectedFiles(this)">
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-6 col-sm-6 offset-3 offset-sm-3">
+                                                <a id="done-btn" class="btn btn-defult p-3 w-100" href="javascript:void(0)"> <i class="icon-ok"></i> שלח</a>
+                                            </div>
+                                        </div>
+
+                                        <div id="bottom-wizard">
+                                            <a class="btn btn-primary btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> חזור</a>
+
+                                        </div>
+                                    </section>
+                                    <!--<section id="second-slide" class="container py-4">
+                                                <div class="row">
+                                                    <div class="col-6 col-sm-6 mx-auto">
+                                                        <a id="done-btn" class="btn btn-defult p-3 w-100" href="javascript:void(0)"> <i class="icon-ok"></i> DONE</a>
+                                                    </div>
+                                                </div>
+                                                <div class="row pt-5">
+                                                        <div class="col-6">
+                                                            <div class="form-group">
+                                                            <input type="text" class="form-control" placeholder="Feedback name">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="col-3">
+                                                            <div class="form-group">
+                                                            <select class="form-control" id="">
+                                                                <option>Department</option>
+                                                                <option>Department</option>
+                                                                <option>Department</option>
+                                                            </select>
+                                                        </div>
+                                                        </div>
+
+                                                        <div class="col-3">
+                                                            <div class="form-group">
+                                                            <select class="form-control" id="">
+                                                                <option>Course</option>
+                                                                <option>Course</option>
+                                                                <option>Course</option>
+                                                            </select>
+                                                        </div>
+                                                        </div>
+                                                </div>
+                                                <div class="row py-5">
+                                                        <div class="col-md-6">
+                                                            <p>Estimating…</p>
+                                                        <div class="alert alert-light alert-dismissible fade show" role="alert">
+                                                            <div class="progress">
+                                                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                                                            </div>
+                                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <p>1.35MB/3.67MB</p>
+                                                        <div class="alert alert-light alert-dismissible fade show" role="alert">
+                                                            <div class="progress">
+                                                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="36" aria-valuemin="0" aria-valuemax="100" style="width: 36%">36%</div>
+                                                            </div>
+                                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        </div>
+
+                                                       <div class="col-12 text-center">
+                                                            <i class="icon-folder-open" style="font-size: 150px"></i>
+                                                            <br>
+
+                                                             <div class="upload-btn-wrapper">
+                                                                <a href="javascript:void(0)" class="btn btn-primary">Browse</a>
+                                                                <input type="file" name="myfile" />
+                                                            </div>
+                                                       </div>
+                                                    </div>
+                                        <div id="bottom-wizard">
+                                            <a class="btn btn-primary btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> Return</a>
+
+                                        </div>
+                                    </section>-->
+                                    <!-- 2nd-slide end -->
+                                    <!-- 3rd-slide start -->
+                                    <section id="third-slide" class="container py-4">
+                                        <div class="row pt-5">
+                                            <div class="col-12 text-center">
+                                                <h3 class="">משוב חדש</h3>
+                                                <h3 class="nameFeed1"></h3>
+                                                <!--<h3 class="nameFeed"></h3>-->
+                                            </div>
+                                        </div>
+                                        <div class="row pt-5">
+
+                                            <div class="col-4">
+                                                <div class="form-group">
+                                                </div>
+                                                <div class="form-group">
+                                                    <select class="form-control" id="add-criteria-btn">
+                                                        <option selected disabled>הוסף קריטריון</option>
+                                                        <option value="Choose From List">בחר מרשימה</option>
+                                                        <option value="New">חדש</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <!--<div class="col-4 mx-auto">
+                                                <a id="exist-edit-btn" class="btn btn-defult" onclick="lastTimeDoc()" href="javascript:void(0)">משוב משנים קודמות</a>
+                                            </div>-->
+                                            <div class="col-3 "></div>
+                                        </div>
+                                    </section>
+                                    <!--4th slide start-->
+                                    <section id="fourth-slide" class="py-4">
+                                        <div class="slide4">
+                                            <div class="row pt-5">
+                                                <div class="col-12 text-center">
+                                                    <h3 class="nameFeed"></h3>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-2"></div>
+                                                <div class="col-4 mx-auto">
+                                                    <a id="exist-edit-btn" class="btn btn-defult" onclick="lastTimeDoc()" href="javascript:void(0)">משוב משנים קודמות</a>
+                                                </div>
+                                            </div>
+                                            <div id="addHere">
+
+
+                                            </div>
+
+                                        </div>
+
+
+                                        <!--4th slide end-->
+                                        <div class="row pt-5">
+                                            <!--<div class='col-sm-8 mx-auto'>
+                                                <div id="app" v-cloak>
+                                                    <h4>זמן הרצאה</h4>
+                                                    <timer-setup v-if="!time" @set-time="setTime"></timer-setup>
+                                                    <div v-else>
+                                                        <timer :time="prettyTime"></timer>
+                                                        <div>
+                                                            <a href="javascript:void(0)" class="btn btn-primary btn" v-if="!isRunning" @click="start">התחל</a>
+                                                            <a href="javascript:void(0)" class="btn btn-primary btn" v-if="isRunning" @click="stop">סיים</a>
+                                                            <a href="javascript:void(0)" class="btn btn-primary btn" @click="reset">אתחל מחדש</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>-->
+                                        </div>
+                                        <div class="row pt-5">
+                                            <div class="col-8 m-auto">
+                                                <!--<p>36/100</p>-->
+                                                <div class="progress">
+                                                    <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="height:100%" id="aria-valuenow"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="btnDropdown" class="row pt-3">
+                                            <div class="col-sm-4 mx-auto">
+                                                <a class="btn btn-defult text-light m-3 prev" onclick="saveToData(true)" href="javascript:void(0)"> סיים</a>
+                                                <a class="btn btn-defult text-light m-3 prev" onclick="saveToData(false)" href="javascript:void(0)"> שמור</a>
+                                            </div>
+                                        </div>
+                                        <div id="bottom-wizard">
+                                            <a class="btn btn-primary btn prev" href="index2.html"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> חזור</a>
+
+                                        </div>
+                                    </section>
+                                    <!-- 3rd-slide end -->
+                                    <!-- 5th-slide start -->
+
+                                    <section id="fifth-slide" class="container py-4">
+
+                                        <div class="slide5">
+                                            <div class="row pt-5">
+                                                <div class="col-12 text-center">
+                                                    <h3 class="nameFeed"></h3>
+                                                </div>
+                                            </div>
+                                            <div class="row pt-5">
+                                                <div class="col-sm-6 mx-auto">
+                                                    <div class="form-group">
+                                                        <select class="form-control" onchange="editselectedDoc()" id="lastDoc">
+                                                            <!--<option>2018</option>
+                                                            <option>2018</option>
+                                                            <option>2018</option>-->
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="last"></div>
+                                            <!--<div class="row pt-5">-->
+
+                                            <div class="row pt-3">
+                                                <div class="col-sm-4 m-auto text-center">
+                                                    <a class="btn btn-defult text-light m-3 prev" onclick="saveLastDoc()" href="javascript:void(0)"> סיים</a>
+
+                                                    <a class="btn btn-defult text-light m-3 feedback-show-btn" onclick="editLadsDocToNew()" href="javascript:void(0)"> ערוך</a>
+
+                                                    <a class="btn btn-defult text-light m-3 feedback-edit-btn" onclick="goback()" href="javascript:void(0)"> ביטול</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="bottom-wizard">
+                                            <a class="btn btn-defult text-light m-3 feedback-edit-bt" onclick="goback()" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> חזור</a>
+
+                                        </div>
+                                    </section>
+
+                                    <!-- 5th-slide end-->
+                                    <!-- 6st-slide start -->
+                                    <section id="sixth-slide" class="container py-4">
+                                        <div class="row pt-5">
+                                            <div class="col-12 text-center">
+                                                <h3 class="nameFeed"></h3>
+                                            </div>
+                                        </div>
+                                        <div class="row py-5">
+                                            <div class="col-12 text-center">
+                                                <h3 class="font-weight-bold">מאגר קריטריונים</h3>
+                                            </div>
+
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-3"></div>
+                                            <div class="p-1 rounded shadow-sm mb-4 col-6">
+                                                <div class=" input-group">
+                                                    <div class="input-group-prepend">
+                                                        <button id="button-addon2" type="submit" class="btn btn-link text-info">
+                                                            <i class="icon-search-8"></i>
+                                                        </button>
+                                                    </div>
+                                                    <input id="myInput1" type="search" placeholder="חיפוש" aria-describedby="button-addon2" class="form-control border-0">
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div id="sixth">
+
+                                        </div>
+                                        <div id="bottom-wizard" class="text-center">
+                                            <a class="btn btn-primary btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> חזור</a>
+                                        </div>
+                                    </section>
+                                    <!-- 6st-slide end -->
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- /middle-wizard -->
+                </form>
+            </div>
+            <!-- /Wizard container -->
+        </div>
+        <!-- /Container -->
+    </main>
+    <!-- /main -->
+    <footer>
+        <div class="container clearfix">
+            <p>© 2020 | Feedback System</p>
+        </div>
+    </footer>
+    <!-- /footer -->
+    <div class="cd-overlay-nav">
+        <span></span>
+    </div>
+    <!-- /cd-overlay-nav -->
+    <div class="cd-overlay-content">
+        <span></span>
+    </div>
+    <!-- /cd-overlay-content -->
+    <a href="#0" class="cd-nav-trigger">Menu<span class="cd-icon"></span></a>
+    <!-- /cd-nav-trigger -->
+    <!-- Modal terms -->
+    <div class="modal fade" id="terms-txt" tabindex="-1" role="dialog" aria-labelledby="termsLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="termsLabel">Terms and conditions</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Lorem ipsum dolor sit amet, in porro albucius qui, in <strong>nec quod novum accumsan</strong>, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
+                    <p>Lorem ipsum dolor sit amet, in porro albucius qui, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus. Lorem ipsum dolor sit amet, <strong>in porro albucius qui</strong>, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
+                    <p>Lorem ipsum dolor sit amet, in porro albucius qui, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /Modal terms -->
+    <!-- COMMON SCRIPTS -->
+    <script src="js/jquery-2.2.4.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
+    <script src="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js"></script>
+    <script src="js/common_scripts.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.1.10/vue.min.js"></script>
+
+    <script src="js/menu.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/wizard_func_single_branch.js"></script>
+    <script type="text/javascript">
+        $(function () {
+
+            $('#datetimepicker3').datetimepicker({
+                format: 'LT'
+            });
+            $('#datetimepicker3').datetimepicker({
+                format: 'LT'
+            });
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            $("#second-slide").hide();
+            $("#third-slide").hide();
+            $("#fourth-slide").hide();
+            $("#fifth-slide").hide();
+            $("#sixth-slide").hide();
+            $("#excel").hide();
+
+
+
+            //first slide
+            $("#first-slide #new-feedback-btn").click(function () {
+                $("#first-slide").hide();
+                $("#second-slide").fadeIn();
+            });
+
+            $("#first-slide #setting-btn").click(function () {
+                $("#first-slide").hide();
+                $("#sixth-slide").fadeIn();
+            });
+
+            $("#first-slide .service_box").click(function () {
+                $("#first-slide").hide();
+                $("#fifth-slide").fadeIn();
+            });
+
+            //second slide
+            //$("#second-slide #done-btn").click(function() {
+            //$("#second-slide").hide();
+            //$("#third-slide").fadeIn();
+            //});
+
+            $("#second-slide .prev").click(function () {
+                $("#second-slide").hide();
+                $("#first-slide").fadeIn();
+            });
+
+            //third slide
+            $("#third-slide #exist-edit-btn").click(function () {
+                $("#third-slide").hide();
+                $("#fourth-slide").hide();
+                $("#fifth-slide").fadeIn();
+                $("#add-criteria-btn").prop('selectedIndex', 0);
+            });
+
+            $('#add-criteria-btn').on('change', function () {
+                var criteria = $(this).val();
+                if (criteria == "Choose From List") { bankCriteria(); $("#third-slide").hide(); $("#fourth-slide").hide(); $("#add-criteria-btn").prop('selectedIndex', 0); $("#sixth-slide").fadeIn(); }
+                else if (criteria == "New") { CritLS(); $("#fourth-slide").slideDown(); }
+            });
+
+            $("#third-slide .prev").click(function () {
+                $("#third-slide").hide();
+                $("#fourth-slide").hide();
+                $("#add-criteria-btn").prop('selectedIndex', 0);
+                $("#first-slide").fadeIn();
+            });
+
+            //fourth slide
+            $("#fourth-slide .fourth-slide-hide-btn").click(function () {
+                $("#fourth-slide").slideUp();
+                $("#add-criteria-btn").prop('selectedIndex', 0);
+            });
+
+            //fifth slide
+            $("#fifth-slide .prev").click(function () {
+                $("#fifth-slide").hide();
+                $("#fifth-slide .feedback1-edit,#fifth-slide .feedback2-edit").hide();
+                $("#fifth-slide .feedback1-show,#fifth-slide .feedback2-show").fadeIn();
+                $("#first-slide").fadeIn();
+            });
+
+            $("#fifth-slide .feedback1-edit,#fifth-slide .feedback2-edit").hide();
+
+            $("#fifth-slide .feedback1-edit-btn").click(function () {
+                $("#fifth-slide .feedback1-show").hide();
+                $("#fifth-slide .feedback1-edit").fadeIn();
+            });
+            $("#fifth-slide .feedback2-edit-btn").click(function () {
+                $("#fifth-slide .feedback2-show").hide();
+                $("#fifth-slide .feedback2-edit").fadeIn();
+            });
+
+            $("#fifth-slide .feedback-edit-btn").click(function () {
+                $("#fifth-slide .feedback1-edit-btn").click();
+                $("#fifth-slide .feedback2-edit-btn").click();
+            });
+
+            $("#fifth-slide .feedback1-show-btn").click(function () {
+                $("#fifth-slide .feedback1-show").fadeIn();
+                $("#fifth-slide .feedback1-edit").hide();
+            });
+
+            $("#fifth-slide .feedback2-show-btn").click(function () {
+                $("#fifth-slide .feedback2-show").fadeIn();
+                $("#fifth-slide .feedback2-edit").hide();
+            });
+
+            $("#fifth-slide .feedback-show-btn").click(function () {
+                $("#fifth-slide .feedback1-show-btn").click();
+                $("#fifth-slide .feedback2-show-btn").click();
+            });
+
+            //sixth slide
+            $("#sixth-slide .prev").click(function () {
+                $("#sixth-slide").hide();
+                $("#fourth-slide").fadeIn();
+            });
+
+
+        });
+
+    </script>
+    <script type="text/javascript">
+        let timerSetup = {
+  template: `
+    <form>
+         <label for="min">Minutes<br />
+         <input class="form-control" type="number" v-model="minutes" name="time_m" id="min" min="0" max="59">
+         </label>
+         <label for="sec">Secondes<br />
+              <input class="form-control" type="number" v-model="secondes" name="time_s" id="sec" max="59" min="0">
+         </label>
+         <a href="javascript:void(0)" class="btn btn-primary btn" @click="sendTime">Set time</a>
+    </form>`,
+  data() {
+    return {
+      minutes: 0,
+      secondes: 0 };
+
+  },
+  methods: {
+    sendTime() {
+      this.$emit('set-time', { minutes: this.minutes, secondes: this.secondes });
+    } } };
+
+
+
+let Timer = {
+  template: `
+         <div class="timer">{{ time | prettify }}</div>
+    `,
+  props: ['time'],
+  filters: {
+    prettify: function (value) {
+      let data = value.split(':');
+      let minutes = data[0];
+      let secondes = data[1];
+      if (minutes < 10) {
+        minutes = "0" + minutes;
+      }
+      if (secondes < 10) {
+        secondes = "0" + secondes;
+      }
+      return minutes + ":" + secondes;
+    } } };
+
+
+
+let app = new Vue({
+  el: "#app",
+  components: {
+    'timer-setup': timerSetup,
+    'timer': Timer },
+
+  data: {
+    isRunning: false,
+    minutes: 0,
+    secondes: 0,
+    time: 0,
+    timer: null,
+        //sound: new Audio("http://s1download-universal-soundbank.com/wav/nudge.wav")
+    },
+
+  computed: {
+    prettyTime() {
+      let time = this.time / 60;
+      let minutes = parseInt(time);
+      let secondes = Math.round((time - minutes) * 60);
+      return minutes + ":" + secondes;
+    } },
+
+  methods: {
+    start() {
+      this.isRunning = true;
+      if (!this.timer) {
+        this.timer = setInterval(() => {
+          if (this.time > 0) {
+            this.time--;
+          } else {
+            clearInterval(this.timer);
+            this.sound.play();
+            this.reset();
+          }
+        }, 1000);
+      }
+    },
+    stop() {
+      this.isRunning = false;
+      clearInterval(this.timer);
+      this.timer = null;
+    },
+    reset() {
+      this.stop();
+      this.time = 0;
+      this.secondes = 0;
+      this.minutes = 0;
+    },
+    setTime(payload) {
+      this.time = payload.minutes * 60 + payload.secondes;
+    } } });
+    </script>
+
+    <script src="js/lastTimeDocJS.js"></script>
+    <script src="js/goNext.js"></script>
+    <script src="js/searchJS.js"></script>
+</body>
+
+</html>

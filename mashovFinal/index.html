@@ -92,15 +92,6 @@
 
             if (student.Pass.length > 0) {
 
-                //if (student.Pass == "") {
-                //    student2 = {
-                //        "Pass": password,
-                //        "Id": student.Id,
-
-                //    }
-                //    ajaxCall("PUT", "./api/Login/PassStudent", JSON.stringify(student2), PUTSuccessPass, PUTErrorPass);
-                //}
-               // else
                 if (student.Pass == password) {
                     localStorage["Student"] = JSON.stringify(student);
                     window.location.href = "index5.html";
@@ -126,16 +117,6 @@
 
             if (usersList.Email != "") {
 
-                //if (user.Pass == "") {//insert first time to system
-                //    user2 = {
-                //        "Pass": password,
-                //        "Email": user.Email,
-
-                //    }
-                //    //update pass
-                //    ajaxCall("PUT", "./api/Login/Pass", JSON.stringify(user2), PUTSuccessPass, PUTErrorPass);
-                //}
-               // else
                 if (usersList.Pass == password) {
                     nextstep(usersList);
 
@@ -177,6 +158,7 @@
 
                 }
                 if (isManager) {
+
                     window.location.href = "index2.html";
                 }
                 else if (isJudge) {
@@ -265,7 +247,7 @@
     </style>
 </head>
 
-<body>
+<body style="font-family:FbSpacer;">
 	
 	<div id="preloader">
 		<div data-loader="circle-side"></div>
@@ -275,9 +257,9 @@
 	<div id="loader_form">
 		<div data-loader="circle-side-2"></div>
 	</div> 
-    <!--/loader_form--> 
+    <!--/loader_form-->     
 	
-	<header>
+	<!--<header>
 		<div class="container-fluid">
 		    <div class="row">
                 <div class="col-3">
@@ -287,7 +269,7 @@
                 </div>
                 <div class="col-9">
                     
-                    <!-- /social -->
+                     /social 
                     <nav>
                         <ul class="cd-primary-nav">
                             <li><a href="javascript:void(0)" class="animated_link">Menu</a></li>
@@ -297,8 +279,8 @@
                 </div>
             </div>
 		</div>
-		<!-- /container -->
-	</header>
+		 /container 
+	</header>-->
 	<!-- /Header -->
 	
 	<main>
@@ -311,18 +293,18 @@
 
 						<div class="submit step pb-5" id="end">
 								<div class="question_title">
-									<h3>Feedback System</h3>
+								
 								</div>
 								<div class="row justify-content-center">
 									<div class="col-lg-5">
-										<div class="box_general">
-											<div class="form-group">
-												<input type="text"  id="username" name="first_last_name" class="required form-control" placeholder="שם משתמש">
-											</div>
-											<div class="form-group">
-												<input type="password" id="password" name="password" class="required form-control" placeholder="סיסמא">
-											</div>
-
+                                        <div class="box_general">
+                                            <img src="img/logo.png" style="width:100%;height:100%;" />
+                                            <div class="form-group">
+                                                <input type="text" id="username" name="first_last_name" class="required form-control" placeholder="שם משתמש">
+                                            </div>
+                                            <div class="form-group">
+                                                <input type="password" id="password" name="password" class="required form-control" placeholder="סיסמא">
+                                            </div>
                                             <div class="form-group pt-5">
                                                 <input type="submit" id="btn" class="button form-control" value="התחבר">
                                                 <a class="a" href="javascript:void(0)" onclick="forgetPass()">שכחתי סיסמא?</a>
@@ -331,8 +313,8 @@
                                                     <input type="submit" id="btn1" class="button form-control" value="עדכן מייל">
                                                 </div>
                                             </div>
-																						
-										</div>
+
+                                        </div>
 										<!-- /box_general -->
 									</div>
 								</div>
@@ -367,7 +349,7 @@
 	</div>
 	<!-- /cd-overlay-content -->
 
-	<a href="#0" class="cd-nav-trigger">Menu<span class="cd-icon"></span></a>
+	<!--<a href="#0" class="cd-nav-trigger">Menu<span class="cd-icon"></span></a>-->
 	<!-- /cd-nav-trigger -->
 	
 	<!-- Modal terms -->

@@ -15,7 +15,7 @@ header {
     height: 50px;
     padding: 0;
     margin: 0;
-    background: #6C7187;
+    /*background: #6C7187;*/
 }
 
     header:after {
@@ -57,7 +57,7 @@ div#content h3, div#content h1, div#content h2 {
     width: 960px;
     text-align: center;
     margin-top: 8px;
-    color: #6C7187;
+    /*color: #6C7187;*/
 }
 /*תפריט עליון- קטגוריות*/
 .element_general_prime_categories {
@@ -406,7 +406,7 @@ form#form2 div#content {
 div#content h2 {
     text-align: center;
     font-weight: normal;
-    color: #7F4789;
+    color: #1cac78;
     margin-bottom: 20px;
 }
 

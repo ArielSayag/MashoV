@@ -8,7 +8,7 @@ using mashovFinal.Models;
 
 namespace mashovFinal.Controllers
 {
-    public class CalendarController : ApiController
+    public class calendarController : ApiController
     {
         [HttpPost]
         [Route("api/calendar/Meet")]
@@ -45,6 +45,78 @@ namespace mashovFinal.Controllers
 
             return u.getcalG();
         }
-        
+        [HttpPut]
+        [Route("api/calendar/updateM")]
+        public int PutupdateM([FromBody] calendarMeeting m)
+        {
+
+            return m.updateM();
+        }
+        [HttpPut]
+        [Route("api/calendar/updateT")]
+        public int PutupdateT([FromBody] calendarTask t)
+        {
+
+            return t.updateT();
+        }
+
+        [HttpGet]
+        [Route("api/calendar/deleteM/{idm}")]
+        public int getdaleteM( int idm)
+        {
+            calendarMeeting m = new calendarMeeting();
+            return m.deleteM(idm);
+        }
+
+        [HttpPut]
+        [Route("api/calendar/deleteT")]
+        public int PutdeleteT([FromBody] int id)
+        {
+            calendarTask t = new calendarTask();
+            return t.deleteT(id);
+        }
+
+        //----------student------------------//
+
+        [HttpGet]
+        [Route("api/calendar/Meet/{idStudent}")]
+        public List<calendarMeeting> GetMeet(string idStudent)
+        {
+            calendarMeeting m = new calendarMeeting();
+            return m.getallcalendarMeetingByStudent(idStudent);
+        }
+
+        [HttpGet]
+        [Route("api/calendar/Task/{idStudent}")]
+        public List<calendarTask> GetTask( string idStudent)
+        {
+            calendarTask t = new calendarTask();
+            return t.getallcalendarTByStudent(idStudent);
+        }
+
+        [HttpGet]
+        [Route("api/calendar/Mentor/{idStudent}")]
+        public List<Users> GetMentor(string idStudent)
+        {
+            Students s = new Students();
+            return s.getallmentorbystudent(idStudent);
+        }
+
+
+        [HttpPut]
+        [Route("api/calendar/StatusT/")]
+        public int PutStatusT([FromBody]int id)
+        {
+            Students s = new Students();
+            return s.updateStatusT(id);
+        }
+
+        [HttpGet]
+        [Route("api/calendar/Groups/{id}")]
+        public List<Groups> gatGroups(string id)
+        {
+            Students s = new Students();
+            return s.getGroupsMentorofS(id);
+        }
     }
 }

@@ -188,8 +188,7 @@
     <Compile Include="Areas\HelpPage\SampleGeneration\SampleDirection.cs" />
     <Compile Include="Areas\HelpPage\SampleGeneration\TextSample.cs" />
     <Compile Include="Areas\HelpPage\XmlDocumentationProvider.cs" />
-    <Compile Include="Controllers\CalendarController.cs" />
-    <Compile Include="Controllers\CreateExcelController.cs" />
+    <Compile Include="Controllers\calendarController.cs" />
     <Compile Include="Controllers\CriteriaController.cs" />
     <Compile Include="Controllers\DocController.cs" />
     <Compile Include="Controllers\ExcelDocumentController.cs" />
@@ -233,6 +232,7 @@
     <Content Include="assets\css\fullcalendar.print.css" />
     <Content Include="assets\js\fullcalendar.min.js" />
     <Content Include="assets\js\moment.min.js" />
+    <Content Include="calendarStudent.html" />
     <Content Include="calendar.html" />
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
@@ -240,6 +240,7 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="css\bootstrap.css" />
     <Content Include="css\bootstrap.min.css" />
+    <Content Include="css\chatTemplate.css" />
     <Content Include="css\cssManger.css" />
     <Content Include="css\custom.css" />
     <Content Include="css\icon_fonts\css\all_icons.css" />
@@ -385,7 +386,6 @@
     <Content Include="css\vendors.min.css" />
     <Content Include="dataTable.html" />
     <Content Include="DB-Script\myText.txt" />
-    <Content Include="eventcalendar_google-calendar.html" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
@@ -402,6 +402,8 @@
     <Content Include="img\avatar1.jpg" />
     <Content Include="img\avatar2.jpg" />
     <Content Include="img\avatar3.jpg" />
+    <Content Include="img\chatSent.png" />
+    <Content Include="img\chat.png" />
     <Content Include="img\company_icon.svg" />
     <Content Include="img\design-1.jpg" />
     <Content Include="img\design-2.jpg" />
@@ -429,6 +431,7 @@
     <Content Include="img\logo.png" />
     <Content Include="img\logo_2x.png" />
     <Content Include="img\map-marker.png" />
+    <Content Include="img\message.png" />
     <Content Include="img\minus.png" />
     <Content Include="img\minus.svg" />
     <Content Include="img\pattern.svg" />
@@ -796,6 +799,8 @@
     <Content Include="img\SVG_icon_set_4\zip.svg" />
     <Content Include="img\SVG_icon_set_4\zoom-in.svg" />
     <Content Include="img\SVG_icon_set_4\zoom-out.svg" />
+    <Content Include="img\talk.png" />
+    <Content Include="img\user.png" />
     <Content Include="img\web-1.jpg" />
     <Content Include="img\web-2.jpg" />
     <Content Include="img\web-3.jpg" />
@@ -806,16 +811,20 @@
     <Content Include="img\web_development_icon_3.svg" />
     <Content Include="img\web_development_icon_4.svg" />
     <Content Include="index.html" />
+    <Content Include="index2 - Copy.html" />
     <Content Include="index3.html" />
     <Content Include="index4.html" />
     <Content Include="index5.html" />
     <Content Include="js\CreateExcelJS.js" />
+    <Content Include="js\goNext.js" />
     <Content Include="js\judgeJS.js" />
     <Content Include="js\lastTimeDocJS.js" />
     <Content Include="js\mentorJS.js" />
     <Content Include="js\mobiscroll.jquery.min.js" />
     <Content Include="js\searchJS.js" />
     <Content Include="js\StudentJS.js" />
+    <Content Include="LiveChatStudent.html" />
+    <Content Include="LiveChat.html" />
     <Content Include="setting.html" />
     <Content Include="index2.html" />
     <Content Include="js\common_scripts.min.js" />

@@ -1,6 +1,6 @@
 ﻿
 function lastTimeDoc() {
-    alert(selectCours + "," + selectDep);
+
 
     cd = {
         "NumDepartment": selectDep,
@@ -100,67 +100,101 @@ function helpstr(strL, count, critLast) {
 var listCrit1 = [];
 
 function saveLastDoc() {
-    for (i in listLastCrit) {
-        var temp = document.getElementById(listLastCrit[i]);
+    var doit = false;
+    if (arrlastDoc.length > 0) {
 
-        //tempArr[0] = temp.querySelector("#critname").value; // find the id from all div
-        //tempArr[1] = temp.querySelector("#description").value;
-        var weight = $(temp).find("#weight2").attr('value');
-        var idcrit = $(temp).find("#fdataname1").attr('name');
-        var scala = temp.querySelector("#scala2").value;
+        Swal.fire({
+            title: '<strong>שים לב</strong>',
+            text: 'אם תלחץ אישור, כל הקריטריונים הקודמים שיצרת ימחקו',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'כן, אני מאשר'
+        }).then((result) => {
+            if (result.value) {
+                for (i in listLastCrit) {
+                    var temp = document.getElementById(listLastCrit[i]);
 
-        //for (k in tempArr) {
-        //    tempArr[k] = tempString(tempArr[k]);
-        //}
+                    //tempArr[0] = temp.querySelector("#critname").value; // find the id from all div
+                    //tempArr[1] = temp.querySelector("#description").value;
+                    var weight = $(temp).find("#weight2").attr('value');
+                    var idcrit = $(temp).find("#fdataname1").attr('name');
+                    var scala = temp.querySelector("#scala2").value;
 
-        //if (weight != 0) {
+                    //for (k in tempArr) {
+                    //    tempArr[k] = tempString(tempArr[k]);
+                    //}
 
-        crit = {
-            "NumCrit": idcrit,
-            "WeightCrit": weight,
-            "typeCrit": scala,
-        }
-            listCrit1.push(crit);
+                    //if (weight != 0) {
 
-        //}
+                    crit = {
+                        "NumCrit": idcrit,
+                        "WeightCrit": weight,
+                        "typeCrit": scala,
+                    }
+                    listCrit1.push(crit);
 
+                    //}
+
+                }
+
+
+                newDoc.Status = false;
+                newDoc.TotalWeight = 100;
+                critsInDoc = {
+                    "AllCrit": listCrit1,
+                    "Doc": newDoc,
+
+                }
+         
+                ajaxCall("POST", "./api/Criteria/LastnewDoc", JSON.stringify(critsInDoc), postSuccessCrit, postErrorCrit);
+                
+            } 
+        })
+
+     
+              
     }
-
-
-    newDoc.Status = true;
-    newDoc.TotalWeight = 100;
-    critsInDoc = {
-        "AllCrit": listCrit1,
-        "Doc": newDoc,
-
+    else {
+        Swal.fire("פעולה לא תקינה ,אין קריטריונים לבחירה");
     }
-
-    ajaxCall("POST", "./api/Criteria/LastnewDoc", JSON.stringify(critsInDoc), postSuccessCrit, postErrorCrit);
+    
 }
 
 function postSuccessCrit(data) {
     console.log(data);
-    swal("נתונים הועברו בהצלחה");
-    dashboard(getuser); 
-    $("#third-slide").hide();
-    $("#fourth-slide").hide();
-    $("#first-slide").fadeIn(); // back to dash
+    Swal.fire(
+        'בוצע!',
+        'המסמך עודכן בהצלחה',
+        'success'
+    ).then(function () {
+        location.reload(true);
+    });
+
 }
 
 function postErrorCrit(err) {
     console.log(err);
+    Swal.fire({
+        icon: 'error',
+        title: 'שגיאה',
+        text: 'נתונים  לא הועברו',
+
+    })
+  
 
 }
 
 function editLadsDocToNew() {
+    if (listLastCrit.length > 0) {
+        for (i in listLastCrit) {
 
-    for (i in listLastCrit) {
-        
-        var temp = document.getElementById(listLastCrit[i]);
+            var temp = document.getElementById(listLastCrit[i]);
 
-        addCrit[0] = $(temp).find("#fdataname1").attr('value');
-        addCrit[1] = $(temp).find("#fdatadec1").attr('value');
-        var idc = $(temp).find("#fdataname1").attr('name');
+            addCrit[0] = $(temp).find("#fdataname1").attr('value');
+            addCrit[1] = $(temp).find("#fdatadec1").attr('value');
+            var idc = $(temp).find("#fdataname1").attr('name');
 
 
             strAnat = 'anat' + count++;
@@ -172,7 +206,7 @@ function editLadsDocToNew() {
                                                 <input type="text" class="form-control" id="critname" value="${addCrit[0]}" required>
                                                 </div>
                                                 <div class="form-group">
-                                                <textarea type="text" class="form-control ckeditor"  id="description" >${addCrit[1]}</textarea>
+                                                <textarea type="text" class="form-control ckeditor"  id="ckeditor${i}" >${addCrit[1]}</textarea>
                                                 </div>
                                                 </div>
                                                 </div>
@@ -226,15 +260,18 @@ function editLadsDocToNew() {
                                                 </div>`;
 
 
-          
-        $("#addHere").append(straddCrit);
-        console.log(straddCrit);
-        listDiv.push(strAnat);
-       
+
+            $("#addHere").append(straddCrit);
+            console.log(straddCrit);
+            listDiv.push(strAnat);
+
+        }
+        ckReplace();
+        $("#fourth-slide").fadeIn();
+        $("#fifth-slide").hide();
+    } else {
+        Swal.fire("פעולה לא תקינה ,אין קריטריונים לבחירה");
     }
- ckReplace();
-  $("#fourth-slide").fadeIn();
-  $("#fifth-slide").hide();
 }
 
 
@@ -249,3 +286,5 @@ function goback() {
         $("#fourth-slide").fadeIn();
     }
 }
+
+

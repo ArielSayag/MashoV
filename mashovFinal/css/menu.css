@@ -241,26 +241,29 @@ Main
 }
 
 ul.cd-primary-nav {
-  list-style: none;
-  padding: 80px 0 0 0;
-  margin: 0;
-  /* by default it's hidden */
-  position: fixed;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: 100%;
-  padding: 80px 5%;
-  z-index: 9999;
-  background-color: #fff;
-  overflow: auto;
-  /* this fixes the buggy scrolling on webkit browsers - mobile devices only - when overflow property is applied */
-  -webkit-overflow-scrolling: touch;
-  visibility: hidden;
-  opacity: 0;
-  -webkit-transition: visibility 0s, opacity 0.3s;
-  -moz-transition: visibility 0s, opacity 0.3s;
-  transition: visibility 0s, opacity 0.3s;
+    list-style: none;
+    padding: 80px 0 0 0;
+    margin: 0;
+    /* by default it's hidden */
+    position: fixed;
+    left: 0;
+    top: 0;
+    /*height: 100%;
+  width: 100%;*/
+    padding: 80px 5%;
+    z-index: 9999;
+    background-color: #fff;
+    overflow: auto;
+    /* this fixes the buggy scrolling on webkit browsers - mobile devices only - when overflow property is applied */
+    -webkit-overflow-scrolling: touch;
+    visibility: hidden;
+    opacity: 0;
+    -webkit-transition: visibility 0s, opacity 0.3s;
+    -moz-transition: visibility 0s, opacity 0.3s;
+    transition: visibility 0s, opacity 0.3s;
+    border-radius: 15px;
+    border: 2px solid #D3D3D3;
+    
 }
 
 .cd-primary-nav li {
@@ -366,9 +369,9 @@ ul.cd-primary-nav {
   z-index: 999;
 }
 
-.cd-overlay-nav span {
+/*.cd-overlay-nav span {
   background-color: #89E894;
-}
+}*/
 
 .cd-overlay-content {
   /* main rounded colored bg 2 */

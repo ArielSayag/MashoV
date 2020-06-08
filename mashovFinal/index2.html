@@ -38,15 +38,17 @@
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
             integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
             crossorigin="anonymous"></script>
-    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+   
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <!--<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">-->
     <script src="//cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script>
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <script src='https://kit.fontawesome.com/a076d05399.js'></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+
     <script>
 
 
@@ -88,7 +90,40 @@
 
             $("#myInput").on("keyup", function () {
                 var value = $(this).val();
-                console.log(this);
+
+                $('#results > div').hide();
+
+                $('#results > div > div > h3:contains("' + value + '")').closest('#results > div').show();
+                $('#results > div > div > p:contains("' + value + '")').closest('#results > div').show();
+
+
+            });
+
+            $("#myInput1").on("keyup", function () {//search for bank crit
+                var value = $(this).val();
+
+                $('#sixth > div').hide();
+
+                $('#sixth > div > div > h5:contains("' + value + '")').closest('#sixth > div').show();
+                $('#sixth > div > div > h6:contains("' + value + '")').closest('#sixth > div').show();
+
+
+            });
+
+            $("#browsers1").on("change", function () {
+                var value = $(this).val();
+
+                $('#results > div').hide();
+
+                $('#results > div > div > h3:contains("' + value + '")').closest('#results > div').show();
+                $('#results > div > div > p:contains("' + value + '")').closest('#results > div').show();
+
+
+            });
+
+            $("#year").on("change", function () {
+                var value = $(this).val();
+
                 $('#results > div').hide();
 
                 $('#results > div > div > h3:contains("' + value + '")').closest('#results > div').show();
@@ -98,11 +133,10 @@
             });
 
 
-
             $("#wrapped").submit(f1);
 
             loginUser = JSON.parse(localStorage["Login"]); //user from login page
-            localStorage["update"] = JSON.stringify(loginUser);
+
             //check if manager
             var listTT = loginUser.Typesofuser
             for (i in listTT) {
@@ -114,6 +148,7 @@
                     loginUser.Type = t;
 
                     getuser = loginUser;
+                    localStorage["update"] = JSON.stringify(loginUser);
                 }
             }
             console.log(loginUser);
@@ -129,7 +164,7 @@
                 var arry = [];
                 arry[0] = filesName.split(".")[0];
                 // arry[0] = $("#extractFile").val().split(".")[0];
-                arry[1] = $("#Department").val();
+                arry[1] = $("#DepartmentExcel").val();
                 arry[2] = $("#Course").val();
                 arry[3] = filesName;
 
@@ -144,7 +179,7 @@
                     }
                 }
                 if (bool) {
-                    swal("אחד הפרמטרים לא תקינים ,נסה שנית");
+                    Swal.fire("אחד הפרמטרים לא תקינים ,נסה שנית");
                 }
                 else {
                     for (k in arry) {
@@ -189,7 +224,7 @@
         //------------------------------------------------------------------------------//
         //-------------------started dash for admin---------------------------------//
         function GETSuccessUser(data) {
-            var strmsg = "";
+           
             localStorage["AllDoc"] = JSON.stringify(data);
             localData = data;
             str = "";
@@ -204,38 +239,36 @@
                     if (!data[i].Status) {
                         if (data[i].TotalWeight == 0) {
                             str += `<div id="${i}" class="col-md-4 col-sm-6 search " style="direction:rtl" title="המשוב 0% קריטריונים ,לחץ לעדכון" onclick="showFeed(this.id)"><div class="service_box2 content">
-                                                                <div class="service_icon" ></div>`;
+                                                                        <div class="service_icon" ></div>`;
                         }
                         else if (data[i].TotalWeight == 100) {
                             str += `<div id="${i}" class="col-md-4 col-sm-6 search" style="direction:rtl" onclick="showFeed(this.id)"><div class="service_box content">
-                                                            <div class="service_icon" ></div>`;
+                                                                    <div class="service_icon" ></div>`;
                         }
                         else {
                             str += `<div id="${i}" class="col-md-4 col-sm-6 search " style="direction:rtl" title="המשוב אינו מוכן ,לחץ לעדכון" onclick="showFeed(this.id)"><div class="service_box1 content">
-                                                            <div class="service_icon"></div>`;
+                                                                    <div class="service_icon"></div>`;
                         }
                     }
                     else if (data[i].Status) {
 
-                        str += `<div id="${i}" class="col-md-4 col-sm-6 search" style="direction:rtl"><div class="service_box content">
-                                <div class="service_icon"><img src="img/icons8-borrow-book-50.png"  onclick="createExcel(this.parentNode.parentNode.parentNode.id)" /></div>`;
+                        str += `<div id="${i}" class="col-md-4 col-sm-6 search" style="direction:rtl" onclick="showFeed(this.id)"><div class="service_box content">
+                                        <div class="service_icon"><img src="img/icons8-borrow-book-50.png"  onclick="createExcel(this.parentNode.parentNode.parentNode.id)" /></div>`;
+
                     }
 
                     str += `<h3>
-                             ${data[i].DetailsMeet.NameMeeting}</h3><p><b>תאריך הצגה :</b>
-                             ${data[i].DetailsMeet.Date.split("T")[0]}</p><p id="numCourse" name="${data[i].DetailsMeet.DetailsCourseDep.NumCourse}"><b>שם הקורס :</b>
-                             ${data[i].DetailsMeet.DetailsCourseDep.NameCourse}</p><p id="numDep" name="${data[i].DetailsMeet.DetailsCourseDep.NumDepartment}"><b>מחלקה :</b>
-                             ${data[i].DetailsMeet.DetailsCourseDep.NameDepartment}</p><p><b>שנה :</b>
-                             ${data[i].DetailsMeet.YearMeeting}</p></div></div>`;
+                                     ${data[i].DetailsMeet.NameMeeting}</h3><p><b>תאריך הצגה :</b>
+                                     ${data[i].DetailsMeet.Date.split("T")[0]}</p><p id="numCourse" name="${data[i].DetailsMeet.DetailsCourseDep.NumCourse}"><b>שם הקורס :</b>
+                                     ${data[i].DetailsMeet.DetailsCourseDep.NameCourse}</p><p id="numDep" name="${data[i].DetailsMeet.DetailsCourseDep.NumDepartment}"><b>מחלקה :</b>
+                                     ${data[i].DetailsMeet.DetailsCourseDep.NameDepartment}</p><p><b>שנה :</b>
+                                     ${data[i].DetailsMeet.YearMeeting}</p></div></div>`;
 
                 }
 
                 $('#results').append(str);
             }
-            if (strmsg != "") {
-                swal(strmsg);
-
-            }
+           
         }
         function GETErrorUsere(err) { console.log(err); }
         var bankCrit = [];
@@ -249,23 +282,24 @@
 
             for (i in bankCrit) {
                 idCritDiv = 'crit' + i;
-
+                //#sixth>div > div >h5
+                //#sixth>div > div >h6
                 str2 += `<div id="${idCritDiv}" class="row pt-4">
-                                                                <div class="col-sm-3"></div>
-                                                                <div id="idC" value="${bankCrit[i].NumCrit}" class="col-sm-5">
-                                                                <h5 id="fdataname1" class="feedback1-show" value="${bankCrit[i].NameCrit}">${numbering++})${bankCrit[i].NameCrit}</h5>
-                                                                <h6 id="fdatadec1" class="feedback1-show" value="${bankCrit[i].DescriptionCrit}">תיאור:${bankCrit[i].DescriptionCrit}</h6>
+                                                                        <div class="col-sm-3"></div>
+                                                                        <div id="idC" value="${bankCrit[i].NumCrit}" class="col-sm-5">
+                                                                        <h5 id="fdataname1" class="feedback1-show" value="${bankCrit[i].NameCrit}">${numbering++})${bankCrit[i].NameCrit}</h5>
+                                                                        <h6 id="fdatadec1" class="feedback1-show" value="${bankCrit[i].DescriptionCrit}">תיאור:${bankCrit[i].DescriptionCrit}</h6>
 
-                                                                <div class="col-sm-12 p-0">
-                                                                <div class="form-group">
+                                                                        <div class="col-sm-12 p-0">
+                                                                        <div class="form-group">
 
-                                                                </div>
-                                                                </div>
-                                                                </div>
-                                                                <div class="col-sm-1">
-                                                                <a href="javascript:void(0)" class="btn btn-defult m-2" onclick=add(${idCritDiv})>הוסף<i class="icon-plus-circled"></i></a>
-                                                                </div>
-                                                                </div>`;
+                                                                        </div>
+                                                                        </div>
+                                                                        </div>
+                                                                        <div class="col-sm-1">
+                                                                        <a href="javascript:void(0)" class="btn btn-defult m-2" onclick=add(${idCritDiv})>הוסף<i class="icon-plus-circled"></i></a>
+                                                                        </div>
+                                                                        </div>`;
 
 
 
@@ -292,7 +326,7 @@
                 var errStr2 = data["msg"].split(",")[1];
 
 
-                swal(errStr1, errStr2).then(function () {
+                Swal.fire(errStr1, errStr2).then(function () {
                     location.reload();
                 });
 
@@ -305,11 +339,11 @@
                     "NameDoc": filesName.split(".")[0],
                 }
 
-                swal("הנתונים הועלו בהצלחה");
+                Swal.fire("הנתונים הועלו בהצלחה");
 
                 document.getElementById("addHere").innerHTML = "";
                 document.getElementById("nameFeed1").innerHTML = "";
-                $('.nameFeed1').append(newDoc.NameDoc);
+                $('.nameFeed1').html(newDoc.NameDoc);
                 $("#second-slide").hide();
                 $("#third-slide").fadeIn();
                 $("#fourth-slide").fadeIn();
@@ -370,7 +404,7 @@
 
                 }
                 else {
-                    swal("עברת את ה100% ,אנא בחר משקל אחד");
+                    Swal.fire("עברת את ה100% ,אנא בחר משקל אחד");
                     $(val).find("#weight").prop("selectedIndex", 0).val();
 
                     for (var j in arrExist) {
@@ -393,7 +427,7 @@
 
                 if (criteria == "Choose From List") {
                     if (totalWeight == 100) {
-                        swal("הגעת ל100% , לחיצה על סיים לא תאפשר שינויים.");
+                        Swal.fire("הגעת ל100% , לחיצה על סיים לא תאפשר שינויים.");
 
                     }
                     else {
@@ -411,7 +445,7 @@
         function CritLS() {
 
             if (totalWeight == 100) {
-                swal("הגעת ל100% , לחיצה על סיים לא תאפשר שינויים.");
+                Swal.fire("הגעת ל100% , לחיצה על סיים לא תאפשר שינויים.");
 
             }
             else {
@@ -424,39 +458,59 @@
         var listDiv = [];
 
         function saveToData(indexBoll) {
-
+      
             if ((indexBoll && totalWeight == 100) || (!indexBoll)) {
                 console.log(listDiv);
                 var tempArr = [];
                 for (var i = 0; i < listDiv.length; i++) {
 
+
+                    var index = parseInt(i) + 1;
                     var temp = document.getElementById(listDiv[i]);
 
-                    tempArr[0] = temp.querySelector("#critname").value; // find the id from all div
-                    tempArr[1] = CKEDITOR.instances[$("#" + temp.id + " #description").attr('id')].getData();
+                    tempArr[0] = temp.querySelector("#critname").value;
+           
+                    var editor = "ckeditor" + index;
+                    tempArr[1] = CKEDITOR.instances[editor].getData();
+               
+                  
                     var weight = temp.querySelector("#weight").value;
                     var scala = temp.querySelector("#scala").value;
-                    var idc = temp.querySelector("#idc").value;
+                    var idc = $(temp).find("#idc").attr('value');
 
                     for (k in tempArr) {
                         tempArr[k] = tempString(tempArr[k]);
                     }
 
-                    if (weight != 0) {
+                    if ((weight != 0) && (scala != 0)) {
 
-                        crit = {
-                            "NumCrit": idc,
-                            "NameCrit": tempArr[0],
-                            "DescriptionCrit": tempArr[1],
-                            "WeightCrit": weight,
-                            "typeCrit": scala,
+                        if ((tempArr[0].length > 100) || (tempArr[0] == "")) {
+                            Swal.fire("בקריטריון מספר " + index + "כותרת הקריטריון צריך להיות מ1-100 תויים");
+                            return false;
                         }
-                        listCrit.push(crit);
+                        else if ((tempArr[1].length > 4000) || (tempArr[1] == "")) {
+                            Swal.fire("בקריטריון מספר " + index + "תיאור הקריטריון צריך להיות מ 1-4000 תווים");
+                            return false;
+                        } else {
+                            crit = {
+                                "NumCrit": idc,
+                                "NameCrit": tempArr[0],
+                                "DescriptionCrit": tempArr[1],
+                                "WeightCrit": weight,
+                                "typeCrit": scala,
+                            }
+                            listCrit.push(crit);
+                        }
 
+                    }
+                    else {
+
+                        Swal.fire("בקריטריון מספר " + index + " לא בחרת משקל/סקלה ");
+                        return false;
                     }
 
                 }
-                console.log(localData[0]);
+
 
                 newDoc.Status = indexBoll; // if clicked 'סיים' status=true ..if  'שמור' status=false
                 newDoc.TotalWeight = totalWeight;
@@ -469,19 +523,30 @@
                 ajaxCall("POST", "./api/Criteria", JSON.stringify(critsInDoc), GETSuccessCrit, GETErrorCrit);
             }
             else {
-                swal("לא ניתן לסיים משוב שלא הגיע ל100%🤷‍♂️");
+                Swal.fire("לא ניתן לסיים משוב שלא הגיע ל100%🤷‍♂️");
             }
         }
         var strLScrit = "";
         function GETSuccessCrit(data) {
 
-            swal('המשוב הועלה בהצלחה✔');
-            dashboard(getuser);  // like  refresh
-            $("#third-slide").hide();
-            $("#fourth-slide").hide();
-            $("#first-slide").fadeIn(); // back to dash
+            Swal.fire(
+                'בוצע!',
+                'המסמך עודכן בהצלחה',
+                'success'
+            ).then(function () {
+                location.reload(true);
+            });
+
         }
-        function GETErrorCrit(err) { console.log(err); }
+        function GETErrorCrit(err) {
+            console.log(err);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'המשוב לא הועלה בהצלחה',
+              
+            })
+        }
 
         var strNewCrit = "";
         var strAnat = "";
@@ -489,84 +554,98 @@
 
 
         function showDivNewCrit() {
+            var i = count;
             strAnat = 'anat' + count++;
-
+       
             strNewCrit = `<div class="box" id="${strAnat}">
-                                                        <div class="row pt-5">
-                                                        <div class="col-sm-6 mx-auto">
-                                                        <div id="idc" value="0" class="form-group">קריטריון מס ${count})
-                                                        <input type="text" class="form-control" id="critname" placeholder="שם קריטריון" required>
-                                                        </div>
-                                                        <div class="form-group">
-                                                        <textarea type="text" class="form-control ckeditor cke_rtl"  style="width:100%" id="description" placeholder="תיאור"></textarea>
-                                                        </div>
-                                                        </div>
-                                                        </div>
-                                                        <div class="row pt-4">
-                                                        <div class="col-sm-5 offset-6 m-auto ">
-                                                        <div class="form-group">
-                                                        <select class="form-control" id="weight" onchange="showTotalWeight(${strAnat})">
-                                                        <option value="0">בחר משקל</option>
-                                                        <option value="5">5%</option>
-                                                        <option value="10">10%</option>
-                                                        <option value="15">15%</option>
-                                                        <option value="20">20%</option>
-                                                        <option value="25">25%</option>
-                                                        <option value="30">30%</option>
-                                                        <option value="35">35%</option>
-                                                        <option value="40">40%</option>
-                                                        <option value="45">45%</option>
-                                                        <option value="50">50%</option>
-                                                        </select>
-                                                        </div>
-                                                        <div class="form-group">
-                                                        <select class="form-control" id="scala">
-                                                        <option value="0">בחר סקאלה</option>
-                                                        <option value="1">כן/לא</option>
-                                                        <option value="2">בוצע/לא בוצע</option>
-                                                        <option value="3">רציף 1-100</option>
-                                                        <option value="4">1-10 רציף</option>
-                                                        <option value="5">1-5 בדיד</option>
-                                                        <option value="6">1-10 בדיד</option>
-                                                        </select>
-                                                        </div>
-                                                        </div>
-                                                        </div>
-                                                        <div class="row pt-3">
-                                                        <div class="col-sm-4 m-auto">
-                                                        <a class="btn btn-defult text-light m-3 fourth-slide-hide-btn"  onclick="deleteCrit(${strAnat})" href="javascript:void(0)"> מחק</a>
-                                                        </div>
-                                                        </div>
-                                                        <div class="row">
-                                                        <div class="col-sm-6 mx-auto">
-                                                        <div class="form-group">
-                                                        <select class="form-control" onclick="addSecendTime(${strAnat})" id="add-criteria-btn">
-                                                        <option selected disabled>הוסף קריטריון </option>
-                                                        <option value="Choose From List">בחר מרשימה</option>
-                                                        <option value="New">חדש</option>
-                                                        </select>
-                                                        </div>
-                                                        </div>
-                                                        </div>
-                                                        </div>
-                                                        </div>`;
+                                                                <div class="row pt-5">
+                                                                <div class="col-sm-6 mx-auto">
+                                                                <div id="idc" value="0" class="form-group">קריטריון מס ${count})
+                                                                <input type="text" class="form-control" id="critname" placeholder="שם קריטריון" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                <textarea type="text" class="form-control ckeditor cke_rtl"  style="width:100%" id="ckeditor${i}"></textarea>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                <div class="row pt-4">
+                                                                <div class="col-sm-5 offset-6 m-auto ">
+                                                                <div class="form-group">
+                                                                <select class="form-control" id="weight" onchange="showTotalWeight(${strAnat})">
+                                                                <option value="0">בחר משקל</option>
+                                                                <option value="5">5%</option>
+                                                                <option value="10">10%</option>
+                                                                <option value="15">15%</option>
+                                                                <option value="20">20%</option>
+                                                                <option value="25">25%</option>
+                                                                <option value="30">30%</option>
+                                                                <option value="35">35%</option>
+                                                                <option value="40">40%</option>
+                                                                <option value="45">45%</option>
+                                                                <option value="50">50%</option>
+                                                                </select>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                <select class="form-control" id="scala">
+                                                                <option value="0">בחר סקאלה</option>
+                                                                <option value="1">כן/לא</option>
+                                                                <option value="2">בוצע/לא בוצע</option>
+                                                                <option value="3">רציף 1-100</option>
+                                                                <option value="4">1-10 רציף</option>
+                                                                <option value="5">1-5 בדיד</option>
+                                                                <option value="6">1-10 בדיד</option>
+                                                                </select>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                <div class="row pt-3">
+                                                                <div class="col-sm-4 m-auto">
+                                                                <a class="btn btn-defult text-light m-3 fourth-slide-hide-btn"  onclick="deleteCrit(${strAnat})" href="javascript:void(0)"> מחק</a>
+                                                                </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                <div class="col-sm-6 mx-auto">
+                                                                <div class="form-group">
+                                                                <select class="form-control" onclick="addSecendTime(${strAnat})" id="add-criteria-btn">
+                                                                <option selected disabled>הוסף קריטריון </option>
+                                                                <option value="Choose From List">בחר מרשימה</option>
+                                                                <option value="New">חדש</option>
+                                                                </select>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                </div>`;
 
             $("#addHere").append(strNewCrit);
             // $("#five").append(strNewCrit);
-            ckReplace();
+            ckReplace(strAnat);
             console.log(strAnat);
             listDiv.push(strAnat);
 
 
         }
-        function ckReplace() {
-            //connect all text area to CKeditor;
-            var areas = $(".ckeditor");
-            $.each(areas, function (i, area) {
-                CKEDITOR.replace(area, {
-                    customConfig: '/Scripts/ckeditor/config.mini.js'
+        var ckEd = [];
+        function ckReplace(index) {
+
+            if (index != undefined) {
+                var x = index.charAt(index.length - 1)
+                var areas = $("#" + index + ` #ckeditor${x}`);
+                $.each(areas, function (i, area) {
+                    CKEDITOR.replace(area, {
+                        customConfig: '/Scripts/ckeditor/config.mini.js'
+                    });
                 });
-            });
+            }
+            else {
+                //connect all text area to CKeditor;
+                var areas = $(".ckeditor");
+                $.each(areas, function (i, area) {
+                    CKEDITOR.replace(area, {
+                        customConfig: '/Scripts/ckeditor/config.mini.js'
+                    });
+                });
+            }
         }
         function deleteCrit(del) {
 
@@ -584,6 +663,9 @@
 
             var w = $(del).find("#weight").attr('value');
             $(del).remove();
+
+            critEditExist.push(critEditExist.splice(critEditExist.indexOf(k), 1)[0]);
+            critEditExist.pop();
 
             /////delete crit from data
             console.log(listDiv);
@@ -639,83 +721,104 @@
         }
         addCrit = [];
         var straddCrit = "";
+        var exist = false;
         function add(oneCrit) {
-            var temp1 = $(oneCrit).attr('id');
-            var temp = document.getElementById(temp1);
+            var temp1 = $(oneCrit).find("#idC").attr('value');
+            for (c in listCrit) {
+                var temp = document.getElementById(listDiv[c]);
+                var idc2 = $(temp).find("#idc").attr('value');
+                if (temp1 == idc2) {
+                    exist = true;
+                    break;
+                }
+            }
+            for (c1 in critEditExist) {
+                var temp3 = document.getElementById(critEditExist[c1]);
+                var idc3 = $(temp3).find("#idC").attr('value');
+                if (temp1 == idc3) {
+                    exist = true;
+                    break;
+                }
+            }
+            if (!exist) {
 
-            addCrit[0] = $(oneCrit).find("#fdataname1").attr('value');
-            addCrit[1] = $(oneCrit).find("#fdatadec1").attr('value');
-            var idc = $(oneCrit).find("#idC").attr('value');
+                addCrit[0] = $(oneCrit).find("#fdataname1").attr('value');
+                addCrit[1] = $(oneCrit).find("#fdatadec1").attr('value');
+                var idc = $(oneCrit).find("#idC").attr('value');
+
+                var z = count;
+                strAnat = 'anat' + count++;
+
+                straddCrit = `<div class="box" id="${strAnat}">
+                                                                <div class="row pt-5">
+                                                                <div class="col-sm-6 mx-auto">
+                                                                <div id="idc" value="${idc}" class="form-group">קריטריון מס ${count})
+                                                                <input type="text" class="form-control" id="critname" value="${addCrit[0]}" required>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                <textarea type="text" class="form-control ckeditor" style="height:100%"  id="ckeditor${z}" >${addCrit[1]}</textarea>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                <div class="row pt-4">
+                                                                <div class="col-sm-5 offset-6 m-auto ">
+                                                                <div class="form-group">
+                                                                <select class="form-control" id="weight" onchange="showTotalWeight(${strAnat})">
+                                                                <option value="0">בחר משקל</option>
+                                                                <option value="5">5%</option>
+                                                                <option value="10">10%</option>
+                                                                <option value="15">15%</option>
+                                                                <option value="20">20%</option>
+                                                                <option value="25">25%</option>
+                                                                <option value="30">30%</option>
+                                                                <option value="35">35%</option>
+                                                                <option value="40">40%</option>
+                                                                <option value="45">45%</option>
+                                                                <option value="50">50%</option>
+                                                                </select>
+                                                                </div>
+                                                                <div class="form-group">
+                                                                <select class="form-control" id="scala">
+                                                                <option value="0">בחר סקאלה</option>
+                                                                <option value="1">כן/לא</option>
+                                                                <option value="2">בוצע/לא בוצע</option>
+                                                                <option value="3">רציף 1-100</option>
+                                                                <option value="4">1-10 רציף</option>
+                                                                <option value="5">1-5 בדיד</option>
+                                                                <option value="6">1-10 בדיד</option>
+                                                                </select>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                <div class="row pt-3">
+                                                                <div class="col-sm-4 m-auto">
+                                                                <a class="btn btn-defult text-light m-3 fourth-slide-hide-btn"  onclick="deleteCrit(${strAnat})" href="javascript:void(0)"> מחק</a>
+                                                                </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                <div class="col-sm-6 mx-auto">
+                                                                <div class="form-group">
+                                                                <select class="form-control" onclick="addSecendTime(${strAnat})" id="add-criteria-btn">
+                                                                <option selected disabled>הוסף קריטריון </option>
+                                                                <option value="Choose From List">בחר מרשימה</option>
+                                                                <option value="New">חדש</option>
+                                                                </select>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                </div>
+                                                                </div>`;
 
 
-            strAnat = 'anat' + count++;
-
-            straddCrit = `<div class="box" id="${strAnat}">
-                                                        <div class="row pt-5">
-                                                        <div class="col-sm-6 mx-auto">
-                                                        <div id="idc" value="${idc}" class="form-group">קריטריון מס ${count})
-                                                        <input type="text" class="form-control" id="critname" value="${addCrit[0]}" required>
-                                                        </div>
-                                                        <div class="form-group">
-                                                        <textarea type="text" class="form-control ckeditor" style="height:100%"  id="description" >${addCrit[1]}</textarea>
-                                                        </div>
-                                                        </div>
-                                                        </div>
-                                                        <div class="row pt-4">
-                                                        <div class="col-sm-5 offset-6 m-auto ">
-                                                        <div class="form-group">
-                                                        <select class="form-control" id="weight" onchange="showTotalWeight(${strAnat})">
-                                                        <option value="0">בחר משקל</option>
-                                                        <option value="5">5%</option>
-                                                        <option value="10">10%</option>
-                                                        <option value="15">15%</option>
-                                                        <option value="20">20%</option>
-                                                        <option value="25">25%</option>
-                                                        <option value="30">30%</option>
-                                                        <option value="35">35%</option>
-                                                        <option value="40">40%</option>
-                                                        <option value="45">45%</option>
-                                                        <option value="50">50%</option>
-                                                        </select>
-                                                        </div>
-                                                        <div class="form-group">
-                                                        <select class="form-control" id="scala">
-                                                        <option value="0">בחר סקאלה</option>
-                                                        <option value="1">כן/לא</option>
-                                                        <option value="2">בוצע/לא בוצע</option>
-                                                        <option value="3">רציף 1-100</option>
-                                                        <option value="4">1-10 רציף</option>
-                                                        <option value="5">1-5 בדיד</option>
-                                                        <option value="6">1-10 בדיד</option>
-                                                        </select>
-                                                        </div>
-                                                        </div>
-                                                        </div>
-                                                        <div class="row pt-3">
-                                                        <div class="col-sm-4 m-auto">
-                                                        <a class="btn btn-defult text-light m-3 fourth-slide-hide-btn"  onclick="deleteCrit(${strAnat})" href="javascript:void(0)"> מחק</a>
-                                                        </div>
-                                                        </div>
-                                                        <div class="row">
-                                                        <div class="col-sm-6 mx-auto">
-                                                        <div class="form-group">
-                                                        <select class="form-control" onclick="addSecendTime(${strAnat})" id="add-criteria-btn">
-                                                        <option selected disabled>הוסף קריטריון </option>
-                                                        <option value="Choose From List">בחר מרשימה</option>
-                                                        <option value="New">חדש</option>
-                                                        </select>
-                                                        </div>
-                                                        </div>
-                                                        </div>
-                                                        </div>
-                                                        </div>`;
-
-
-            $("#fourth-slide").fadeIn();
-            $("#sixth-slide").hide();
-            $("#addHere").append(straddCrit);
-            listDiv.push(strAnat);
-            ckReplace();
+                $("#fourth-slide").fadeIn();
+                $("#sixth-slide").hide();
+                $("#addHere").append(straddCrit);
+                listDiv.push(strAnat);
+                ckReplace(strAnat);
+            }
+            else {
+                Swal.fire("קריטריון זה כבר קיים במסמך הנ`ל");
+            }
         }
 
 
@@ -740,7 +843,7 @@
 
         }
 
-
+        var critEditExist = [];
         function GETSuccessDoc(data) {
             totalWeight = 0;
             totalW = 0;
@@ -756,29 +859,30 @@
             IdDoc = data.Doc;
 
 
-            $('.nameFeed').append(data.Doc.NameDoc);
+            $('.nameFeed').html(data.Doc.NameDoc);
 
             for (i in listCritEdit) {
                 critFdata = 'fdata' + i;
+                critEditExist.push(critFdata);
                 totalWeight += parseInt(listCritEdit[i].WeightCrit);
                 var idC = listCritEdit[i].NumCrit;
-                str1 += `<div id="${critFdata}" class="row pt-4">
-                                                                <div class="col-sm-3"></div>
-                                                                <div id="idC" value="${listCritEdit[i].NumCrit}" class="col-sm-5">
-                                                                <h5 id="fdataname" class="feedback1-show" value="${listCritEdit[i].NameCrit}">${++countFeedName})${listCritEdit[i].NameCrit}</h5>
-                                                                <h6 id="fdatadec" class="feedback1-show" value="${listCritEdit[i].DescriptionCrit}">תיאור:${listCritEdit[i].DescriptionCrit}</h6>
-                                                                <h7 id="weight" class="feedback1-show" value="${listCritEdit[i].WeightCrit}" >משקל: ${listCritEdit[i].WeightCrit}</h7>
-                                                                <div class="col-sm-12 p-0">
-                                                                <div class="form-group">
-                                                                <h7 id="scala" name="${listCritEdit[i].TypeCrit}" class="feedback1-show" value="${listCritEdit[i].NameScala}" >סקאלה: ${listCritEdit[i].NameScala}</h7>
-                                                                </div>
-                                                                </div>
-                                                                </div>
-                                                                <div class="col-sm-1">
-                                                                <a href="javascript:void(0)" class="btn btn-defult m-2 feedback1-edit-btn" onclick="crit_edit_btn(${critFdata})">ערוך<i class="icon-edit"></i></a>
-                                                                <a href="javascript:void(0)" class="btn btn-defult m-2 feedback1-edit-btn" onclick="deleteCritfromdata(${critFdata},${idC})">מחק<i class="fa fa-trash"></i></a>
-                                                                </div>
-                                                                </div>`;
+                str1 += `<div id="${critFdata}" class="row pt-4 box">
+                                                                        <div class="col-sm-3"></div>
+                                                                        <div id="idC" value="${listCritEdit[i].NumCrit}" class="col-sm-5">
+                                                                        <h5 id="fdataname" class="feedback1-show" value="${listCritEdit[i].NameCrit}">${++countFeedName})${listCritEdit[i].NameCrit}</h5>
+                                                                        <h6 id="fdatadec" class="feedback1-show" value="${listCritEdit[i].DescriptionCrit}">תיאור:${listCritEdit[i].DescriptionCrit}</h6>
+                                                                        <h7 id="weight" class="feedback1-show" value="${listCritEdit[i].WeightCrit}" >משקל: ${listCritEdit[i].WeightCrit}</h7>
+                                                                        <div class="col-sm-12 p-0">
+                                                                        <div class="form-group">
+                                                                        <h7 id="scala" name="${listCritEdit[i].TypeCrit}" class="feedback1-show" value="${listCritEdit[i].NameScala}" >סקאלה: ${listCritEdit[i].NameScala}</h7>
+                                                                        </div>
+                                                                        </div>
+                                                                        </div>
+                                                                        <div class="col-sm-1 btndeledit">
+                                                                        <a href="javascript:void(0)" class="btn btn-defult m-2 feedback1-edit-btn" onclick="crit_edit_btn(${critFdata})">ערוך<i class="icon-edit"></i></a>
+                                                                        <a href="javascript:void(0)" class="btn btn-defult m-2 feedback1-edit-btn" onclick="deleteCritfromdata(${critFdata},${idC})">מחק<i class="fa fa-trash"></i></a>
+                                                                        </div>
+                                                                        </div>`;
 
             }
 
@@ -789,27 +893,44 @@
 
             //if (totalWeight < 100) {
             str1 += `<div class="row pt-4" >
-                             <div class="col-sm-3"></div>
-                             <div class="col-sm-5"><div id="newFor" ><div class="form-group">
-                             <select class="form-control" onclick="addSecendTime(newFor)" id="add-criteria-btn">
-                             <option selected disabled>הוסף קריטריון</option>
-                             <option value="Choose From List">בחר מרשימה</option>
-                             <option value="New">חדש</option>
-                             </select>
-                             </div></div>`;
+                                     <div class="col-sm-3"></div>
+                                     <div class="col-sm-5"><div id="newFor"><div class="form-group">
+                                     <select class="form-control" onclick="addSecendTime(newFor)" id="add-criteria-btn">
+                                     <option selected disabled>הוסף קריטריון</option>
+                                     <option value="Choose From List">בחר מרשימה</option>
+                                     <option value="New">חדש</option>
+                                     </select>
+                                     </div></div>`;
             //}
             $('#addHere').append(str1);
+
+            if (newDoc.Status) {
+                $(".btndeledit").hide();
+                $("#btnDropdown").hide();
+                $("#exist-edit-btn").hide();
+                $("#newFor").hide();
+
+            }
+            else {
+                $(".btndeledit").show();
+                $("#btnDropdown").show();
+                $("#exist-edit-btn").show();
+                $("#newFor").show();
+
+            }
         }
         function GETErrorDoc(err) { console.log(err); }
         var sreEdit = "";
         var countEditCrit = "";
         var scala1 = '';
         var critArr = [];
+
         function crit_edit_btn(critId) {
 
             countEditCrit = $(critId).attr('id');
 
             critArr[0] = $(critId).find("#fdataname").attr('value');
+
             critArr[1] = $(critId).find("#fdatadec").attr('value');
             critArr[2] = $(critId).find("#weight").attr('value');
             critArr[3] = $(critId).find("#scala").attr('name');
@@ -817,57 +938,61 @@
             critArr[5] = $(critId).find("#idC").attr('value');
 
 
-            sreEdit = `<div id="${countEditCrit}" class="row pt-4">
-                                                        <div class="col-sm-3"></div>
-                                                          <div id="idcrit" value="${critArr[5]}" class="col-sm-5">
-                                                              <input id="critname1" type="text" class="form-control feedback1-edit" value="${critArr[0]}">
-                                                              <textarea id="description1" type="text"  style="width:100%" class="form-control feedback1-edit ckeditor" >${critArr[1]}</textarea>
-                                                              <input id="weight1" type="text" class="form-control feedback1-edit" value="${critArr[2]}">
-                                                               <div class="col-sm-12 p-0">
-                                                                  <div class="form-group">
-                                                                     <select class="form-control"  id="scala1">
-                                                                     <option  value="${critArr[3]}">${critArr[4]}</option>
-                                                                        <option value="1">כן/לא</option>
-                                                        <option value="2">בוצע/לא בוצע</option>
-                                                        <option value="3">רציף 1-100</option>
-                                                        <option value="4">1-10 רציף</option>
-                                                        <option value="5">1-5 בדיד</option>
-                                                        <option value="6">1-10 בדיד</option>
-                                                                     </select>
-                                                                   </div>
+            sreEdit = `<div id="${countEditCrit}" class="row pt-4 box">
+                                                                <div class="col-sm-3"></div>
+                                                                  <div id="idcrit" value="${critArr[5]}" class="col-sm-5">
+                                                                      <input id="critname1" type="text" class="form-control feedback1-edit" value="${critArr[0]}">
+                                                                      <textarea id="description1" type="text"  style="width:100%" class="form-control feedback1-edit ckeditor">${critArr[1]}</textarea>
+                                                                      <input id="weight1" type="text" class="form-control feedback1-edit" value="${critArr[2]}">
+                                                                       <div class="col-sm-12 p-0">
+                                                                          <div class="form-group">
+                                                                             <select class="form-control"  id="scala1">
+                                                                             <option  value="${critArr[3]}">${critArr[4]}</option>
+                                                                                <option value="1">כן/לא</option>
+                                                                <option value="2">בוצע/לא בוצע</option>
+                                                                <option value="3">רציף 1-100</option>
+                                                                <option value="4">1-10 רציף</option>
+                                                                <option value="5">1-5 בדיד</option>
+                                                                <option value="6">1-10 בדיד</option>
+                                                                             </select>
+                                                                           </div>
 
-                                                               </div>
-                                                              <div class=row>
-                                                             <a class="btn btn-defult text-light m-3 feedback1-show-btn feedback1-edit" onclick="saveThisCrit(${countEditCrit},1)" href="javascript:void(0)"> שמור</a>
-                                                             <a class="btn btn-defult text-light m-3 feedback1-show-btn feedback1-edit" onclick="saveThisCrit(${countEditCrit},0)" href="javascript:void(0)"> בטל</a>
-                                                                </div>
-                                                           </div>
-                                                         </div>`;
+                                                                       </div>
+                                                                      <div class=row>
+                                                                     <a class="btn btn-defult text-light m-3 feedback1-show-btn feedback1-edit" onclick="saveThisCrit(${countEditCrit},1)" href="javascript:void(0)"> שמור</a>
+                                                                     <a class="btn btn-defult text-light m-3 feedback1-show-btn feedback1-edit" onclick="saveThisCrit(${countEditCrit},0)" href="javascript:void(0)"> בטל</a>
+                                                                        </div>
+                                                                   </div>
+                                                                 </div>`;
 
             $(critId).replaceWith(sreEdit);
             ckReplace();
         }
+
+
         var thiscrit = null;
         var thisEditCrit1 = "";
+        var critnam = "";
+        var dec = "";
+        var weight = "";
+        var scalaid = "";
         function saveThisCrit(thisEditCrit, saveORnot) {
 
-            //if (thiscrit != null) {
-            //    swal('🤦‍♀️אנא המתן..עומס כבד על המערכת');
-
-            //    return;
-            //}
+            critEditExist.push(thisEditCrit);
             thisEditCrit1 = thisEditCrit;
             thiscrit = $(thisEditCrit).attr('id');
             var temp = document.getElementById(thiscrit);
 
 
-            var critnam = temp.querySelector("#critname1").value;
-            var dec = temp.querySelector("#description1").value;
-            var weight = temp.querySelector("#weight1").value;
-            var id = $(thisEditCrit).find("#idcrit").attr('value');
+            critnam = temp.querySelector("#critname1").value;
+            dec = CKEDITOR.instances[$("#" + thiscrit + " #description1").attr('id')].getData();
+            weight = temp.querySelector("#weight1").value;
+            id = $(thisEditCrit).find("#idcrit").attr('value');
+
             critnam = tempString(critnam);
             dec = tempString(dec);
-            var scalaid = temp.querySelector("#scala1").value;
+            scalaid = temp.querySelector("#scala1").value;
+
 
 
 
@@ -884,6 +1009,8 @@
 
             }
             else {
+
+
                 var newW = parseInt(weight);
                 var oldW = parseInt(critArr[2]);
                 var sum = totalWeight - oldW + newW;
@@ -893,33 +1020,41 @@
                     totalWeight += newW;
 
 
-                    document.getElementById("aria-valuenow").innerHTML = "";
-                    $("#aria-valuenow").append(totalWeight);
-                    $("#aria-valuenow").progressbar({ value: totalWeight });
-                    $("#aria-valuenow").css({ "width": totalWeight + "%" });
 
-                    c = {
-                        "NumCrit": id,
-                        "NameCrit": critnam,
-                        "DescriptionCrit": dec,
-                        "WeightCrit": weight,
-                        "TypeCrit": scalaid,
+                    if (critnam.length > 100) {
+                        Swal.fire("שם הקריטריון צריך להיות עד 100 תווים");
                     }
-                    var lis = [];
-                    lis.push(c);
-                    cd = {
-                        "Doc": IdDoc,
-                        "AllCrit": lis,
+                    else if (dec.length > 4000) {
+                        Swal.fire("תיאור הקריטריון צריך להיות עד 100 תווים");
+                    } else {
 
+                        document.getElementById("aria-valuenow").innerHTML = "";
+                        $("#aria-valuenow").append(totalWeight);
+                        $("#aria-valuenow").progressbar({ value: totalWeight });
+                        $("#aria-valuenow").css({ "width": totalWeight + "%" });
+
+                        c = {
+                            "NumCrit": id,
+                            "NameCrit": critnam,
+                            "DescriptionCrit": dec,
+                            "WeightCrit": weight,
+                            "TypeCrit": scalaid,
+                        }
+                        var lis = [];
+                        lis.push(c);
+                        cd = {
+                            "Doc": IdDoc,
+                            "AllCrit": lis,
+
+                        }
+
+
+                        ajaxCall("POST", "./api/Doc/UpdateCrit", JSON.stringify(cd), POSTSuccessC, POSTErrorC);
                     }
-
-
-                    ajaxCall("POST", "./api/Doc/UpdateCrit", JSON.stringify(cd), POSTSuccessC, POSTErrorC);
-
 
                 }
                 else {
-                    swal("עברת את ה100% ,אנא בחר משקל אחד");
+                    Swal.fire("עברת את ה100% ,אנא בחר משקל אחד");
                 }
 
                 //insert new crit , update his ID  and replace  it from the list<Crit> of the doc...
@@ -930,44 +1065,37 @@
 
         function foo(id, thiscrit, scalaid, critnam, dec, weight) {
 
-            critnam = tempString(critnam);
-            dec = tempString(dec);
 
             for (i in listScal) {
                 if (scalaid == listScal[i].NumScala) {
                     var scala = listScal[i].NameScala;
                 }
             }
-            return `<div id="${thiscrit}" class="row pt-4">
-                                                                <div class="col-sm-3"></div>
-                                                                <div id="idcrit" value="${id}" class="col-sm-5">
-                                                                <h5 id="fdataname" class="feedback1-show" value="${critnam}">${1})${critnam}</h5>
-                                                                <h6 id="fdatadec" class="feedback1-show" value="${dec}">תיאור:${dec}</h6>
-                                                                <h7 id="weight" class="feedback1-show" value="${weight}" >משקל: ${weight}</h7>
-                                                                <div class="col-sm-12 p-0">
-                                                                <div class="form-group">
-                                                                <h7 id="scala" name="${scalaid}" class="feedback1-show" value="${scala}" >סקאלה: ${scala}</h7>
-
-                                                                </div>
-                                                                </div>
-                                                                </div>
-                                                                <div class="col-sm-1">
-                                                                <a href="javascript:void(0)" class="btn btn-defult m-2 feedback1-edit-btn" onclick="crit_edit_btn(${thiscrit})">ערוך<i class="icon-edit"></i></a>
-                                                                </div>
-                                                                </div>`;
+            return `<div id="${thiscrit}" class="row pt-4 box">
+                                            <div class="col-sm-3"></div>
+                                            <div id="idcrit" value="${id}" class="col-sm-5">
+                                            <h5 id="fdataname" class="feedback1-show" value="${critnam}">${critnam}</h5>
+                                            <h6 id="fdatadec" class="feedback1-show" value="${dec}">תיאור:${dec}</h6>
+                                            <h7 id="weight" class="feedback1-show" value="${weight}" >משקל: ${weight}</h7>
+                                            <div class="col-sm-12 p-0">
+                                            <div class="form-group">
+                                            <h7 id="scala" name="${scalaid}" class="feedback1-show" value="${scala}" >סקאלה: ${scala}</h7>
+                                            </div>
+                                            </div>
+                                            </div>
+                                            <div class="col-sm-1 btndeledit">
+                                            <a href="javascript:void(0)" class="btn btn-defult m-2 feedback1-edit-btn" onclick="crit_edit_btn(${thiscrit})">ערוך<i class="icon-edit"></i></a>
+                                            <a href="javascript:void(0)" class="btn btn-defult m-2 feedback1-edit-btn" onclick="deleteCritfromdata(${thiscrit},${id})">מחק<i class="fa fa-trash"></i></a>
+                                            </div>
+                                            </div>`;
 
         }
         var idnew = "";
         function POSTSuccessC(data) {
             console.log(data);
-            idnew = data;
-            var temp = document.getElementById(thiscrit);
-            var critnam = temp.querySelector("#critname1").value;
-            var dec = temp.querySelector("#description1").value;
-            var weight = temp.querySelector("#weight1").value;
-            var scalaid = temp.querySelector("#scala1").value;
 
-            strthis = foo(idnew, thiscrit, scalaid, critnam, dec, weight);
+
+            strthis = foo(data.NumCrit, thiscrit, data.TypeCrit, data.NameCrit, data.DescriptionCrit, data.WeightCrit);
 
             $(thisEditCrit1).replaceWith(strthis);
             thiscrit = null;
@@ -994,7 +1122,7 @@
 
 </head>
 
-<body ng-app="HebrewDate">
+<body ng-app="HebrewDate" style="font-family:FbSpacer;">
     <div id="preloader">
         <div data-loader="circle-side"></div>
     </div>
@@ -1014,16 +1142,16 @@
                 <div class="col-9">
                     <div id="social" class="m-auto">
                         <ul>
-                            <li><a style="color: #89E894" href="index2.html">מנהל</a></li>
-                            <li><a href="index3.html">שופט</a></li>
-                            <li><a href="index4.html">מנחה</a></li>
+                            <li><a style="color: #89E894" href="javascript:void(0)" onclick="goNextPage(2)">מנהל</a></li>
+                            <li><a href="javascript:void(0)" onclick="goNextPage(3)">שופט</a></li>
+                            <li><a href="javascript:void(0)" onclick="goNextPage(4)">מנחה</a></li>
                             <!--<li><a href="index5.html">סטודנט</a></li>-->
                         </ul>
                     </div>
                     <!-- /social -->
                     <nav>
                         <ul class="cd-primary-nav">
-                            <li><a href="javascript:void(0)" class="animated_link">Setting</a></li>
+                            <li><a href="javascript:void(0)" class="animated_link">הגדרות</a></li>
                             <li><a href="javascript:void(0)" class="animated_link">Menu</a></li>
                         </ul>
                     </nav>
@@ -1043,6 +1171,8 @@
                             <div class="col-md-12">
                                 <div id="tabsJustifiedContent" class="tab-content">
                                     <h2 id="helloAdmin" class="text-center"></h2>
+                                    <br/>
+                                    <br/>
                                     <!-- 1st-slide start -->
                                     <section id="first-slide" class="container py-4">
                                         <div class="branch" id="Seo-Optimization">
@@ -1051,7 +1181,7 @@
                                                     <div class="col-4 text-center">
                                                         <a id="new-feedback-btn" class="btn btn-defult p-lg-3 p-sm-2" href="javascript:void(0)">צור חדש</a>
                                                         <br />
-                                                        <a  href="setting.html" >
+                                                        <a href="setting.html">
                                                             <i class="material-icons" style="font-size:48px;color:#5a5a5a;padding:15px">settings</i>
                                                         </a>
                                                         <a href="updateUser.html">
@@ -1079,7 +1209,7 @@
                                                                         <i class="icon-search-8"></i>
                                                                     </button>
                                                                 </div>
-                                                                <input id="myInput" type="search" placeholder="Search" aria-describedby="button-addon2" class="form-control border-0">
+                                                                <input id="myInput" type="search" placeholder="חיפוש" aria-describedby="button-addon2" class="form-control border-0">
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1111,7 +1241,7 @@
                                         <div class="row pt-5 justify-content-center">
                                             <div class="col-3">
                                                 <div class="form-group">
-                                                    <select class="form-control" id="Department" autocomplete="on"></select>
+                                                    <select class="form-control" id="DepartmentExcel" autocomplete="on"></select>
                                                 </div>
                                             </div>
                                             <div class="col-3">
@@ -1144,77 +1274,77 @@
                                         </div>
                                     </section>
                                     <!--<section id="second-slide" class="container py-4">
-                <div class="row">
-                    <div class="col-6 col-sm-6 mx-auto">
-                        <a id="done-btn" class="btn btn-defult p-3 w-100" href="javascript:void(0)"> <i class="icon-ok"></i> DONE</a>
-                    </div>
-                </div>
-                <div class="row pt-5">
-                        <div class="col-6">
-                            <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Feedback name">
-                            </div>
-                        </div>
+                                                <div class="row">
+                                                    <div class="col-6 col-sm-6 mx-auto">
+                                                        <a id="done-btn" class="btn btn-defult p-3 w-100" href="javascript:void(0)"> <i class="icon-ok"></i> DONE</a>
+                                                    </div>
+                                                </div>
+                                                <div class="row pt-5">
+                                                        <div class="col-6">
+                                                            <div class="form-group">
+                                                            <input type="text" class="form-control" placeholder="Feedback name">
+                                                            </div>
+                                                        </div>
 
-                        <div class="col-3">
-                            <div class="form-group">
-                            <select class="form-control" id="">
-                                <option>Department</option>
-                                <option>Department</option>
-                                <option>Department</option>
-                            </select>
-                        </div>
-                        </div>
+                                                        <div class="col-3">
+                                                            <div class="form-group">
+                                                            <select class="form-control" id="">
+                                                                <option>Department</option>
+                                                                <option>Department</option>
+                                                                <option>Department</option>
+                                                            </select>
+                                                        </div>
+                                                        </div>
 
-                        <div class="col-3">
-                            <div class="form-group">
-                            <select class="form-control" id="">
-                                <option>Course</option>
-                                <option>Course</option>
-                                <option>Course</option>
-                            </select>
-                        </div>
-                        </div>
-                </div>
-                <div class="row py-5">
-                        <div class="col-md-6">
-                            <p>Estimating…</p>
-                        <div class="alert alert-light alert-dismissible fade show" role="alert">
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
-                            </div>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        </div>
-                        <div class="col-md-6">
-                            <p>1.35MB/3.67MB</p>
-                        <div class="alert alert-light alert-dismissible fade show" role="alert">
-                            <div class="progress">
-                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="36" aria-valuemin="0" aria-valuemax="100" style="width: 36%">36%</div>
-                            </div>
-                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
-                        </div>
-                        </div>
+                                                        <div class="col-3">
+                                                            <div class="form-group">
+                                                            <select class="form-control" id="">
+                                                                <option>Course</option>
+                                                                <option>Course</option>
+                                                                <option>Course</option>
+                                                            </select>
+                                                        </div>
+                                                        </div>
+                                                </div>
+                                                <div class="row py-5">
+                                                        <div class="col-md-6">
+                                                            <p>Estimating…</p>
+                                                        <div class="alert alert-light alert-dismissible fade show" role="alert">
+                                                            <div class="progress">
+                                                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                                                            </div>
+                                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        </div>
+                                                        <div class="col-md-6">
+                                                            <p>1.35MB/3.67MB</p>
+                                                        <div class="alert alert-light alert-dismissible fade show" role="alert">
+                                                            <div class="progress">
+                                                                <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="36" aria-valuemin="0" aria-valuemax="100" style="width: 36%">36%</div>
+                                                            </div>
+                                                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                                                <span aria-hidden="true">&times;</span>
+                                                            </button>
+                                                        </div>
+                                                        </div>
 
-                       <div class="col-12 text-center">
-                            <i class="icon-folder-open" style="font-size: 150px"></i>
-                            <br>
+                                                       <div class="col-12 text-center">
+                                                            <i class="icon-folder-open" style="font-size: 150px"></i>
+                                                            <br>
 
-                             <div class="upload-btn-wrapper">
-                                <a href="javascript:void(0)" class="btn btn-primary">Browse</a>
-                                <input type="file" name="myfile" />
-                            </div>
-                       </div>
-                    </div>
-        <div id="bottom-wizard">
-            <a class="btn btn-primary btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> Return</a>
+                                                             <div class="upload-btn-wrapper">
+                                                                <a href="javascript:void(0)" class="btn btn-primary">Browse</a>
+                                                                <input type="file" name="myfile" />
+                                                            </div>
+                                                       </div>
+                                                    </div>
+                                        <div id="bottom-wizard">
+                                            <a class="btn btn-primary btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> Return</a>
 
-        </div>
-    </section>-->
+                                        </div>
+                                    </section>-->
                                     <!-- 2nd-slide end -->
                                     <!-- 3rd-slide start -->
                                     <section id="third-slide" class="container py-4">
@@ -1239,8 +1369,8 @@
                                                 </div>
                                             </div>
                                             <!--<div class="col-4 mx-auto">
-                <a id="exist-edit-btn" class="btn btn-defult" onclick="lastTimeDoc()" href="javascript:void(0)">משוב משנים קודמות</a>
-            </div>-->
+                                                <a id="exist-edit-btn" class="btn btn-defult" onclick="lastTimeDoc()" href="javascript:void(0)">משוב משנים קודמות</a>
+                                            </div>-->
                                             <div class="col-3 "></div>
                                         </div>
                                     </section>
@@ -1252,8 +1382,11 @@
                                                     <h3 class="nameFeed"></h3>
                                                 </div>
                                             </div>
-                                            <div class="col-4 mx-auto">
-                                                <a id="exist-edit-btn" class="btn btn-defult" onclick="lastTimeDoc()" href="javascript:void(0)">משוב משנים קודמות</a>
+                                            <div class="row">
+                                                <div class="col-2"></div>
+                                                <div class="col-4 mx-auto">
+                                                    <a id="exist-edit-btn" class="btn btn-defult" onclick="lastTimeDoc()" href="javascript:void(0)">משוב משנים קודמות</a>
+                                                </div>
                                             </div>
                                             <div id="addHere">
 
@@ -1266,19 +1399,19 @@
                                         <!--4th slide end-->
                                         <div class="row pt-5">
                                             <!--<div class='col-sm-8 mx-auto'>
-                <div id="app" v-cloak>
-                    <h4>זמן הרצאה</h4>
-                    <timer-setup v-if="!time" @set-time="setTime"></timer-setup>
-                    <div v-else>
-                        <timer :time="prettyTime"></timer>
-                        <div>
-                            <a href="javascript:void(0)" class="btn btn-primary btn" v-if="!isRunning" @click="start">התחל</a>
-                            <a href="javascript:void(0)" class="btn btn-primary btn" v-if="isRunning" @click="stop">סיים</a>
-                            <a href="javascript:void(0)" class="btn btn-primary btn" @click="reset">אתחל מחדש</a>
-                        </div>
-                    </div>
-                </div>
-            </div>-->
+                                                <div id="app" v-cloak>
+                                                    <h4>זמן הרצאה</h4>
+                                                    <timer-setup v-if="!time" @set-time="setTime"></timer-setup>
+                                                    <div v-else>
+                                                        <timer :time="prettyTime"></timer>
+                                                        <div>
+                                                            <a href="javascript:void(0)" class="btn btn-primary btn" v-if="!isRunning" @click="start">התחל</a>
+                                                            <a href="javascript:void(0)" class="btn btn-primary btn" v-if="isRunning" @click="stop">סיים</a>
+                                                            <a href="javascript:void(0)" class="btn btn-primary btn" @click="reset">אתחל מחדש</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>-->
                                         </div>
                                         <div class="row pt-5">
                                             <div class="col-8 m-auto">
@@ -1288,7 +1421,7 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row pt-3">
+                                        <div id="btnDropdown" class="row pt-3">
                                             <div class="col-sm-4 mx-auto">
                                                 <a class="btn btn-defult text-light m-3 prev" onclick="saveToData(true)" href="javascript:void(0)"> סיים</a>
                                                 <a class="btn btn-defult text-light m-3 prev" onclick="saveToData(false)" href="javascript:void(0)"> שמור</a>
@@ -1315,8 +1448,8 @@
                                                     <div class="form-group">
                                                         <select class="form-control" onchange="editselectedDoc()" id="lastDoc">
                                                             <!--<option>2018</option>
-                            <option>2018</option>
-                            <option>2018</option>-->
+                                                            <option>2018</option>
+                                                            <option>2018</option>-->
                                                         </select>
                                                     </div>
                                                 </div>
@@ -1336,27 +1469,25 @@
                                         </div>
 
                                         <div id="bottom-wizard">
-                                            <a class="btn btn-primary btn prev" onclick="goback()" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> חזור</a>
+                                            <a class="btn btn-defult text-light m-3 feedback-edit-bt" onclick="goback()" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> חזור</a>
 
                                         </div>
                                     </section>
 
                                     <!-- 5th-slide end-->
                                     <!-- 6st-slide start -->
-                                   <section id="sixth-slide" class="container py-4">
-                                <div class="row pt-5">
-                                    <div class="col-12 text-center">
-                                        <h3 class="nameFeed"></h3>
-                                    </div>
-                                </div>
-                                <div class="row py-5">
-                                    <div class="col-12 text-center">
-                                        <h3 class="font-weight-bold">מאגר קריטריונים</h3>
-                                    </div>
-                                    <div class="col-4 mx-auto">
-        <a id="exist-edit-btn" class="btn btn-defult" onclick="lastTimeDoc()" href="javascript:void(0)">משוב משנים קודמות</a>
-    </div>
-                                </div>
+                                    <section id="sixth-slide" class="container py-4">
+                                        <div class="row pt-5">
+                                            <div class="col-12 text-center">
+                                                <h3 class="nameFeed"></h3>
+                                            </div>
+                                        </div>
+                                        <div class="row py-5">
+                                            <div class="col-12 text-center">
+                                                <h3 class="font-weight-bold">מאגר קריטריונים</h3>
+                                            </div>
+
+                                        </div>
                                         <div class="row">
                                             <div class="col-3"></div>
                                             <div class="p-1 rounded shadow-sm mb-4 col-6">
@@ -1366,7 +1497,7 @@
                                                             <i class="icon-search-8"></i>
                                                         </button>
                                                     </div>
-                                                    <input type="search" placeholder="Search" aria-describedby="button-addon2" class="form-control border-0">
+                                                    <input id="myInput1" type="search" placeholder="חיפוש" aria-describedby="button-addon2" class="form-control border-0">
                                                 </div>
                                             </div>
                                         </div>
@@ -1378,8 +1509,8 @@
                                         </div>
                                     </section>
                                     <!-- 6st-slide end -->
-                                 
-                         
+
+
                                 </div>
                             </div>
                         </div>
@@ -1456,7 +1587,7 @@
             $("#fifth-slide").hide();
             $("#sixth-slide").hide();
             $("#excel").hide();
-        
+
 
 
             //first slide
@@ -1555,7 +1686,7 @@
             //sixth slide
             $("#sixth-slide .prev").click(function () {
                 $("#sixth-slide").hide();
-                $("#first-slide").fadeIn();
+                $("#fourth-slide").fadeIn();
             });
 
 
@@ -1663,7 +1794,7 @@ let app = new Vue({
     </script>
 
     <script src="js/lastTimeDocJS.js"></script>
-  
+    <script src="js/goNext.js"></script>
     <script src="js/searchJS.js"></script>
 </body>
 

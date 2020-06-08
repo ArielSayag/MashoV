@@ -94,3 +94,8 @@ C:\Users\Ariel\Desktop\mashovFinal\mashovFinal\bin\NPOI.OpenXmlFormats.dll
 C:\Users\Ariel\Desktop\mashovFinal\mashovFinal\bin\BouncyCastle.Crypto.xml
 C:\Users\Ariel\Desktop\mashovFinal\mashovFinal\bin\ICSharpCode.SharpZipLib.pdb
 C:\Users\Ariel\Desktop\mashovFinal\mashovFinal\bin\ICSharpCode.SharpZipLib.xml
+C:\Users\Ariel\Desktop\mashovFinal\mashovFinal\bin\Syncfusion.Compression.Base.dll
+C:\Users\Ariel\Desktop\mashovFinal\mashovFinal\bin\Syncfusion.Licensing.dll
+C:\Users\Ariel\Desktop\mashovFinal\mashovFinal\bin\Syncfusion.XlsIO.Base.dll
+C:\Users\Ariel\Desktop\mashovFinal\mashovFinal\bin\Syncfusion.Compression.Base.xml
+C:\Users\Ariel\Desktop\mashovFinal\mashovFinal\bin\Syncfusion.XlsIO.Base.xml

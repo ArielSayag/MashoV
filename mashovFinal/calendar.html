@@ -8,6 +8,7 @@
     <title>
 
     </title>
+    <link rel="shortcut icon" href="img/fav.png" type="image/x-icon">
     <meta charset="UTF-8" />
     <link href="dist/css/skins/_all-skins.min.css" rel="stylesheet" type="text/css" />
     <link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
@@ -19,6 +20,7 @@
     <script src="bootstrap/js/bootstrap.min.js" type="text/javascript"></script>
     <link href="css/cssManger.css" rel="stylesheet" />
     <script src="Scripts/ajaxCalls.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
 
     <style>
         .ng-scope {
@@ -49,9 +51,10 @@
     <link href="css/tipol_calendar.css" rel="stylesheet" />
     <script>
         var getuser = "";
+        var groups = [];
         function successg(data) {
-            
-            console.log(data);
+            groups = data;
+
             var arrNames = "<option value=''>בחר קבוצה</option>";
 
             for (i in data) {
@@ -60,16 +63,41 @@
             }
 
             $('#ContentPlaceHolder1_farm_ddl').append(arrNames);
-          //  $('#browsers1').append(arrNamesDep);
+            $('#groupList').append(arrNames);
+            $('#ContentPlaceHolder1_areaFilterDDL').append(arrNames);
 
         }
         function errg(arr) {
             console.log(arr);
         }
-        $(document).ready(function () {
-           
 
-            function alertFunc(message_alert){
+        function studentinG() {
+            document.getElementById("namesStudent").innerHTML = "";
+            var idNumG = $("#groupList").val();
+            if (idNumG == "") {
+                swal("תחילה בחר קבוצה");
+            }
+            else {
+                for (j in groups) {
+                    if (groups[j].NumGroup == idNumG) {
+                        var students = "<option value=''>בחר סטודנט</option>";
+
+                        for (i in groups[j].ListStudent) {
+
+                            students += `<option value=${groups[j].ListStudent[i].Id}>${groups[j].ListStudent[i].FirstName} ${groups[j].ListStudent[i].LastName} </option>`;
+                        }
+
+                        $('#namesStudent').append(students);
+                        break;
+                    }
+                }
+            }
+        }
+
+        $(document).ready(function () {
+
+
+            function alertFunc(message_alert) {
                 $('#alertlabel').empty();
                 $('#alertlabel').append(message_alert);
 
@@ -180,37 +208,22 @@
             var GuardingInfo = {//פרטי שמירה
                 StartTime: null,
                 EndTime: null,
-                FarmID: null,
-                FarmName: null,
-                GuardObjlength: null,
-                GuardID1: null,
-                GuardName1: null,
-                GuardID2: null,
-                GuardName2: null,
                 startDate: null,
+                Place: null,
+                Group: null,
                 endDate: null
             }
             var guardingById = {
                 id: null
-            }
-            var FarmById = {
-                id: null
-            }
-            var guardById = {
-                idG1: null,
-                idG2: null
             }
 
             var GuardingDataUpdate = {
                 startTime: null,
                 endTime: null,
                 briefing: null,
-                g1: null,
-                g2: null,
-                farmID: null,
-                farmNane: null,
                 startDate: null,
                 endDate: null,
+                place: null,
                 id: null
             };
             var companyEventData = {
@@ -220,8 +233,8 @@
                 startDate: null,
                 endDate: null,
                 companyEventDesc: null,
-                forGuard: null,
-                forManage: null,
+                group: null,
+                student: null,
                 companyEventDataId: null,
 
             };
@@ -233,211 +246,91 @@
                 startTime: null,
                 endTime: null,
                 briefing: null,
-                g1: null,
-                g2: null,
-                farmID: null,
-                farmNane: null,
                 startDate: null,
                 endDate: null,
                 id: null
             };
-            var guardingfarmdate = {
-                date: null
-            }
+
 
 
             //לקיחת הנתונים מהשדות לדאטה בייס
 
             $('#ContentPlaceHolder1_BTNup').click(function () {//לאחר שמסיימים לערוך את השמירה, לוחצים על עדכן ומגיעים לכאן, ומכאן מכניסים לדאטה בייס
-                confirmalertFunc("האם אתה בטוח שברצונך לעדכן שמירה זאת?");
+                confirmalertFunc("האם אתה בטוח שברצונך לעדכן פגישה זאת?");
             })
 
             $('#confirm_close_alertlabel').click(function () {
-                    $('#confirmalertModelDIV').dialog('close');
-                    flagFarm = 0;
-                    GuardingDataUpdate.startTime = $('#ContentPlaceHolder1_TBstarttime').val();
-                    GuardingDataUpdate.endTime = $('#ContentPlaceHolder1_TBendtime').val();
-                    GuardingDataUpdate.startDate = GuardingInfo.startDate;
+                $('#confirmalertModelDIV').dialog('close');
 
-                    var today = new Date(GuardingDataUpdate.startDate);
-                    var tomorrow = new Date(today);
-                    tomorrow.setDate(today.getDate() + 1);
-                    tomorrow.toLocaleDateString();
-                    var endDate = 0;
-                    if (GuardingDataUpdate.endTime <= GuardingDataUpdate.startTime) {
-                        endDate = formatDate(tomorrow);
-                    }
-                    else if (GuardingDataUpdate.endTime > GuardingDataUpdate.startTime) {
-                        endDate = formatDate(today);
-                    }
+                GuardingDataUpdate.id = guardingById.id;
+                GuardingDataUpdate.startTime = $('#ContentPlaceHolder1_TBstarttime').val();
+                GuardingDataUpdate.endTime = $('#ContentPlaceHolder1_TBendtime').val();
+                GuardingDataUpdate.startDate = GuardingInfo.startDate;
+                GuardingDataUpdate.place = $('#ContentPlaceHolder1_DDLg1').val();
+                updateMeet = {
+                    "Id": GuardingDataUpdate.id,
+                    "StartTime": GuardingDataUpdate.startTime,
+                    "EndTime": GuardingDataUpdate.endTime,
+                    "PlaceMetting": GuardingDataUpdate.place,
+                }
 
-                    GuardingDataUpdate.endDate = endDate;
-                    GuardingDataUpdate.farmID = $('#ContentPlaceHolder1_DDLfarm').val();
+                ajaxCall("PUT", "./api/calendar/updateM", JSON.stringify(updateMeet), successupdateMeet, errupdateMeet);
 
-                    guardingfarmdate.date = GuardingDataUpdate.startDate;//להביא חוות שיש בהם שמירה בתאריך הזה ולבדוק אם הוסיפו חווה שכבר יש לה שמירה בתאריך הזה
-                    var dataString = JSON.stringify(guardingfarmdate);
-                    $.ajax
-                               ({
-                                   url: 'ajaxWebService.asmx/getguardingfarmdate',//מביאים רשימת חוות שיש להם שמירה בתאריך הזה
-                                   data: dataString,
-                                   type: 'POST',
-                                   dataType: 'json',
-                                   contentType: 'application/json; charset = utf-8', // sent to the server
-                                   async: false,
-                                   success: function (data) {// אחרי שקיבלנו רשימת שמירות נבדוק אם החווה שבחרו זהה לאחת מהחוות שנמצאות ברשימה
-                                       var farmobjList = $.parseJSON(data.d);
-                                       cache: true;
-                                       $(farmobjList).each(function (key) {
-                                           if (farmobjList[key] == GuardingDataUpdate.farmID) {
-                                               flagFarm = 1;
-                                           }
-                                       });
-
-                                   },
-                                   error: function (result) {
-                                       alertFunc("לא הגיעו חוות");
-                                       //alert("לא הגיעו חוות");
-                                   }
-                               });
-
-
-                    GuardingDataUpdate.farmNane = $('#ContentPlaceHolder1_DDLfarm option:selected').text();
-                    var resG1 = ($('#ContentPlaceHolder1_DDLg1').val()).split(",");
-                    GuardingDataUpdate.g1 = resG1[0];
-                    var resG2 = ($('#ContentPlaceHolder1_DDLg2').val()).split(",");
-                    GuardingDataUpdate.g2 = resG2[0];
-
-                    GuardingDataUpdate.briefing = false;
-                    GuardingDataUpdate.id = guardingById.id;
-                    if (GuardingDataUpdate.g1 == "בחר שומר") {
-                        GuardingDataUpdate.g1 = "0";
-                    }
-                    if (GuardingDataUpdate.g2 == "בחר שומר") {
-                        GuardingDataUpdate.g2 = "0";
-                    }
-                    if ((GuardingDataUpdate.g1 == GuardingDataUpdate.g2) && (GuardingDataUpdate.g1 != 0) && (GuardingDataUpdate.g2 != 0)) {//נבדוק אם בחרו את אותו שומר והוא לא השומר הפקטיבי אז נציג הערה
-                        alertFunc("לא ניתןן לבחור את אותו שומר לשמירה");
-                    }
-                    else {//אם שני השומרים שונים אז נכניס את השמירה לדאטה בייס
-                        var dataString = JSON.stringify(GuardingDataUpdate);
-                        if (GuardingDataUpdate.startTime != '' && GuardingDataUpdate.endTime != '' && GuardingDataUpdate.farmID != "0") {
-                            if (flagFarm == 1)//זה אומר שבחרו חווה שכבר יש לה שמירה בתאריך הזה
-                            {
-                                confirmalertFunc1("שים לב, לחווה זו כבר יש שמירה בתאריך זה,האם ברצונך להמשיך?");
-                            }
-
-                            else {//אם לא בחרו חווה שיש לה שמירה בתאריך אז ישר מכניסים לדאטה בייס
-                                $.ajax
-                                ({//עדכון של השמירה בדאטה בייס
-                                    url: 'ajaxWebService.asmx/UpdateGuarding',
-                                    data: dataString,
-                                    type: 'POST',
-                                    dataType: 'json',
-                                    contentType: 'application/json; charset = utf-8', // sent to the server
-                                    async: false,
-                                    success: function (data) {
-                                        $('#updatePopuppDiv').dialog('close');
-                                        alertFunc("השמירה עודכנה בהצלחה!");
-                                        location.reload(true);
-                                    },
-
-                                    error: function (result) {
-                                        alertFunc("השמירה לא עודכנה במערכת");
-                                    }
-                                });
-                            }
-
-                        } else {
-                            alertFunc("אחד משדות החובה לא מולאו");
-                            return false;
-                        }
-                    }
-
-
-                });
-
-
-
-            $('#confirm_close_alertlabel1').click(function () {
-                // עדיין רוצים להכניס שמירה לחווה שכבר יש לה שמירה בתאריך הזה
-                $('#confirmalertModelDIV1').dialog('close');
-                var dataString = JSON.stringify(GuardingDataUpdate);
-                $.ajax
-               ({//עדכון של השמירה בדאטה בייס
-                   url: 'ajaxWebService.asmx/UpdateGuarding',
-                   data: dataString,
-                   type: 'POST',
-                   dataType: 'json',
-                   contentType: 'application/json; charset = utf-8', // sent to the server
-                   async: false,
-                   success: function (data) {
-                       $('#updatePopuppDiv').dialog('close');
-                       alertFunc("השמירה עודכנה בהצלחה!");
-
-                       location.reload(true);
-                   },
-
-                   error: function (result) {
-                       alertFunc("השמירה לא עודכנה במערכת");
-                   }
-               });
-        });
-
-
-
-
-
+            });
 
 
             $('#ContentPlaceHolder1_updateEventBTN').click(function () {//לאחר שמסיימים לערוך את האירוע, לוחצים על עדכן ומגיעים לכאן, ומכאן מכניסים לדאטה בייס
                 if (confirm("האם אתה בטוח שברצונך לעדכן אירוע זה?") == true) {
 
-                    companyEventData.subjectEvent = $('#ContentPlaceHolder1_subjectUPDATE').val();
-                    companyEventData.startTime = $('#ContentPlaceHolder1_UpdateStartTime').val();
+                    companyEventData.startDate = $('#ContentPlaceHolder1_UpdateStartTime').val();
                     companyEventData.endTime = $('#ContentPlaceHolder1_UpdateEndTime').val();
+                    //companyEventData.startDate
+                    var utc = new Date();
+                    utc = formatDate(utc);
+                    ////  var eventDate = formatDate(event._d);
 
-                    var today = new Date(companyEventData.startDate);
+                    if ((utc <= companyEventData.startDate) && (companyEventData.startDate <= companyEventData.endTime)) {
+                        companyEventData.subjectEvent = $('#ContentPlaceHolder1_subjectUPDATE').val();
+                        companyEventData.companyEventDesc = $('#ContentPlaceHolder1_UpdateEventDesc').val();
+                        s1 = {
+                            "Id": $("#ContentPlaceHolder1_CheckBoxUpdates").val(),
+                        }
+                        companyEventData.student = s1;
 
-                    var tomorrow = new Date(today);
-                    tomorrow.setDate(today.getDate() + 1);
-                    tomorrow.toLocaleDateString();
-                    var endDate = 0;
+                        var today = new Date(companyEventData.startDate);
 
-                    var endDate = new Date();
-                    if (companyEventData.endTime <= companyEventData.startTime) {
-                        endDate = formatDate(tomorrow);
+                        var tomorrow = new Date(today);
+                        tomorrow.setDate(today.getDate() + 1);
+                        tomorrow.toLocaleDateString();
+                        var endDate = 0;
+
+                        var endDate = new Date();
+                        if (companyEventData.endTime <= companyEventData.startTime) {
+                            endDate = formatDate(tomorrow);
+                        }
+                        else if (companyEventData.endTime > companyEventData.startTime) {
+                            endDate = formatDate(today);
+                        }
+                        companyEventData.endDate = endDate;
+                        t = {
+                            "Id": companyEventData.companyEventDataId,
+                            "Student": companyEventData.student,
+                            "NameTask": companyEventData.subjectEvent,
+                            "Complet": companyEventData.endTime,
+                            "Startdate": companyEventData.startDate,
+                            "Desc": companyEventData.companyEventDesc,
+                        }
+
+
+                        ajaxCall("PUT", "./api/calendar/updateT", JSON.stringify(t), successupdateT, errupdateT);
                     }
-                    else if (companyEventData.endTime > companyEventData.startTime) {
-                        endDate = formatDate(today);
-                    }
-                    companyEventData.endDate = endDate;
-
-                    companyEventData.companyEventDesc = $('#ContentPlaceHolder1_UpdateEventDesc').val();
-                    companyEventData.forGuard = $('#ContentPlaceHolder1_CheckBoxUpdateGuard').is(":checked");
-                    companyEventData.forManage = $('#ContentPlaceHolder1_CheckBoxUpdateManager').is(":checked");
-
-                    var dataString = JSON.stringify(companyEventData);
-                    if ((companyEventData.subjectEvent != "") || ((companyEventData.forGuard == true) && (companyEventData.forManage == true)) || ((companyEventData.forGuard == false) && (companyEventData.forManage == true)) || ((companyEventData.forGuard == true) && (companyEventData.forManage == false))) {
-                        $.ajax
-                            ({//עדכון של האירוע בדאטה בייס
-                                url: 'ajaxWebService.asmx/UpdateCompanyEvent',
-                                data: dataString,
-                                type: 'POST',
-                                dataType: 'json',
-                                contentType: 'application/json; charset = utf-8', // sent to the server
-                                async: false,
-                                success: function (data) {
-                                    alertFunc("האירוע עודכן בהצלחה!");
-                                    location.reload(true);
-                                },
-                                error: function (result) {
-                                    alertFunc("האירוע לא עודכן במערכת");
-                                }
-                            });
-                    } else {
-                        alertFunc("אחד משדות החובה לא מולאו");
+                    else {
+                        alertFunc("תאריכים איתם תקינים");
                         return false;
                     }
+
+
+
                 }
             });
 
@@ -455,51 +348,14 @@
                     });
                     $('#updatePopuppDiv').dialog('open');
                     $("#updatePopuppDiv").dialog({
-                        title: " פרטי שמירה",
+                        title: " פרטי פגישה",
                     });
 
                     //מילוי נתונים בשדות
                     document.getElementById("ContentPlaceHolder1_TBstarttime").value = GuardingInfo.StartTime;
                     document.getElementById("ContentPlaceHolder1_TBendtime").value = GuardingInfo.EndTime;
-
-                    remove("ContentPlaceHolder1_DDLfarm", GuardingInfo.FarmID);
-                    $("#ContentPlaceHolder1_DDLfarm").prepend("<option value='" + GuardingInfo.FarmID + "' selected='selected'>" + GuardingInfo.FarmName + "</option>");
-
-                    if (GuardingInfo.GuardObjlength == 1) {
-                        $("#ContentPlaceHolder1_DDLg2").prepend("<option value='0' selected='selected'>לא נבחר שומר</option>");
-
-                        if (GuardingInfo.GuardID1 == '0') {
-                            $("#ContentPlaceHolder1_DDLg1").prepend("<option value='0' selected='selected'>לא נבחר שומר</option>");
-                        }
-                        else {
-                            remove("ContentPlaceHolder1_DDLg1", GuardingInfo.GuardID1);
-                            $("#ContentPlaceHolder1_DDLg2").prepend("<option value='0' selected='selected'>לא נבחר שומר</option>");
-                            $("#ContentPlaceHolder1_DDLg1").prepend("<option value='" + GuardingInfo.GuardID1 + "' selected='selected'>" + GuardingInfo.GuardName1 + "</option>");
-
-                        }
-                    }
-                    else {
-
-                        if (GuardingInfo.GuardID1 == '0') {
-                            $("#ContentPlaceHolder1_DDLg1").prepend("<option value='0' selected='selected'>לא נבחר שומר</option>");
-                        }
-                        else {
-                            remove("ContentPlaceHolder1_DDLg1", GuardingInfo.GuardID1);
-                            $("#ContentPlaceHolder1_DDLg1").prepend("<option value='0' selected='selected'>לא נבחר שומר</option>");
-                            $("#ContentPlaceHolder1_DDLg1").prepend("<option value='" + GuardingInfo.GuardID1 + "' selected='selected'>" + GuardingInfo.GuardName1 + "</option>");
-
-                        }
-
-                        if (GuardingInfo.GuardID2 == '0') {
-                            $("#ContentPlaceHolder1_DDLg2").prepend("<option value='0' selected='selected'>לא נבחר שומר</option>");
-                        }
-                        else {
-                            remove("ContentPlaceHolder1_DDLg2", GuardingInfo.GuardID2);
-                            $("#ContentPlaceHolder1_DDLg2").prepend("<option value='0' selected='selected'>לא נבחר שומר</option>");
-                            $("#ContentPlaceHolder1_DDLg2").prepend("<option value='" + GuardingInfo.GuardID2 + "' selected='selected'>" + GuardingInfo.GuardName2 + "</option>");
-
-                        }
-                    }
+                    document.getElementById("groupSelected").innerHTML = GuardingInfo.Group;
+                    document.getElementById("ContentPlaceHolder1_DDLg1").value = GuardingInfo.Place;
                 }
                 else {
                     alertFunc("התאריך שנבחר עבר,לא ניתן לעדכן את השמירה");
@@ -510,41 +366,29 @@
             //======================================================start DELETE btn guarding=================================================
 
             $('#ContentPlaceHolder1_BTNdelete').click(function () {
-                confirmalertFunc2("האם אתה בטוח שברצונך למחוק שמירה זאת?");//כשרוצים למחוק את השמירה
+                confirmalertFunc2("האם אתה בטוח שברצונך למחוק פגישה זאת?");//כשרוצים למחוק את פגישה
 
             })
             $('#confirm_close_alertlabel2').click(function () {
-                // עדיין רוצים להכניס שמירה לחווה שכבר יש לה שמירה בתאריך הזה
+
+                var idd = guardingById.id;
+
+                ajaxCall("GET", "./api/calendar/deleteM/" + idd, "", successDeleteM, errDeleteM)
+
+
                 $('#confirmalertModelDIV2').dialog('close');
-                var dataString = JSON.stringify(guardingById);
-                $.ajax
-                               ({
-                                   url: 'ajaxWebService.asmx/deleteGuardingBYID',
-                                   data: dataString,
-                                   type: 'POST',
-                                   dataType: 'json',
-                                   contentType: 'application/json; charset = utf-8', // sent to the server
-                                   async: false,
-                                   success: function (data) {
-
-                                       $('#showGuardingPopupDiv').dialog('close');
-                                       alertFunc("השמירה נמחקה בהצלחה!")
-                                       location.reload(true)
-                                   },
-
-                                   error: function (result) {
-                                       alertFunc("השמירה לא נמחקה מהמערכת");
-                                   }
-                               });
 
             });
+
+
             //======================================================End DELETE btn guarding=================================================
             //======================================================start update btn company event=================================================
-            $('#ContentPlaceHolder1_ButtonEditevent').click(function () {//כשרוצים לעדכן אירוע קיים
+            $('#ContentPlaceHolder1_ButtonEditevent').click(function () {//כשרוצים לעדכן משימה קיימת
                 var utc = new Date();
                 utc = formatDate(utc);
                 var compeventDate = companyEventData.startDate;
-                if (utc <= compeventDate) {
+                var compeventDatee = companyEventData.endTime;
+                if (utc <= compeventDatee) {
                     $('#showCompanyEventPopupDiv').dialog('close');
 
                     $("#updateEVENTPopupDiv").dialog({
@@ -553,54 +397,39 @@
                     });
                     $('#updateEVENTPopupDiv').dialog('open');
                     $("#updateEVENTPopupDiv").dialog({
-                        title: " פרטי אירוע",
+                        title: " פרטי משימה",
                     });
 
                     //מילוי נתונים בשדות
 
                     document.getElementById("ContentPlaceHolder1_subjectUPDATE").value = companyEventData.subjectEvent;
-                    document.getElementById("ContentPlaceHolder1_UpdateStartTime").value = companyEventData.startTime;
+                    document.getElementById("ContentPlaceHolder1_UpdateStartTime").value = companyEventData.startDate;
                     document.getElementById("ContentPlaceHolder1_UpdateEndTime").value = companyEventData.endTime;
                     document.getElementById("ContentPlaceHolder1_UpdateEventDesc").value = companyEventData.companyEventDesc;
-                    if (companyEventData.forGuard == true) {
-                        document.getElementById("ContentPlaceHolder1_CheckBoxUpdateGuard").checked = true;
+                    document.getElementById("ContentPlaceHolder1_CheckBoxUpdateGuard").innerHTML = companyEventData.group.NameGroup + ", " + companyEventData.group.NameProject;
+
+                    var students = `<option value='${companyEventData.student.Id}'>${companyEventData.student.FirstName} ${companyEventData.student.LastName}</option>`;
+
+                    for (i in companyEventData.group.ListStudent) {
+                        if (companyEventData.group.ListStudent[i].Id != companyEventData.student.Id)
+                            students += `<option value=${companyEventData.group.ListStudent[i].Id}>${companyEventData.group.ListStudent[i].FirstName} ${companyEventData.group.ListStudent[i].LastName} </option>`;
                     }
-                    if (companyEventData.forManage == true) {
-                        document.getElementById("ContentPlaceHolder1_CheckBoxUpdateManager").checked = true;
-                    }
+                    $("#ContentPlaceHolder1_CheckBoxUpdates").append(students);
+
                 }
                 else {
-                    alertFunc("התאריך שנבחר עבר,לא ניתן לעדכן את האירוע");
+                    alertFunc("התאריך שנבחר עבר,לא ניתן לעדכן את המשימה");
                 }
             })
             //======================================================End update btn company event=================================================
 
             //======================================================start DELETE btn company event=================================================
 
-            $('#ContentPlaceHolder1_ButtonDeleteEvent').click(function () {//כשרוצים למחוק את האירוע חברתי
-                if (confirm("האם אתה בטוח שברצונך למחוק אירוע זה??") == true) {
+            $('#ContentPlaceHolder1_ButtonDeleteEvent').click(function () {//כשרוצים למחוק את המשימה
+                if (confirm("האם אתה בטוח שברצונך למחוק משימה זאת??") == true) {
 
+                    ajaxCall("PUT", "./api/calendar/deleteT", JSON.stringify(companyEventData.companyEventDataId), successDeleteT, errDeleteT)
 
-                    var dataString = JSON.stringify(compEventById);
-                    $.ajax
-                                   ({
-                                       url: 'ajaxWebService.asmx/deleteEventBYID',
-                                       data: dataString,
-                                       type: 'POST',
-                                       dataType: 'json',
-                                       contentType: 'application/json; charset = utf-8', // sent to the server
-                                       async: false,
-                                       success: function (data) {
-
-                                           $('#showCompanyEventPopupDiv').dialog('close');
-                                           alertFunc("האירוע נמחק בהצלחה!")
-                                           location.reload(true)
-                                       },
-
-                                       error: function (result) {
-                                           alertFunc("האירוע לא נמחק מהמערכת");
-                                       }
-                                   });
                 }
 
             })
@@ -616,74 +445,56 @@
 
                 $('#insertNewCOMPPopupDiv').dialog('open');
                 $("#insertNewCOMPPopupDiv").dialog({
-                    title: "פרטי אירוע חברה",
+                    title: "פרטי משימה",
                 });
             });
 
-            //--------------------------------------אחרי שמזינים את הפרטים של אירוע החברה ולוחצים הוסף  -------------------
+            //--------------------------------------אחרי שמזינים את הפרטים של משימה ולוחצים הוסף  -------------------
             $('#ContentPlaceHolder1_addCOMPevent').click(function () {
 
+                companyEventData.endTime = $('#ContentPlaceHolder1_timeStartTextBox').val();
+                //companyEventData.startDate
+                var utc = new Date();
+                utc = formatDate(utc);
+                ////  var eventDate = formatDate(event._d);
 
-                companyEventData.subjectEvent = $('#ContentPlaceHolder1_TBSubjectEvent').val();
-                companyEventData.startTime = $('#ContentPlaceHolder1_timeStartTextBox').val();
-                companyEventData.endTime = $('#ContentPlaceHolder1_timeEndTextBox').val();
-                //companyEventData.startDate = formatDate(event._d);
+                if ((utc <= companyEventData.startDate) && (companyEventData.startDate <= companyEventData.endTime)) {
 
-                var today = new Date(companyEventData.startDate);
-                var tomorrow = new Date(today);
-                tomorrow.setDate(today.getDate() + 1);
-                tomorrow.toLocaleDateString();
-                var endDate = 0;
+                    companyEventData.subjectEvent = $('#ContentPlaceHolder1_TBSubjectEvent').val();
+                    //companyEventData.startTime = $('#ContentPlaceHolder1_timeStartTextBox').val();
 
-                if (companyEventData.endTime <= companyEventData.startTime) {
-                    endDate = formatDate(tomorrow);
-                }
+                    //companyEventData.startDate = formatDate(event._d);
+                    companyEventData.student = $('#namesStudent').val();
+                    companyEventData.group = $('#groupList').val();
+                    companyEventData.companyEventDesc = $('#ContentPlaceHolder1_eventDesc').val();
 
-                else if (companyEventData.endTime > companyEventData.startTime) {
-                    endDate = formatDate(today);
-                }
-
-                companyEventData.endDate = endDate;
-                companyEventData.companyEventDesc = $('#ContentPlaceHolder1_eventDesc').val();
-                companyEventData.forGuard = $('#ContentPlaceHolder1_CheckBoxGuard').is(":checked");
-                companyEventData.forManage = $('#ContentPlaceHolder1_CheckBoxManager').is(":checked");
-
-                var dataString = JSON.stringify(companyEventData);
-                if ((companyEventData.subjectEvent != "") || ((companyEventData.forGuard == true) && (companyEventData.forManage == true)) || ((companyEventData.forGuard == false) && (companyEventData.forManage == true)) || ((companyEventData.forGuard == true) && (companyEventData.forManage == false))) {
-                    $.ajax
-                        ({
-                            url: 'ajaxWebService.asmx/insertCompEvent',
-                            data: dataString,
-                            type: 'POST',
-                            dataType: 'json',
-                            contentType: 'application/json; charset = utf-8', // sent to the server
-                            async: false,
-                            success: function (data) {
-
-                                var obj = $.parseJSON(data.d);
-                                cache: true;
-                                $(obj).each(function () {
-                                    CompanyEventsData2 = {//הכנסת פרטי האירוע לתוך גייסון והכנסתו לקלנדר
-                                        id: $(this).attr('CompanyEventsID'),
-                                        title: $(this).attr('Title'),
-                                        start: $(this).attr('Startdate'),
-                                        end: $(this).attr('Enddate')
-                                    };
-
-                                    $('#calendar').fullCalendar('renderEvent', CompanyEventsData2, true); // stick? = true
-                                    location.reload(true)
-                                });
-
-                            },
-
-                            error: function (result) {
-                                alertFunc("האירוע לא נשמר במערכת");
-                            }
-                        });
+                    if (companyEventData.subjectEvent != "" && companyEventData.endTime != "" && companyEventData.student != "" && companyEventData.group && companyEventData.subjectEvent.length <= 200 && companyEventData.companyEventDesc.length <= 1000) {
+                        s = {
+                            "Id": companyEventData.student,
+                        }
+                        g1 = {
+                            "NumGroup": companyEventData.group,
+                        }
+                        insertT = {
+                            "Mentor": getuser,
+                            "Group": g1,
+                            "Student": s,
+                            "NameTask": companyEventData.subjectEvent,
+                            "Complet": companyEventData.endTime,
+                            "Startdate": companyEventData.startDate,
+                            "Desc": companyEventData.companyEventDesc,
+                        }
+                        ajaxCall("POST", "./api/calendar/insertT", JSON.stringify(insertT), successinsertT, errinsertT)
+                    }
+                    else {
+                        alertFunc("אחד משדות החובה לא מולאו בדוק גם שנושא המשימה הינו עד 200 תווים והתיאור עד 1000 תווים במידת הצורך");
+                        return false;
+                    }
                 } else {
-                    alertFunc("אחד משדות החובה לא מולאו");
+                    alertFunc("תאריך סיום אינו תקין");
                     return false;
                 }
+
                 $('#insertNewCOMPPopupDiv').dialog('close');
             })
 
@@ -699,7 +510,7 @@
 
                 $('#insertPopupDiv').dialog('open');
                 $("#insertPopupDiv").dialog({
-                    title: "פרטי שמירה",
+                    title: "פרטי פגישה",
                 });
 
 
@@ -708,7 +519,10 @@
 
             $('#ContentPlaceHolder1_add_guarding').click(function () {//הוספנו שמירה חדשה לדאטה בייס
 
-            //    var flagFarm = 0;
+                if ($('#place').val().length > 50) {
+                    swal("מיקום לא תקין.רשאי עד 50 תווים");
+                    return false;
+                }
                 g = {
                     "NumGroup": $("#ContentPlaceHolder1_farm_ddl").val(),
                 }
@@ -716,9 +530,9 @@
                 calendarMeeting = {
                     "StartTime": $('#ContentPlaceHolder1_TBtimeStart').val(),
                     "EndTime": $('#ContentPlaceHolder1_TBtimeEnd').val(),
-                    "DateSelected":s,
+                    "DateSelected": s,
                     "Mentor": getuser,
-                    "Group":g,
+                    "Group": g,
                     "PlaceMetting": $('#place').val(),
                 }
                 GuardingData.startTime = $('#ContentPlaceHolder1_TBtimeStart').val();
@@ -740,142 +554,6 @@
                 ajaxCall("POST", "./api/calendar/insertM", JSON.stringify(calendarMeeting), successinsertM, errinsertM);
                 $('#insertPopupDiv').dialog('close');
             })
-                //$.ajax
-                //    ({
-                //        url: 'ajaxWebService.asmx/insertGuarding',
-                //        data: dataString,
-                //        type: 'POST',
-                //        dataType: 'json',
-                //        contentType: 'application/json; charset = utf-8', // sent to the server
-                //        async: false,
-                //        success: function (data) {
-
-                //            var obj = $.parseJSON(data.d);
-                //            cache: true;
-                //            $(obj).each(function () {
-                //                GuardingData2 = {
-                //                    id: $(this).attr('Id'),
-                //                    title: $(this).attr('Title'),
-                //                    start: $(this).attr('Startdate'),
-                //                    end: $(this).attr('Enddate')
-                //                };
-
-                //                $('#calendar').fullCalendar('renderEvent', GuardingData2, true); // stick? = true
-                //                $('#insertPopupDiv').dialog('close');
-                //                location.reload(true)
-                //            });
-
-                //        },
-
-                //        error: function errinsertM(result) {
-                //            alertFunc("השמירה לא נרשמה במערכת");
-                //        }
-                //    });
-                //GuardingData.farmID = $('#ContentPlaceHolder1_farm_ddl').val();
-                //GuardingData.farmNane = $('#ContentPlaceHolder1_farm_ddl option:selected').text();
-
-                //guardingfarmdate.date = GuardingData.startDate;//להביא חוות שיש בהם שמירה בתאריך הזה ולבדוק אם הוסיפו חווה שכבר יש לה שמירה בתאריך הזה
-                //var dataString = JSON.stringify(guardingfarmdate);
-                //$.ajax
-                //           ({
-                //               url: 'ajaxWebService.asmx/getguardingfarmdate',//מביאים רשימת חוות שיש להם שמירה בתאריך הזה
-                //               data: dataString,
-                //               type: 'POST',
-                //               dataType: 'json',
-                //               contentType: 'application/json; charset = utf-8', // sent to the server
-                //               async: false,
-                //               success: function (data) {// אחרי שקיבלנו רשימת שמירות נבדוק אם החווה שבחרו זהה לאחת מהחוות שנמצאות ברשימה
-                //                   var farmobjList = $.parseJSON(data.d);
-                //                   cache: true;
-                //                   $(farmobjList).each(function (key) {
-                //                       if (farmobjList[key] == GuardingData.farmID) {
-                //                           flagFarm = 1;
-                //                       }
-                //                   });
-
-                //               },
-                //               error: function (result) {
-                //                   alertFunc("לא הגיעו חוות");
-                //               }
-                //           });
-
-                //GuardingData.g1 = $('#ContentPlaceHolder1_Guard1').val();
-                //GuardingData.g2 = $('#ContentPlaceHolder1_Guard2').val();
-
-                //GuardingData.briefing = false;
-
-                //if (GuardingData.g1 == "בחר שומר") {
-                //    GuardingData.g1 = "0";
-                //}
-                //if (GuardingData.g2 == "בחר שומר") {
-                //    GuardingData.g2 = "0";
-                //}
-
-                //if ((GuardingData.g1 == GuardingData.g2) && (GuardingData.g1 != 0) && (GuardingData.g2 != 0)) {//נבדוק אם בחרו את אותו שומר והוא לא השומר הפקטיבי אז נציג הערה
-                //    alertFunc("לא ניתן לבחור את אותו שומר לשמירה");
-                //}
-                //else {
-
-                //    var dataString = JSON.stringify(GuardingData);
-                //    if (GuardingData.startTime != '' && GuardingData.endTime != '' && GuardingData.farmID != "0") {
-
-                //        if (flagFarm == 1)//זה אומר שבחרו חווה שכבר יש לה שמירה בתאריך הזה
-                //        {
-
-                //            if (confirm("שים לב, לחווה זו כבר יש שמירה בתאריך זה,האם ברצונך להמשיך?") == false) {
-                //                return false;
-                //            }
-                //            else {// עדיין רוצים להכניס שמירה לחווה שכבר יש לה שמירה בתאריך הזה
-                //                $.ajax
-                //              ({
-                //                  url: 'ajaxWebService.asmx/insertGuarding',
-                //                  data: dataString,
-                //                  type: 'POST',
-                //                  dataType: 'json',
-                //                  contentType: 'application/json; charset = utf-8', // sent to the server
-                //                  async: false,
-                //                  success: function (data) {
-
-                //                      var obj = $.parseJSON(data.d);
-                //                      cache: true;
-                //                      $(obj).each(function () {
-                //                          GuardingData2 = {
-                //                              id: $(this).attr('Id'),
-                //                              title: $(this).attr('Title'),
-                //                              start: $(this).attr('Startdate'),
-                //                              end: $(this).attr('Enddate')
-                //                          };
-
-                //                          $('#calendar').fullCalendar('renderEvent', GuardingData2, true); // stick? = true
-                //                          $('#insertPopupDiv').dialog('close');
-                //                          location.reload(true)
-                //                      });
-
-                //                  },
-
-                //                  error: function (result) {
-                //                      alertFunc("השמירה לא נרשמה במערכת");
-                //                  }
-                //              });
-                //            }
-
-                //        }
-                //        else {//אם לא בחרו חווה שיש לה שמירה בתאריך אז ישר מכניסים לדאטה בייס
-
-                        
-                        //}
-                    //}
-                    //else {
-                    //    alertFunc("אחד משדות החובה לא מולאו");
-                    //    return false;
-                    //}
-
-                   
-                //}
-           // })
-
-
-
 
             /* initialize the calendar
                 -----------------------------------------------------------------*/
@@ -921,128 +599,16 @@
                     }
 
                     $('#calendar').fullCalendar('removeEvents', event._id);
-                    
-                  
+
+
                     ajaxCall("POST", "./api/calendar/Meet", JSON.stringify(getuser), successMeet, errMeet);
                     ajaxCall("POST", "./api/calendar", JSON.stringify(getuser), success, err);
-                    //$.ajax({
-                    //    url: 'ajaxWebService.asmx/getGuarding',
-                    //    type: 'POST', // Send post data
-                    //    dataType: 'json',
-                    //    data: dataString,
-                    //    contentType: 'application/json; charset = utf-8',
-                    //    async: false,
-                    //    success: function (obj) {
-                    //        var obj = $.parseJSON(obj.d);
-                    //        cache: true;
-                    //        var color;
-
-                    //        $(obj).each(function (index) {//רץ על כל השמירות הקיימות
-
-                    //            if (obj[index].g1.GuardID == 0 && obj[index].g2.GuardID == 0) { color = '#FF0065'; }//כשלא משובצים שומרים-יצבע בורוד
-                    //            if ((obj[index].g1.GuardID != 0 && obj[index].g2.GuardID == 0) || (obj[index].g1.GuardID == 0 && obj[index].g2.GuardID != 0)) { color = '#FFC100'; } //כשמשובץ שומר אחד-יצבע בצהוב
-                    //            if (obj[index].g1.GuardID != 0 && obj[index].g2.GuardID != 0) { color = '#0ACD58'; } //כשמשובצים 2 שומרים- יצבע בירוק
-
-                    //            eventData = {//מקבל את הפרטים של השמירה
-                    //                id: $(this).attr('GuardingID'),
-                    //                title: $(this).attr('Title'),
-                    //                start: $(this).attr('Startdate') + "T" + $(this).attr('StartTime'),
-                    //                end: $(this).attr('Enddate') + "T" + $(this).attr('EndTime'),
-                    //                color: color,
-                    //                type: "guarding"
-
-                    //            };
-                    //            $('#calendar').fullCalendar('renderEvent', eventData, true);
-
-                    //        });
-
-                    //    },
-                    //    error: function (result) {
-                    //        alertFunc("בעיה בטעינת שמירות ללוח השנה")
-                    //    }
-                    //});
-
-
-                    //-----------------------מביאים אירועים חברתיים-------------------------
-                   
-                    //$.ajax({
-                    //    url: 'ajaxWebService.asmx/getCompanyEvents',
-                    //    type: 'POST', // Send post data
-                    //    dataType: 'json',
-                    //    contentType: 'application/json; charset = utf-8',
-                    //    async: false,
-                    //    success: function (obj) {
-                    //        var obj = $.parseJSON(obj.d);
-                    //        cache: true;
-                    //        $(obj).each(function () {//רץ על כל האירועים החברתיים
-
-
-                    //            CompanyEventsData = {
-                    //                id: $(this).attr('CompanyEventsID'),
-                    //                title: $(this).attr('Title'),
-                    //                start: $(this).attr('Startdate') + "T" + $(this).attr('StartTime'),
-                    //                end: $(this).attr('Enddate') + "T" + $(this).attr('EndTime'),
-                    //                startTime: $(this).attr('StartTime'),
-                    //                endTime: $(this).attr('EndTime'),
-                    //                eventDesc: $(this).attr('CompanyEventsDESC'),
-                    //                forGuard: $(this).attr('ForGuard'),
-                    //                forManger: $(this).attr('ForManger'),
-                    //                type: "CompanyEvent"
-
-
-                    //            };
-                    //            $('#calendar').fullCalendar('renderEvent', CompanyEventsData, true);
-                    //        });
-
-                    //    },
-                    //    error: function (result) {
-                    //        alertFunc("בעיה בטעינת אירועים ללוח השנה")
-                    //    }
-                    //});
 
                     //-------------------------------------------------------------------------
                 },
                 //===============================select==========================================
                 selectable: true,
                 select: function (event) {//לחיצה על יום ריק
-
-                    //var guardingDate = {
-                    //    startDate: formatDate(event._d)
-                    //}
-
-                    //var dataString = JSON.stringify(guardingDate);
-                    //$.ajax
-                    //         ({
-                    //             url: 'ajaxWebService.asmx/insertGuardToDDL',//מביא רשימה של שומרים שלא שומרים כבר באותו יום
-                    //             data: dataString,
-                    //             type: 'POST',
-                    //             dataType: 'json',
-                    //             contentType: 'application/json; charset = utf-8', // sent to the server
-                    //             async: false,
-                    //             success: function (data) {
-                    //                 var guardList = $.parseJSON(data.d);
-                    //                 $("#ContentPlaceHolder1_Guard1").empty();
-                    //                 $("#ContentPlaceHolder1_Guard2").empty();
-                    //                 $("#ContentPlaceHolder1_Guard1").append($("<option></option>").val(0).html("בחר שומר"));//מכניסי לתוך הדרופדאוןליסטים את רשימת השומרים שיכולים לשבץ אותם
-                    //                 $("#ContentPlaceHolder1_Guard2").append($("<option></option>").val(0).html("בחר שומר"));
-
-                    //                 $.each(guardList, function (key, value) {
-                    //                     var valueID = value.split(",");
-                    //                     if (valueID[0] != 0) {
-                    //                         $("#ContentPlaceHolder1_Guard1").append($("<option></option>").val(valueID[0]).html(value));
-                    //                         $("#ContentPlaceHolder1_Guard2").append($("<option></option>").val(valueID[0]).html(value));
-                    //                     }
-
-
-                    //                 });
-
-                    //             },
-
-                    //             error: function (result) {
-                    //                 alertFunc("בעיה בקבלת רשימת השומרים");
-                    //             }
-                    //         });
-
 
                     var utc = new Date();
                     utc = formatDate(utc);
@@ -1082,164 +648,40 @@
                             startDate: tempStartDate[0]
                         }
 
-                        //var dataString = JSON.stringify(guardingDate2);
-                        //$.ajax
-                        //         ({
-                        //             url: 'ajaxWebService.asmx/insertGuardToDDL',
-                        //             data: dataString,
-                        //             type: 'POST',
-                        //             dataType: 'json',
-                        //             contentType: 'application/json; charset = utf-8', // sent to the server
-                        //             async: false,
-                        //             success: function (data) {
-                        //                 var guardList = $.parseJSON(data.d);
-                        //                 $("#ContentPlaceHolder1_DDLg1").empty();//מוסיפים את רשימת השומרים שיכולים לשמור לפקדים שיש בעדכון שמירה
-                        //                 $("#ContentPlaceHolder1_DDLg2").empty();
 
-                        //                 $.each(guardList, function (key, value) {
-                        //                     var valueID = value.split(",");
-                        //                     if (valueID[0] != 0) {
-                        //                         $("#ContentPlaceHolder1_DDLg1").append($("<option></option>").val(valueID[0]).html(value));
-                        //                         $("#ContentPlaceHolder1_DDLg2").append($("<option></option>").val(valueID[0]).html(value));
-                        //                     }
-
-                        //                 });
-
-                        //             },
-
-                        //             error: function (result) {
-                        //                 alertFunc("בעיה בטעינת שומרים ללוח השנה")
-                        //             }
-                        //         });
                         //--------------------------------------------------------------
 
                         GuardingInfo.startDate = guardingDate2.startDate;
                         guardingById.id = event.id;
 
                         var obj;
-                        var FarmObj;
-                        var GuardObj;
-
-                        var dataString = JSON.stringify(guardingById);
-                        $.ajax
-                                        ({
-                                            url: 'ajaxWebService.asmx/getGuardingBYID',
-                                            data: dataString,
-                                            type: 'POST',
-                                            dataType: 'json',
-                                            contentType: 'application/json; charset = utf-8', // sent to the server
-                                            async: false,
-                                            success: function (data) {
-
-                                                obj = $.parseJSON(data.d);
-                                                document.getElementById("ContentPlaceHolder1_LStartTime").innerHTML = obj.StartTime;
-                                                document.getElementById("ContentPlaceHolder1_LEndTime").innerHTML = obj.EndTime;
-                                                GuardingInfo.StartTime = obj.StartTime;
-                                                GuardingInfo.EndTime = obj.EndTime;
-
-                                                var endDate = new Date();
-                                                if (GuardingInfo.EndTime <= GuardingInfo.StartTime) {//מסתיים ביום למחרת
-                                                    tempEndDate = (event.end._i).split('T');
-                                                    endDate = tempEndDate[0];
-                                                }
-                                                else if (GuardingInfo.EndTime > GuardingInfo.StartTime) {
-                                                    endDate = GuardingInfo.startDate;
-                                                }
-                                                GuardingInfo.endDate = endDate;
 
 
-                                                //// ____________להביא שם חווה_______________________________________________________________
+                        for (i in dataMeetfromData) {
+                            if (dataMeetfromData[i].Id == guardingById.id) {
+                                obj = dataMeetfromData[i];
+                                break;
+                            }
 
-                                                //FarmById.id = obj.farm.FarmID;
-                                                //var dataString = JSON.stringify(FarmById);
-                                                //$.ajax
-                                                //({
-                                                //    url: 'ajaxWebService.asmx/getFarmBYID',
-                                                //    data: dataString,
-                                                //    type: 'POST',
-                                                //    dataType: 'json',
-                                                //    contentType: 'application/json; charset = utf-8', // sent to the server
-                                                //    async: false,
-                                                //    success: function (data) {
-                                                //        FarmObj = $.parseJSON(data.d);
-                                                //        document.getElementById("ContentPlaceHolder1_LFarm").innerHTML = FarmObj.FarmName;
+                        }
+                        document.getElementById("ContentPlaceHolder1_LStartTime").innerHTML = obj.StartTime;
+                        document.getElementById("ContentPlaceHolder1_LEndTime").innerHTML = obj.EndTime;
+                        GuardingInfo.StartTime = obj.StartTime;
+                        GuardingInfo.EndTime = obj.EndTime;
+                        GuardingInfo.endDate = GuardingInfo.startDate;
+                        document.getElementById("ContentPlaceHolder1_LGuard1").innerHTML = obj.PlaceMetting;
+                        var detailsG = "";
+                        detailsG += `${obj.Group.NameProject}- `;
 
-                                                //        GuardingInfo.FarmID = FarmById.id;
-                                                //        GuardingInfo.FarmName = FarmObj.FarmName;
-                                                //    },
-                                                //    error: function (result) { alertFunc(" החווה לא זוהתה") }
-                                                //});
-                                                // _______________________________________________________________________________________
-                                                // ____________להביא שמות שומרים_______________________________________________________________
-
-                                                guardById.idG1 = obj.g1.GuardID;
-                                                guardById.idG2 = obj.g2.GuardID;
-
-                                                var dataString = JSON.stringify(guardById);
-                                                $.ajax
-                                                ({
-                                                    url: 'ajaxWebService.asmx/getGuarsdBYID',
-                                                    data: dataString,
-                                                    type: 'POST',
-                                                    dataType: 'json',
-                                                    contentType: 'application/json; charset = utf-8', // sent to the server
-                                                    async: false,
-                                                    success: function (data) {
-                                                        GuardObj = $.parseJSON(data.d);
-                                                        $("ContentPlaceHolder1_LGuard1").empty();
-                                                        $("ContentPlaceHolder1_LGuard2").empty();
-
-                                                        GuardingInfo.GuardObjlength = GuardObj.length;
-
-                                                        if (GuardObj.length == 1) {//אם לא משובצים שומרים לשמירה
-                                                            document.getElementById("ContentPlaceHolder1_LGuard2").innerHTML = "לא נבחר שומר";
-                                                            GuardObj1 = GuardObj[0].split(",");
-
-                                                            GuardingInfo.GuardID1 = GuardObj1[0];
-                                                            if (GuardObj1[0] == '0') {
-                                                                document.getElementById("ContentPlaceHolder1_LGuard1").innerHTML = "לא נבחר שומר";
-                                                            }
-                                                            else {
-                                                                document.getElementById("ContentPlaceHolder1_LGuard1").innerHTML = GuardObj[0];
-                                                                GuardingInfo.GuardName1 = GuardObj[0]
-                                                            }
-                                                        }
-                                                        else {
-                                                            GuardObj1 = GuardObj[0].split(",");
-                                                            GuardingInfo.GuardID1 = GuardObj1[0];
-                                                            if (GuardObj1[0] == '0') {
-                                                                document.getElementById("ContentPlaceHolder1_LGuard1").innerHTML = "לא נבחר שומר";
-                                                            }
-                                                            else {
-                                                                document.getElementById("ContentPlaceHolder1_LGuard1").innerHTML = GuardObj[0];
-                                                                GuardingInfo.GuardName1 = GuardObj[0]
-                                                            }
-
-                                                            GuardObj2 = GuardObj[1].split(",");
-                                                            GuardingInfo.GuardID2 = GuardObj2[0];
-
-                                                            if (GuardObj2[0] == '0') {
-                                                                document.getElementById("ContentPlaceHolder1_LGuard2").innerHTML = "לא נבחר שומר";
-                                                            }
-                                                            else {
-                                                                document.getElementById("ContentPlaceHolder1_LGuard2").innerHTML = GuardObj[1];
-                                                                GuardingInfo.GuardName2 = GuardObj[1]
-                                                            }
-                                                        }
+                        for (j in obj.Group.ListStudent) {
+                            detailsG += `${obj.Group.ListStudent[j].FirstName} ,`;
+                        }
+                        detailsG = detailsG.substring(0, detailsG.length - 1);
+                        document.getElementById("ContentPlaceHolder1_LFarm").innerHTML = detailsG;
 
 
-                                                    },
-                                                    error: function (result) { alertFunc("השומרים לא זוהו") }
-                                                });
-                                                // _______________________________________________________________________________________
-
-                                            },
-
-                                            error: function (result) {
-                                                alertFunc("השמירה לא נרשמה במערכת");
-                                            }
-                                        });
-
+                        GuardingInfo.Place = obj.PlaceMetting;
+                        GuardingInfo.Group = detailsG;
 
                         $("#showGuardingPopupDiv").dialog({
                             autoOpen: false,
@@ -1247,60 +689,44 @@
 
                         $('#showGuardingPopupDiv').dialog('open');
                         $("#showGuardingPopupDiv").dialog({
-                            title: " פרטי שמירה",
+                            title: " פרטי פגישה",
                         });
 
                     }
                     else if (event.type == "calendarTask")//אם לחצו על אירוע משימה
                     {
+                        var obj;
+
+
+                        for (i in dataTaskfromData) {
+                            if (dataTaskfromData[i].Id == event.id) {
+                                obj = dataTaskfromData[i];
+                                break;
+                            }
+
+                        }
                         tempStartDate = (event.start._i).split('T');
-                        companyEventData.startDate = tempStartDate[0];//מממלאים אוביקט גייסון של אירוע חברה לשימוש עזר
-                        companyEventData.startTime = event.startTime;
-                        companyEventData.endTime = event.endTime;
+                        tempEndDate = obj.Complet;
+                        //tempEndDate = (event.end._i).split('T');
+                        companyEventData.startDate = tempStartDate[0];
+                        //  companyEventData.startTime = event.startTime;
+                        companyEventData.endTime = tempEndDate;
 
-                        var endDate = new Date();
-                        if (companyEventData.endTime <= companyEventData.startTime) {//מסתיים ביום למחרת
-                            tempEndtDate = (event.end._i).split('T');
-                            endDate = tempEndtDate[0];
-                        }
-                        else if (companyEventData.endTime > companyEventData.startTime) {
-                            endDate = formatDate(companyEventData.startDate);
-                        }
+                        companyEventData.group = event.group;
 
-                        companyEventData.endDate = endDate;
+                        companyEventData.student = event.student;
                         companyEventData.subjectEvent = event.title;
                         companyEventData.companyEventDesc = event.eventDesc;
-                        companyEventData.forGuard = event.forGuard;
-                        companyEventData.forManage = event.forManger;
                         companyEventData.companyEventDataId = event.id;
                         compEventById.id = event.id;
-                        var dataString = JSON.stringify(compEventById);
-                        $.ajax
-                        ({
-                            url: 'ajaxWebService.asmx/getcompEventById',
-                            data: dataString,
-                            type: 'POST',
-                            dataType: 'json',
-                            contentType: 'application/json; charset = utf-8', // sent to the server
-                            async: false,
-                            success: function (data) {
-                                var compEventObj = $.parseJSON(data.d);
-                                document.getElementById("ContentPlaceHolder1_labelSubjectEvent").innerHTML = compEventObj.Title;
-                                document.getElementById("ContentPlaceHolder1_timeStartLabel").innerHTML = compEventObj.StartTime;
-                                document.getElementById("ContentPlaceHolder1_timeEndLabel").innerHTML = compEventObj.EndTime;
-                                document.getElementById("ContentPlaceHolder1_eventDescLabel").innerHTML = compEventObj.CompanyEventsDESC;
-                                if (compEventObj.ForGuard) {
-                                    document.getElementById("ContentPlaceHolder1_GuardPopulation").innerHTML = "שומרים";
-                                }
-                                if (compEventObj.ForManger) {
-                                    document.getElementById("ContentPlaceHolder1_ManagerPopulation").innerHTML = "הנהלה";
-                                }
 
 
 
-                            },
-                            error: function (result) { alertFunc(" האירוע לא זוהה") }
-                        });
+                        document.getElementById("ContentPlaceHolder1_labelSubjectEvent").innerHTML = companyEventData.subjectEvent;
+                        document.getElementById("ContentPlaceHolder1_timeStartLabel").innerHTML = companyEventData.endTime;
+                        document.getElementById("ContentPlaceHolder1_GuardPopulation").innerHTML = companyEventData.group.NameGroup + ", " + companyEventData.group.NameProject;
+                        document.getElementById("ContentPlaceHolder1_eventDescLabel").innerHTML = companyEventData.companyEventDesc;
+                        document.getElementById("ContentPlaceHolder1_eventSLabel").innerHTML = companyEventData.student.FirstName + " " + companyEventData.student.LastName;
 
                         $("#showCompanyEventPopupDiv").dialog({
                             autoOpen: false,
@@ -1308,7 +734,7 @@
 
                         $('#showCompanyEventPopupDiv').dialog('open');
                         $("#showCompanyEventPopupDiv").dialog({
-                            title: " פרטי אירוע",
+                            title: " פרטי משימה",
                         });
                     }
 
@@ -1321,6 +747,7 @@
         });
 
         function successMeet(data) {
+            dataMeetfromData = data;
             for (i in data) {
                 cache: true;
                 eventData = {
@@ -1339,145 +766,126 @@
             }
         }
         function errMeet(err) {
-            alertFunc("בעיה בטעינת שמירות ללוח השנה");
+            swal("בעיה בטעינת פגישות ללוח השנה");
         }
+        var dataTaskfromData = [];
+        function success(data) {//רץ על כל המשימות
+            dataTaskfromData = data;
+            var today = new Date();
+            var dd = String(today.getDate()).padStart(2, '0');
+            var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+            var yyyy = today.getFullYear();
 
-        function success(data) {
+            today = yyyy + '-' + mm + '-' + dd;
             for (i in data) {
+                var color = "";
                 cache: true;
                 //$(obj).each(function () {//רץ על כל האירועים החברתיים
+                if ((data[i].Status == 2) && (data[i].Complet < today)) {
+                    color = "#FF0065";
+                }
+                else if (data[i].Status == 1) {
+                    color = "#0ACD58";
+                }
+                else {
+                    color = "#FFC100";
+                }
+                for (j in data[i].Group.ListStudent) {
+                    if (data[i].Group.ListStudent[j].Id == data[i].Student.Id) {
+                        data[i].Student = data[i].Group.ListStudent[j];
+                        break;
+                    }
+                }
                 CompanyEventsData = {
-                    id: $(this).attr('CompanyEventsID'),
-                    title: $(this).attr('Title'),
-                    start: $(this).attr('Startdate') + "T" + $(this).attr('StartTime'),
-                    end: $(this).attr('Enddate') + "T" + $(this).attr('EndTime'),
-                    startTime: $(this).attr('StartTime'),
-                    endTime: $(this).attr('EndTime'),
-                    eventDesc: $(this).attr('CompanyEventsDESC'),
-                    forGuard: $(this).attr('ForGuard'),
-                    forManger: $(this).attr('ForManger'),
-                    color: '#0ACD58',
+                    id: data[i].Id,
+                    eventDesc: data[i].Desc,
+                    title: data[i].NameTask,
+                    start: data[i].Startdate,
+                    end: data[i].Complet,
+                    student: data[i].Student,
+                    group: data[i].Group,
+                    color: color,
                     type: "calendarTask"
 
 
                 };
+                console.log(CompanyEventsData);
                 $('#calendar').fullCalendar('renderEvent', CompanyEventsData, true);
                 //});
             }
         }
         function err(err) {
-            alertFunc("בעיה בטעינת אירועים ללוח השנה");
+            swal("בעיה בטעינת משימות ללוח השנה");
         }
         function successinsertM(data) {
-            var obj = $.parseJSON(data.d);
-            cache: true;
-            $(obj).each(function () {
-                GuardingData2 = {
-                    id: $(this).attr('Id'),
-                    title: $(this).attr('Title'),
-                    start: $(this).attr('Startdate'),
-                    end: $(this).attr('Enddate')
-                };
 
-                $('#calendar').fullCalendar('renderEvent', GuardingData2, true); // stick? = true
-                $('#insertPopupDiv').dialog('close');
-                location.reload(true)
+            $('#insertPopupDiv').dialog('close');
+            swal("הפגישה נשמרה בהצלחה!").then(function () {
+                location.reload(true);
             });
+
         }
         function errinsertM(result) {
-            alertFunc("השמירה לא נרשמה במערכת");
+            swal("השמירה לא נרשמה במערכת");
+        }
+        function successupdateMeet(data) {
+            $('#updatePopuppDiv').dialog('close');
+            swal("השמירה עודכנה בהצלחה!").then(function () {
+                location.reload(true);
+            });
+
+        }
+        function errupdateMeet(err) {
+            swal("השמירה לא עודכנה במערכת");
+        }
+        function successDeleteM(data) {
+            $('#showGuardingPopupDiv').dialog('close');
+            swal("הפגישה נמחקה בהצלחה!").then(function () {
+                location.reload(true);
+            });
+        }
+        function successDeleteT(data) {
+            $('#showCompanyEventPopupDiv').dialog('close');
+            swal("המשימה נמחקה בהצלחה!").then(function () {
+                location.reload(true);
+            });
+        }
+        function errDeleteT(data) {
+            swal("המשימה לא נמחקה מהמערכת");
+        }
+        function errDeleteM(data) {
+            swal("הפגישה לא נמחקה מהמערכת");
+        }
+        function successinsertT(data) {
+            $('#insertNewCOMPPopupDiv').dialog('close');
+            swal("המשימה נשמרה בהצלחה!").then(function () {
+                location.reload(true);
+            });
+        }
+
+        function errinsertT(err) {
+            swal("המשימה לא נרשמה במערכת");
+        }
+        function successupdateT(data) {
+            $('#showCompanyEventPopupDiv').dialog('close');
+            swal("השמירה עודכנה בהצלחה!").then(function () {
+                location.reload(true);
+            });
+
+        }
+        function errupdateT(err) {
+            swal("השמירה לא עודכנה במערכת");
         }
     </script>
     <link href="css/tipol_guarding.css" rel="stylesheet" />
 
 </head>
 <body dir="rtl">
+   
     <header>
-        <div class="element_general_prime_categories  ">
-            <!--<div class="logoImg">
-                <img src="images/logo.png" style="width: 130px; height:40px; line-height:50px;" />
-            </div>
-            <ul class="store_categories">
-                <li><a href="tipolStarsManager.aspx"><i class="fa fa-star-o"></i>כוכבים</a></li>
-                <li><a href="tipolEvents.aspx"><i class="fa fa-exclamation-triangle"></i>אירועים</a></li>
-                <li>
-                    <a href="reaportGuard.aspx"><i class="fa fa-pencil-square-o"></i>דוחות </a>
-                    <ul class="store_categories">
-                        <li><a href="reaportGuard.aspx">שומרים</a></li>
-                        <li><a href="reaportGuarding.aspx">שמירות</a></li>
-                    </ul>
-                </li>
-                <li><a href="ManagerMessage.html"><i class="fa fa-envelope-o"></i>הודעות</a> </li>
-                <li>
-                    <a href="tipol_Guardig_And_Event_Manger.aspx"><i class="fa fa-calendar"></i>שמירות</a>
-                    <ul class="store_categories">
-                        <li><a href="tipol_Guardig_And_Event_Manger.aspx">שמירות ואירועים</a></li>
-                        <li><a href="SmartScheduling.aspx">שיבוץ חכם</a></li>
-                        <li><a href="addGuarding.aspx">שמירה חדשה</a></li>
-                        <li><a href="tipolFarms.aspx">טיפול בחוות</a></li>
-                        <li><a href="QuestionForBriefinManger.aspx">טיפול בתדריך</a></li>
-                        <li><a href="guardingHistoryManager.aspx">שמירות שעברו</a></li>
-                    </ul>
-                </li>
-                <li>
-                    <a href="tipolGuard.aspx"><i class="fa fa-users"></i>משתמשים</a>
-                    <ul class="store_categories">
-                        <li><a href="tipolGuard.aspx">טיפול בשומרים</a></li>
-                        <li><a href="tipolManager.aspx">טיפול במנהלים</a></li>
-                        <li><a href="addGuardFormanager.aspx">הוספת שומר חדש</a></li>
-                        <li><a href="addManagerForManager.aspx">הוספת מנהל חדש</a></li>
-                        <li><a href="tipolContacts.aspx">טיפול בפניות</a></li>
-                    </ul>
-                </li>
-            </ul>-->
-        </div>
-        <!--<div class="navbar-custom-menu">
-            <ul class="nav navbar-nav">
-
-                <li>
-                    <a href="homePage_Manger.aspx">
-                        <i class="fa fa-home"></i>
-                    </a>
-                </li>
-                <li class="dropdown user user-menu">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="dist/img/avatar2.png" id="userImgOut" class="user-image" alt="User Image" />
-                        <span id="userNameout" class="hidden-xs">יוכי אפרת</span>
-                    </a>
-                    <ul class="dropdown-menu">
-                         User image
-                        <li class="user-header">
-                            <img src="dist/img/avatar2.png" id="userImgIn" class="img-circle" alt="User Image" />
-                            <span id="userNamein" class="hidden-xs">יוכי אפרת</span>
-                        </li>
-                        <li class="user-body">
-                            <div class="col-xs-4 text-center">
-                                <a href="#">שמירות</a>
-                            </div>
-                            <div class="col-xs-4 text-center">
-                                <a href="#">משתמשים</a>
-                            </div>
-                            <div class="col-xs-4 text-center">
-                                <a href="#">אירועים</a>
-                            </div>
-                        </li>
-                         Menu Footer
-                        <li class="user-footer">
-                            <div class="pull-left">
-                                <a href="changePass.aspx" class="btn btn-default btn-flat">פרופיל</a>
-                            </div>
-                            <div class="pull-right">
-                                <a href="deskPage.html" class="btn btn-default btn-flat">התנתק</a>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>-->
-
     </header>
 
-    <form method="post" action="./tipol_Guardig_And_Event_Manger.aspx" id="form2">
+    <form method="post" action="./calendar.html" id="form2">
         <div class="aspNetHidden">
             <input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
             <input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
@@ -1486,19 +894,19 @@
         </div>
 
         <script type="text/javascript">
-//<![CDATA[
-var theForm = document.forms['form2'];
-if (!theForm) {
-    theForm = document.form2;
-}
-function __doPostBack(eventTarget, eventArgument) {
-    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
-        theForm.__EVENTTARGET.value = eventTarget;
-        theForm.__EVENTARGUMENT.value = eventArgument;
-        theForm.submit();
-    }
-}
-//]]>
+            //<![CDATA[
+            var theForm = document.forms['form2'];
+            if (!theForm) {
+                theForm = document.form2;
+            }
+            function __doPostBack(eventTarget, eventArgument) {
+                if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+                    theForm.__EVENTTARGET.value = eventTarget;
+                    theForm.__EVENTARGUMENT.value = eventArgument;
+                    theForm.submit();
+                }
+            }
+            //]]>
         </script>
 
 
@@ -1512,558 +920,500 @@ function __doPostBack(eventTarget, eventArgument) {
 
             <!--<h5>דף טיפול בשמירות ואירועים- הוספת אירוע או שמירה, מחיקה ועדכון</h5>-->
 
-               <!--<div id="ContentPlaceHolder1_filters" class="floatright">-->
-                <!-- <div >
-         <h3>סנן לפי אזור: </h3>
-         <select name="ctl00$ContentPlaceHolder1$areaFilterDDL" onchange="javascript:setTimeout(&#39;__doPostBack(\&#39;ctl00$ContentPlaceHolder1$areaFilterDDL\&#39;,\&#39;\&#39;)&#39;, 0)" id="ContentPlaceHolder1_areaFilterDDL">-->
-                <!--<option selected="selected" value="0">בחר אזור</option>
-    <option value="1">צפון</option>
-    <option value="2">דרום</option>-->
-                <!--</select>
-    </div>
-    <div id="ContentPlaceHolder1_FarmDivfilter" class="floatright">
-        <h3>סנן לפי פרויקט: </h3>
-        <select name="ctl00$ContentPlaceHolder1$farmFilterDDL" onchange="javascript:setTimeout(&#39;__doPostBack(\&#39;ctl00$ContentPlaceHolder1$farmFilterDDL\&#39;,\&#39;\&#39;)&#39;, 0)" id="ContentPlaceHolder1_farmFilterDDL">-->
-                <!--<option selected="selected" value="0">בחר חווה</option>
-    <option value="1">עין כמונים</option>
-    <option value="45">גוש רמת הגולן - אגמון החולה</option>
-    <option value="46">גוש ביריה - חזון</option>
-    <option value="47">קרית שמונה - ברעם</option>
-    <option value="48">גלבוע</option>
-    <option value="49">טבריה </option>
-    <option value="50">נצרת</option>
-    <option value="51">כברי</option>
-    <option value="52">שגב</option>
-    <option value="53">כרמל</option>
-    <option value="54">אלונים</option>
-    <option value="55">בית לחם הגלילית</option>
-    <option value="56">בנימינה</option>
-    <option value="57">בצת</option>
-    <option value="58">גבעת יואב</option>
-    <option value="59">גבעת נילי</option>
-    <option value="60">חזון</option>
-    <option value="61">חמדיה</option>
-    <option value="62">יבנאל</option>
-    <option value="63">מכמנים</option>
-    <option value="64">מצר</option>
-    <option value="65">עמיקם גורי</option>
-    <option value="66">עמיקם אורן + עקיבא</option>
-    <option value="67">רותם</option>
-    <option value="68">משמר הירדן</option>
-    <option value="69">חוות נחלאים</option>
-    <option value="70">אגן שקמה</option>
-    <option value="71">אמציה</option>
-    <option value="72">בית ניר</option>
-    <option value="73">הר שמש</option>
-    <option value="74">חביביאן</option>
-    <option value="75">חווה אשב&quot;א</option>
-    <option value="76">חוות ניסים פרץ</option>
-    <option value="77">חוות נעמא</option>
-    <option value="78">לכיש דרום</option>
-    <option value="79">לכיש צפון</option>
-    <option value="80">נס הרים</option>
-    <option value="81">רתמים</option>
-    <option value="82">שקף</option>
-    <option value="83">חוות שמשון</option>
-    <option value="84">יחידת השטחים הפתוחים</option>
-    <option value="85">מנוחה</option>
-    <option value="86">מתנת מדבר</option>
-    <option value="87">שי דרומי</option>-->
-                <!--</select>
-        </div>-->
-                  <!--</div>-->
-                <h2 class="h2_head">פגישות ומשימות</h2>
-                <div id='calendar' style="float:left;padding-left:100px"></div>
-
-
-
-                <div data-role="popup" id="insertPopup" class="ui-content" style="min-width: 250px; width: auto">
-                    <div id="insertPopupDiv" style="display: none;">
-                        <h5>קביעת פגישה</h5>
-
-                        <table dir="rtl">
-                            <tr>
-                                <td>
-                                    <h3>שעת התחלה</h3>
-                                </td>
-                                <td>
-                                    <input name="ctl00$ContentPlaceHolder1$TBtimeStart" id="ContentPlaceHolder1_TBtimeStart" value="21:00" type="time" step="300" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h3>שעת סיום</h3>
-                                </td>
-                                <td>
-                                    <input name="ctl00$ContentPlaceHolder1$TBtimeEnd" id="ContentPlaceHolder1_TBtimeEnd" value="06:00" type="time" step="300" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h3>בחר קבוצה</h3>
-                                </td>
-                                <td>
-                                    <select name="ctl00$ContentPlaceHolder1$farm_ddl" id="ContentPlaceHolder1_farm_ddl"></select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h3>בחר מיקום</h3>
-                                </td>
-                                <td>
-                                    <input type="text" name="place" id="place" />
-                                </td>
-                            </tr>
-
-                            <tr>
-                                <td>
-                                    <input type="submit" name="ctl00$ContentPlaceHolder1$add_guarding" value="הוסף" id="ContentPlaceHolder1_add_guarding" />
-
-                                </td>
-                            </tr>
-                        </table>
-
-                    </div>
-                </div>
-
-                <div data-role="popup" id="showPopup" class="ui-content" style="min-width: 250px; width: auto">
-                    <div id="showGuardingPopupDiv" style="display: none;">
-
-                        <table dir="rtl">
-                            <tr>
-                                <td>
-                                    <h3>שעת התחלה</h3>
-                                </td>
-                                <td>
-                                    <span id="ContentPlaceHolder1_LStartTime">Label</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h3>שעת סיום</h3>
-                                </td>
-                                <td>
-                                    <span id="ContentPlaceHolder1_LEndTime">Label</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h3>חווה</h3>
-                                </td>
-                                <td>
-                                    <span id="ContentPlaceHolder1_LFarm">Label</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h3>שומר 1</h3>
-                                </td>
-                                <td>
-                                    <span id="ContentPlaceHolder1_LGuard1">Label</span>
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h3>שומר 2</h3>
-                                </td>
-                                <td>
-                                    <span id="ContentPlaceHolder1_LGuard2">Label</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="submit" name="ctl00$ContentPlaceHolder1$BTNupdate" value="ערוך שמירה" id="ContentPlaceHolder1_BTNupdate" />
-
-                                </td>
-                                <td>
-                                    <input type="submit" name="ctl00$ContentPlaceHolder1$BTNdelete" value="מחק שמירה" id="ContentPlaceHolder1_BTNdelete" />
-
-                                </td>
-                            </tr>
-                        </table>
-
-                    </div>
-                </div>
-
-                <div data-role="popup" id="updatePopup" class="ui-content" style="min-width: 250px; width: auto">
-                    <div id="updatePopuppDiv" style="display: none;">
-                        <h5>שדות חובה- שעות שמירה, ושם חווה</h5>
-
-                        <table dir="rtl">
-                            <tr>
-                                <td>
-                                    <h3>שעת התחלה</h3>
-                                </td>
-                                <td>
-
-                                    <input name="ctl00$ContentPlaceHolder1$TBstarttime" id="ContentPlaceHolder1_TBstarttime" type="time" step="300" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h3>שעת סיום</h3>
-                                </td>
-                                <td>
-                                    <input name="ctl00$ContentPlaceHolder1$TBendtime" id="ContentPlaceHolder1_TBendtime" type="time" step="300" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h3>בחר חווה</h3>
-                                </td>
-                                <td>
-
-                                    <select name="ctl00$ContentPlaceHolder1$DDLfarm" id="ContentPlaceHolder1_DDLfarm">
-                                        <option value="0">בחר חווה</option>
-                                        <option value="1">עין כמונים</option>
-                                        <option value="45">גוש רמת הגולן - אגמון החולה</option>
-                                        <option value="46">גוש ביריה - חזון</option>
-                                        <option value="47">קרית שמונה - ברעם</option>
-                                        <option value="48">גלבוע</option>
-                                        <option value="49">טבריה </option>
-                                        <option value="50">נצרת</option>
-                                        <option value="51">כברי</option>
-                                        <option value="52">שגב</option>
-                                        <option value="53">כרמל</option>
-                                        <option value="54">אלונים</option>
-                                        <option value="55">בית לחם הגלילית</option>
-                                        <option value="56">בנימינה</option>
-                                        <option value="57">בצת</option>
-                                        <option value="58">גבעת יואב</option>
-                                        <option value="59">גבעת נילי</option>
-                                        <option value="60">חזון</option>
-                                        <option value="61">חמדיה</option>
-                                        <option value="62">יבנאל</option>
-                                        <option value="63">מכמנים</option>
-                                        <option value="64">מצר</option>
-                                        <option value="65">עמיקם גורי</option>
-                                        <option value="66">עמיקם אורן + עקיבא</option>
-                                        <option value="67">רותם</option>
-                                        <option value="68">משמר הירדן</option>
-                                        <option value="69">חוות נחלאים</option>
-                                        <option value="70">אגן שקמה</option>
-                                        <option value="71">אמציה</option>
-                                        <option value="72">בית ניר</option>
-                                        <option value="73">הר שמש</option>
-                                        <option value="74">חביביאן</option>
-                                        <option value="75">חווה אשב&quot;א</option>
-                                        <option value="76">חוות ניסים פרץ</option>
-                                        <option value="77">חוות נעמא</option>
-                                        <option value="78">לכיש דרום</option>
-                                        <option value="79">לכיש צפון</option>
-                                        <option value="80">נס הרים</option>
-                                        <option value="81">רתמים</option>
-                                        <option value="82">שקף</option>
-                                        <option value="83">חוות שמשון</option>
-                                        <option value="84">יחידת השטחים הפתוחים</option>
-                                        <option value="85">מנוחה</option>
-                                        <option value="86">מתנת מדבר</option>
-                                        <option value="87">שי דרומי</option>
-
-                                    </select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h3>שומר 1</h3>
-                                </td>
-                                <td>
-                                    <select name="ctl00$ContentPlaceHolder1$DDLg1" id="ContentPlaceHolder1_DDLg1"></select>
-
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h3>שומר 2</h3>
-                                </td>
-                                <td>
-                                    <select name="ctl00$ContentPlaceHolder1$DDLg2" id="ContentPlaceHolder1_DDLg2"></select>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="submit" name="ctl00$ContentPlaceHolder1$BTNup" value="עדכן" id="ContentPlaceHolder1_BTNup" />
-
-                                </td>
-                            </tr>
-                        </table>
-
-
-
-                    </div>
-                </div>
-
-                <div data-role="popup" id="WhicheventPopup" class="ui-content" style="min-width: 250px; width: auto">
-                    <div id="WhicheventPopupDiv" style="display: none;">
-                        <h3>איזה אירוע ברצונך להכניס למערכת?</h3>
-
-                        <table dir="rtl">
-                            <tr>
-                                <td>
-                                    <input type="submit" name="ctl00$ContentPlaceHolder1$ADDguardingEvent" value="פגישה חדשה" id="ContentPlaceHolder1_ADDguardingEvent" />
-                                </td>
-                                <td>&nbsp;  &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;</td>
-                                <td>
-
-                                    <input type="submit" name="ctl00$ContentPlaceHolder1$ADDcompanyEvent" value="משימה חדשה" id="ContentPlaceHolder1_ADDcompanyEvent" />
-                                </td>
-                            </tr>
-                        </table>
-
-
-
-                    </div>
-                </div>
-
-                <div data-role="popup" id="insertNewCOMPPopup" class="ui-content" style="min-width: 250px; width: auto">
-                    <div id="insertNewCOMPPopupDiv" style="display: none;">
-                        <table dir="rtl">
-                            <tr>
-                                <td>
-                                    <h5>נושא האירוע</h5>
-                                </td>
-                                <td>
-                                    <input name="ctl00$ContentPlaceHolder1$TBSubjectEvent" type="text" id="ContentPlaceHolder1_TBSubjectEvent" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h5>שעת התחלה</h5>
-                                </td>
-                                <td>
-                                    <input name="ctl00$ContentPlaceHolder1$timeStartTextBox" id="ContentPlaceHolder1_timeStartTextBox" value="00:00" type="time" step="300" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h5>שעת סיום</h5>
-                                </td>
-                                <td>
-                                    <input name="ctl00$ContentPlaceHolder1$timeEndTextBox" id="ContentPlaceHolder1_timeEndTextBox" value="00:00" type="time" step="300" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h5>תיאור האירוע</h5>
-                                </td>
-                                <td>
-                                    <textarea name="ctl00$ContentPlaceHolder1$eventDesc" rows="10" cols="20" id="ContentPlaceHolder1_eventDesc">
-                               </textarea>
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h5>אוכלוסיה מיועדת</h5>
-                                </td>
-                                <td>
-
-                                    <input id="ContentPlaceHolder1_CheckBoxGuard" type="checkbox" name="ctl00$ContentPlaceHolder1$CheckBoxGuard" /><label for="ContentPlaceHolder1_CheckBoxGuard">שומרים</label>
-                                    <input id="ContentPlaceHolder1_CheckBoxManager" type="checkbox" name="ctl00$ContentPlaceHolder1$CheckBoxManager" /><label for="ContentPlaceHolder1_CheckBoxManager">הנהלה</label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="submit" name="ctl00$ContentPlaceHolder1$addCOMPevent" value="הוסף" id="ContentPlaceHolder1_addCOMPevent" />
-
-                                </td>
-                            </tr>
-                        </table>
-
-
-
-                    </div>
-                </div>
-
-                <div data-role="popup" id="showCompanyPopup" class="ui-content" style="min-width: 250px; width: auto">
-                    <div id="showCompanyEventPopupDiv" style="display: none;">
-
-                        <table dir="rtl">
-                            <tr>
-                                <td>
-                                    <h4>נושא האירוע</h4>
-                                </td>
-                                <td>
-                                    <span id="ContentPlaceHolder1_labelSubjectEvent">Label</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h4>שעת התחלה</h4>
-                                </td>
-                                <td class="auto-style1">
-                                    <span id="ContentPlaceHolder1_timeStartLabel">Label</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h4>שעת סיום</h4>
-                                </td>
-                                <td class="auto-style1">
-                                    <span id="ContentPlaceHolder1_timeEndLabel">Label</span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h4>תיאור האירוע</h4>
-                                </td>
-                                <td>
-                                    <span id="ContentPlaceHolder1_eventDescLabel">Label</span>
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h4>אוכלוסיה מיועדת</h4>
-                                </td>
-                                <td>
-                                    <span id="ContentPlaceHolder1_GuardPopulation"></span>
-                                </td>
-                                <td>
-                                    <span id="ContentPlaceHolder1_ManagerPopulation"></span>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="submit" name="ctl00$ContentPlaceHolder1$ButtonEditevent" value="ערוך אירוע" id="ContentPlaceHolder1_ButtonEditevent" />
-
-                                </td>
-                                <td>&nbsp;  &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;</td>
-                                <td>
-                                    <input type="submit" name="ctl00$ContentPlaceHolder1$ButtonDeleteEvent" value="מחק אירוע" id="ContentPlaceHolder1_ButtonDeleteEvent" />
-
-                                </td>
-                            </tr>
-                        </table>
-
-
-
-                    </div>
-                </div>
-
-                <div data-role="popup" id="updateEVENTPopup" class="ui-content" style="min-width: 250px; width: auto">
-                    <div id="updateEVENTPopupDiv" style="display: none;">
-
-                        <table dir="rtl">
-                            <tr>
-                                <td>
-                                    <h4>נושא האירוע</h4>
-                                </td>
-                                <td>
-
-                                    <input name="ctl00$ContentPlaceHolder1$subjectUPDATE" type="text" id="ContentPlaceHolder1_subjectUPDATE" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h4>שעת התחלה</h4>
-                                </td>
-                                <td class="auto-style1">
-                                    <input name="ctl00$ContentPlaceHolder1$UpdateStartTime" type="text" id="ContentPlaceHolder1_UpdateStartTime" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h4>שעת סיום</h4>
-                                </td>
-                                <td class="auto-style1">
-                                    <input name="ctl00$ContentPlaceHolder1$UpdateEndTime" type="text" id="ContentPlaceHolder1_UpdateEndTime" />
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h4>תיאור האירוע</h4>
-                                </td>
-                                <td>
-                                    ONCLICK
-                                    <input name="ctl00$ContentPlaceHolder1$UpdateEventDesc" type="text" id="ContentPlaceHolder1_UpdateEventDesc" />
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <h4>אוכלוסיה מיועדת</h4>
-                                </td>
-                                <td>
-                                    <input id="ContentPlaceHolder1_CheckBoxUpdateGuard" type="checkbox" name="ctl00$ContentPlaceHolder1$CheckBoxUpdateGuard" /><label for="ContentPlaceHolder1_CheckBoxUpdateGuard">שומרים</label>
-                                    <input id="ContentPlaceHolder1_CheckBoxUpdateManager" type="checkbox" name="ctl00$ContentPlaceHolder1$CheckBoxUpdateManager" /><label for="ContentPlaceHolder1_CheckBoxUpdateManager">הנהלה</label>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>
-                                    <input type="submit" name="ctl00$ContentPlaceHolder1$updateEventBTN" value="עדכן" id="ContentPlaceHolder1_updateEventBTN" />
-
-                                </td>
-                            </tr>
-                        </table>
-
-
-
-                    </div>
-                </div>
-
-                <div id="infoColor">
-                    <h3>מקרא צבעים:</h3>
-                    <div id="FG">
-                        <h4>פגישה</h4>
-                    </div>
-                    <div id="NFG">
-                        <h4>משימה</h4>
-                    </div>
-                    <!--<div id="NNG">
-            <h4>לא משובצים שומרים</h4>
-        </div>
-        <div id="EV">
-            <h4>אירוע חברה</h4>
-        </div>-->
-                </div>
-
-
-
-                <div data-role="popup" id="alertModel" class="ui-content" style="min-width: 250px; width: auto">
-                    <div id="alertModelDIV" style="display: none;">
-
-                        <label id="alertlabel"></label>
-                        <button type="button" id="close_alertlabel" class="btn btn-default" style="float: left;">אישור</button>
-                    </div>
-
-                </div>
-
-
-                <div data-role="popup" id="confirmalertModel" class="ui-content" style="min-width: 250px; width: auto">
-                    <div id="confirmalertModelDIV" style="display: none;">
-
-                        <label id="confirmalertlabel"></label>
-                        <button type="button" id="confirm_close_alertlabel" class="btn btn-default" style="float: left;">אישור</button>
-                        <button type="button" id="nonconfirm_close_alertlabel" class="btn btn-default" style="float: left;">ביטול</button>
-                    </div>
-
-                </div>
-
-                <div data-role="popup" id="confirmalertModel1" class="ui-content" style="min-width: 250px; width: auto">
-                    <div id="confirmalertModelDIV1" style="display: none;">
-
-                        <label id="confirmalertlabel1"></label>
-                        <button type="button" id="confirm_close_alertlabel1" class="btn btn-default" style="float: left;">אישור</button>
-                        <button type="button" id="nonconfirm_close_alertlabel1" class="btn btn-default" style="float: left;">ביטול</button>
-                    </div>
-
-                </div>
-
-                <div data-role="popup" id="confirmalertModel2" class="ui-content" style="min-width: 250px; width: auto">
-                    <div id="confirmalertModelDIV2" style="display: none;">
-
-                        <label id="confirmalertlabel2"></label>
-                        <button type="button" id="confirm_close_alertlabel2" class="btn btn-default" style="float: left;">אישור</button>
-                        <button type="button" id="nonconfirm_close_alertlabel2" class="btn btn-default" style="float: left;">ביטול</button>
-                    </div>
-
-                </div>
-
+            <div id="ContentPlaceHolder1_filters" class="floatright">
+                <!--<div>
+                    <h3>סנן לפי אזור: </h3>
+                    <select name="ctl00$ContentPlaceHolder1$areaFilterDDL" onchange="javascript:setTimeout(&#39;__doPostBack(\&#39;ctl00$ContentPlaceHolder1$areaFilterDDL\&#39;,\&#39;\&#39;)&#39;, 0)" id="ContentPlaceHolder1_areaFilterDDL">
+                        <option selected="selected" value="0">בחר אזור</option>
+                        <option value="1">צפון</option>
+                        <option value="2">דרום</option>
+                    </select>
+                </div>-->
 
             </div>
+            <h2 class="h2_head">פגישות ומשימות</h2>
+            <div id='calendar' style="float:left;padding-left:100px"></div>
+
+
+
+            <div data-role="popup" id="insertPopup" class="ui-content" style="min-width: 250px; width: auto">
+                <div id="insertPopupDiv" style="display: none;">
+                    <h5>קביעת פגישה</h5>
+
+                    <table dir="rtl">
+                        <tr>
+                            <td>
+                                <h3>שעת התחלה</h3>
+                            </td>
+                            <td>
+                                <input name="ctl00$ContentPlaceHolder1$TBtimeStart" id="ContentPlaceHolder1_TBtimeStart" value="21:00" type="time" step="300" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3>שעת סיום</h3>
+                            </td>
+                            <td>
+                                <input name="ctl00$ContentPlaceHolder1$TBtimeEnd" id="ContentPlaceHolder1_TBtimeEnd" value="06:00" type="time" step="300" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3>בחר קבוצה</h3>
+                            </td>
+                            <td>
+                                <select name="ctl00$ContentPlaceHolder1$farm_ddl" id="ContentPlaceHolder1_farm_ddl" style="width:90%"></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3>בחר מיקום</h3>
+                            </td>
+                            <td>
+                                <input type="text" name="place" id="place" style="width:80%" />
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <input type="submit" name="ctl00$ContentPlaceHolder1$add_guarding" value="הוסף" id="ContentPlaceHolder1_add_guarding" />
+
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+
+            <div data-role="popup" id="showPopup" class="ui-content" style="min-width: 250px; width: auto">
+                <div id="showGuardingPopupDiv" style="display: none;">
+
+                    <table dir="rtl">
+                        <tr>
+                            <td>
+                                <h3>שעת התחלה</h3>
+                            </td>
+                            <td>
+                                <span id="ContentPlaceHolder1_LStartTime">Label</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3>שעת סיום</h3>
+                            </td>
+                            <td>
+                                <span id="ContentPlaceHolder1_LEndTime">Label</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3>קבוצה</h3>
+                            </td>
+                            <td>
+                                <span id="ContentPlaceHolder1_LFarm">Label</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3> מיקום</h3>
+                            </td>
+                            <td>
+                                <span id="ContentPlaceHolder1_LGuard1" style="width:100%">Label</span>
+
+                            </td>
+                        </tr>
+                        <!--<tr>
+                            <td>
+                                <h3>שומר 2</h3>
+                            </td>
+                            <td>
+                                <span id="ContentPlaceHolder1_LGuard2">Label</span>
+                            </td>
+                        </tr>-->
+                        <tr>
+                            <td>
+                                <input type="submit" name="ctl00$ContentPlaceHolder1$BTNupdate" value="ערוך פגישה" id="ContentPlaceHolder1_BTNupdate" />
+
+                            </td>
+                            <td>
+                                <input type="submit" name="ctl00$ContentPlaceHolder1$BTNdelete" value="מחק פגישה" id="ContentPlaceHolder1_BTNdelete" />
+
+                            </td>
+                        </tr>
+                    </table>
+
+                </div>
+            </div>
+
+            <div data-role="popup" id="updatePopup" class="ui-content" style="min-width: 250px; width: auto">
+                <div id="updatePopuppDiv" style="display: none;">
+                    <h5></h5>
+
+                    <table dir="rtl">
+                        <tr>
+                            <td>
+                                <h3>שעת התחלה</h3>
+                            </td>
+                            <td>
+
+                                <input name="ctl00$ContentPlaceHolder1$TBstarttime" id="ContentPlaceHolder1_TBstarttime" type="time" step="300" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3>שעת סיום</h3>
+                            </td>
+                            <td>
+                                <input name="ctl00$ContentPlaceHolder1$TBendtime" id="ContentPlaceHolder1_TBendtime" type="time" step="300" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h3>קבוצה</h3>
+                            </td>
+                            <td>
+                                <span name="ctl00$ContentPlaceHolder1$DDLfarm" id="groupSelected" />
+                            </td>
+                        </tr>
+                        <!--<tr>
+                            <td>
+                                <h3>בחר קבוצה</h3>
+                            </td>
+                            <td>
+
+                                <select name="ctl00$ContentPlaceHolder1$DDLfarm" id="ContentPlaceHolder1_farm_ddl"></select>
+                            </td>
+                        </tr>-->
+                        <tr>
+                            <td>
+                                <h3> מיקום</h3>
+                            </td>
+                            <td>
+                                <input type="text" name="ctl00$ContentPlaceHolder1$DDLg1" id="ContentPlaceHolder1_DDLg1" style="width:100%" />
+
+
+                            </td>
+                        </tr>
+                        <!--<tr>
+                            <td>
+                                <h3>שומר 2</h3>
+                            </td>
+                            <td>
+                                <select name="ctl00$ContentPlaceHolder1$DDLg2" id="ContentPlaceHolder1_DDLg2"></select>
+                            </td>
+                        </tr>-->
+                        <tr>
+                            <td>
+                                <input type="submit" name="ctl00$ContentPlaceHolder1$BTNup" value="עדכן" id="ContentPlaceHolder1_BTNup" />
+
+                            </td>
+                        </tr>
+                    </table>
+
+
+
+                </div>
+            </div>
+
+            <div data-role="popup" id="WhicheventPopup" class="ui-content" style="min-width: 250px; width: auto">
+                <div id="WhicheventPopupDiv" style="display: none;">
+                    <h3>איזה אירוע ברצונך להכניס למערכת?</h3>
+
+                    <table dir="rtl">
+                        <tr>
+                            <td>
+                                <input type="submit" name="ctl00$ContentPlaceHolder1$ADDguardingEvent" value="פגישה חדשה" id="ContentPlaceHolder1_ADDguardingEvent" />
+                            </td>
+                            <td>&nbsp;  &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;</td>
+                            <td>
+
+                                <input type="submit" name="ctl00$ContentPlaceHolder1$ADDcompanyEvent" value="משימה חדשה" id="ContentPlaceHolder1_ADDcompanyEvent" />
+                            </td>
+                        </tr>
+                    </table>
+
+
+
+                </div>
+            </div>
+
+            <div data-role="popup" id="insertNewCOMPPopup" class="ui-content" style="min-width: 250px; width: auto">
+                <div id="insertNewCOMPPopupDiv" style="display: none;">
+                    <table dir="rtl">
+                        <tr>
+                            <td>
+                                <h5>נושא המשימה</h5>
+                            </td>
+                            <td>
+                                <input name="ctl00$ContentPlaceHolder1$TBSubjectEvent" type="text" id="ContentPlaceHolder1_TBSubjectEvent" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h5>תאריך סיום</h5>
+                            </td>
+                            <td>
+                                <input name="ctl00$ContentPlaceHolder1$timeStartTextBox" id="ContentPlaceHolder1_timeStartTextBox" value="" type="date" style="width:90%" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h5>תיאור </h5>
+                            </td>
+                            <td>
+                                <textarea name="ctl00$ContentPlaceHolder1$eventDesc" rows="10" cols="20" id="ContentPlaceHolder1_eventDesc">
+                               </textarea>
+
+                            </td>
+                        </tr>
+                        <!--<tr>
+                            <td>
+                                <h5>שעת סיום</h5>
+                            </td>
+                            <td>
+                                <input name="ctl00$ContentPlaceHolder1$timeEndTextBox" id="ContentPlaceHolder1_timeEndTextBox" value="00:00" type="time" step="300" />
+                            </td>
+                        </tr>-->
+                        <tr>
+                            <td>
+                                <h5>בחר קבוצה</h5>
+                            </td>
+                            <td>
+                                <select name="ctl00$ContentPlaceHolder1$farm_ddl" onchange="studentinG()" id="groupList" style="width:90%"></select>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <h5>סטודנט המבצע</h5>
+                            </td>
+                            <td>
+                                <select name="ctl00$ContentPlaceHolder1$farm_ddl" id="namesStudent" style="width:90%"></select>
+                                <!--<input id="ContentPlaceHolder1_CheckBoxGuard" type="checkbox" name="ctl00$ContentPlaceHolder1$CheckBoxGuard" /><label for="ContentPlaceHolder1_CheckBoxGuard">שומרים</label>
+                                <input id="ContentPlaceHolder1_CheckBoxManager" type="checkbox" name="ctl00$ContentPlaceHolder1$CheckBoxManager" /><label for="ContentPlaceHolder1_CheckBoxManager">הנהלה</label>-->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="submit" name="ctl00$ContentPlaceHolder1$addCOMPevent" value="הוסף" id="ContentPlaceHolder1_addCOMPevent" />
+
+                            </td>
+                        </tr>
+                    </table>
+
+
+
+                </div>
+            </div>
+
+            <div data-role="popup" id="showCompanyPopup" class="ui-content" style="min-width: 250px; width: auto">
+                <div id="showCompanyEventPopupDiv" style="display: none;">
+
+                    <table dir="rtl">
+                        <tr>
+                            <td>
+                                <h4>נושא המשימה</h4>
+                            </td>
+                            <td>
+                                <span id="ContentPlaceHolder1_labelSubjectEvent">Label</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>תאריך סיום</h4>
+                            </td>
+                            <td class="auto-style1">
+                                <span id="ContentPlaceHolder1_timeStartLabel">Label</span>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <h4>תיאור המשימה</h4>
+                            </td>
+                            <td>
+                                <span id="ContentPlaceHolder1_eventDescLabel">Label</span>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>קבוצה</h4>
+                            </td>
+                            <td>
+                                <span id="ContentPlaceHolder1_GuardPopulation"></span>
+                            </td>
+
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>סטודנט הנבחר</h4>
+                            </td>
+                            <td>
+                                <span id="ContentPlaceHolder1_eventSLabel">Label</span>
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="submit" name="ctl00$ContentPlaceHolder1$ButtonEditevent" value="ערוך אירוע" id="ContentPlaceHolder1_ButtonEditevent" />
+
+                            </td>
+                            <td>&nbsp;  &nbsp; &nbsp; &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp;</td>
+                            <td>
+                                <input type="submit" name="ctl00$ContentPlaceHolder1$ButtonDeleteEvent" value="מחק אירוע" id="ContentPlaceHolder1_ButtonDeleteEvent" />
+
+                            </td>
+                        </tr>
+                    </table>
+
+
+
+                </div>
+            </div>
+
+            <div data-role="popup" id="updateEVENTPopup" class="ui-content" style="min-width: 250px; width: auto">
+                <div id="updateEVENTPopupDiv" style="display: none;">
+
+                    <table dir="rtl">
+                        <tr>
+                            <td>
+                                <h4>נושא המשימה</h4>
+                            </td>
+                            <td>
+
+                                <input name="ctl00$ContentPlaceHolder1$subjectUPDATE" type="text" id="ContentPlaceHolder1_subjectUPDATE" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>תאריך התחלה</h4>
+                            </td>
+                            <td class="auto-style1">
+                                <input name="ctl00$ContentPlaceHolder1$UpdateStartTime" type="date" id="ContentPlaceHolder1_UpdateStartTime" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>תאריך סיום</h4>
+                            </td>
+                            <td class="auto-style1">
+                                <input name="ctl00$ContentPlaceHolder1$UpdateEndTime" type="date" id="ContentPlaceHolder1_UpdateEndTime" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>תיאור</h4>
+                            </td>
+                            <td>
+                                <textarea name="ctl00$ContentPlaceHolder1$eventDesc" rows="10" id="ContentPlaceHolder1_UpdateEventDesc">
+                               </textarea>
+                                <!--ONCLICK
+                                <input name="ctl00$ContentPlaceHolder1$UpdateEventDesc" type="text" id="ContentPlaceHolder1_UpdateEventDesc" />-->
+
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>קבוצה</h4>
+                            </td>
+                            <td>
+                                <span id="ContentPlaceHolder1_CheckBoxUpdateGuard"></span>
+                                <!--<input id="ContentPlaceHolder1_CheckBoxUpdateGuard" type="checkbox" name="ctl00$ContentPlaceHolder1$CheckBoxUpdateGuard" /><label for="ContentPlaceHolder1_CheckBoxUpdateGuard">שומרים</label>
+                                <input id="ContentPlaceHolder1_CheckBoxUpdateManager" type="checkbox" name="ctl00$ContentPlaceHolder1$CheckBoxUpdateManager" /><label for="ContentPlaceHolder1_CheckBoxUpdateManager">הנהלה</label>-->
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <h4>סטודנט הנבחר</h4>
+                            </td>
+                            <td>
+                                <!--ONCLICK
+                                <input name="ctl00$ContentPlaceHolder1$UpdateEventDesc" type="text" id="ContentPlaceHolder1_UpdateEventDesc" />-->
+                                <select name="ctl00$ContentPlaceHolder1$farm_ddl" id="ContentPlaceHolder1_CheckBoxUpdates" style="width:90%"></select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="submit" name="ctl00$ContentPlaceHolder1$updateEventBTN" value="עדכן" id="ContentPlaceHolder1_updateEventBTN" />
+
+                            </td>
+                        </tr>
+                    </table>
+
+
+
+                </div>
+            </div>
+
+            <div id="infoColor">
+                <h3>מקרא צבעים:</h3>
+                <div id="FG">
+                    <h4>פגישה</h4>
+                </div>
+                <div id="NFG">
+                    <h4>משימה שהושלמה</h4>
+                </div>
+                <div id="NNG">
+                    <h4>משימה שבתהליך</h4>
+                </div>
+                <div id="EV">
+                    <h4>משימה  שלא בוצעה</h4>
+                </div>
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <div id="bottom-wizard" style="background: rgb(137, 232, 148);">
+                    <a class="btn btn-primary1 btn prev" href="index4.html"><i style="margin-right: 10px;color:#1cac78;" class="fa fa-angle-left"></i> חזור</a>
+                </div>
+            </div>
+
+
+
+            <div data-role="popup" id="alertModel" class="ui-content" style="min-width: 250px; width: auto">
+                <div id="alertModelDIV" style="display: none;">
+
+                    <label id="alertlabel"></label>
+                    <button type="button" id="close_alertlabel" class="btn btn-default" style="float: left;">אישור</button>
+                </div>
+
+            </div>
+
+
+            <div data-role="popup" id="confirmalertModel" class="ui-content" style="min-width: 250px; width: auto">
+                <div id="confirmalertModelDIV" style="display: none;">
+
+                    <label id="confirmalertlabel"></label>
+                    <button type="button" id="confirm_close_alertlabel" class="btn btn-default" style="float: left;">אישור</button>
+                    <button type="button" id="nonconfirm_close_alertlabel" class="btn btn-default" style="float: left;">ביטול</button>
+                </div>
+
+            </div>
+
+            <div data-role="popup" id="confirmalertModel1" class="ui-content" style="min-width: 250px; width: auto">
+                <div id="confirmalertModelDIV1" style="display: none;">
+
+                    <label id="confirmalertlabel1"></label>
+                    <button type="button" id="confirm_close_alertlabel1" class="btn btn-default" style="float: left;">אישור</button>
+                    <button type="button" id="nonconfirm_close_alertlabel1" class="btn btn-default" style="float: left;">ביטול</button>
+                </div>
+
+            </div>
+
+            <div data-role="popup" id="confirmalertModel2" class="ui-content" style="min-width: 250px; width: auto">
+                <div id="confirmalertModelDIV2" style="display: none;">
+
+                    <label id="confirmalertlabel2"></label>
+                    <button type="button" id="confirm_close_alertlabel2" class="btn btn-default" style="float: left;">אישור</button>
+                    <button type="button" id="nonconfirm_close_alertlabel2" class="btn btn-default" style="float: left;">ביטול</button>
+                </div>
+
+            </div>
+
+
+        </div>
 
     </form>
 

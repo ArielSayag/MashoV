@@ -10,17 +10,6 @@ $(document).ready(function () {
 
 
 
-    $("#myInput1").on("keyup", function () {
-        var value = $(this).val();
-        console.log(this);
-        $('#result > div').hide();
-
-        $('#result > div > div > h3:contains("' + value + '")').closest('#result > div').show();
-        $('#result > div > div > p:contains("' + value + '")').closest('#result > div').show();
-
-
-    });
-
 
     loginUser = JSON.parse(localStorage["Student"]);
     
@@ -29,14 +18,13 @@ $(document).ready(function () {
 
     $("#hello").append("שלום, " + loginUser.FirstName);
     dashboard(loginUser.Id);
-    //ajaxCall("GET", "./api/Doc", "", GETSuccessDep, GETErrorDep); // show all Dep
-    //ajaxCall("GET", "./api/Doc/Year", "", GETSuccessYear, GETErrorYear); // show all hebYear
+
 
 });
 //-------------dashboard(getUser)-----------------------------------//
 function dashboard(getuser) {
 
-    document.getElementById("result").innerHTML = "";
+    document.getElementById("resultS").innerHTML = "";
     ajaxCall("GET", "./api/Student/" + getuser,"", GETSuccess, GETError); // show all ready feeds
 }
 var str = "";
@@ -69,19 +57,26 @@ function GETSuccess(data) {
         }
          str+=  `</div></div>`;
     }
-    $("#result").append(str);
+    $("#resultS").append(str);
 
 }
 function GETError(err) {
     console.log(err);
 }
-
+var np = "";
 function showD(index) {
+
+  
+    np = all[index].Group.NameProject + " - " + all[index].Group.NameOrganization;
+    $(".namep").html('');
+    $(".namep").append(np);
+
     console.log(groupAll[index]);
     console.log(all[index]);
     ajaxCall("PUT", "./api/Student/" + loginUser.Id, JSON.stringify(all[index]), PutSuccess, PutError); 
 }
 var dataGroupMeet = [];
+var allJgroup = [];
 function PutSuccess(data) {
     
     document.getElementById("allMeet").innerHTML = "";
@@ -92,43 +87,44 @@ function PutSuccess(data) {
         var idg = data[i].Group.NumGroup;
         var dataGroup = data[i].Group;
         var dataMeet = data[i].FeedBackMeet;
-        var idMeet = "selected" + i;
+        var idMeet1 = "selected" + i;
 
-        str1 += `<div id="${idMeet}" class="col-md-3 col-sm-6" >
+        str1 += `<div id="${idMeet1}" class="col-md-3 col-sm-6">
                        <div class="service_boxJ">`;
-        if (data[i].Sum != 0) {
+        if (dataGroup.FinalScore != 0) {
             str1 += `<div id="grade" value="${dataGroup.FinalScore}"  class="service_icon">${dataGroup.FinalScore}</div>`;
         }
         else {
             str1 += `<div id="grade" value="none"  class="service_icon"></div>`;
         }
-        str1 += `<h3 id="proj">${dataMeet.NameMeeting}</h3>
+        str1 += `<h3 id="proj" value="${dataMeet.NameMeeting}">${dataMeet.NameMeeting}</h3>
                      <p><b id=${dataGroup.Mentor.Email}>מנחה: ${dataGroup.Mentor.FirstName} ${dataGroup.Mentor.LastName}</b></p>
                      <p><b>תאריך: ${dataMeet.Date.split("T")[0]}</b></p>`;
             str1 += `<hr><p><b>שופטים:</b></p>`;
         for (j in data[i].JudgesGroup) {
+            allJgroup.push(data[i].JudgesGroup[j]);
             str1 += `<div class="row ex2">
-                           <div class="col"  onclick="show(this.id,${data[i].Group.NumGroup},${idMeet})" id="${data[i].JudgesGroup[j].Judge.Email}">
-                             <p><b>${data[i].JudgesGroup[j].Judge.FirstName}  ${data[i].JudgesGroup[j].Judge.LastName}</b></p>
+                           <div class="col"  onclick="show(this.id,${data[i].Group.NumGroup},'selected${i}',${dataMeet.NumDoc})" id="${data[i].JudgesGroup[j].Judge.Email}">
+                             <p><b class="nameJJ" value="${data[i].JudgesGroup[j].Judge.FirstName}  ${data[i].JudgesGroup[j].Judge.LastName}">${data[i].JudgesGroup[j].Judge.FirstName}  ${data[i].JudgesGroup[j].Judge.LastName}</b></p>
                            </div>
                            <div class="col">`;
             if (data[i].JudgesGroup[j].SumScore == 0) {
                 str1 += `<p><b>-</b></p>`;
             }
             else {
-                str1 += `<p><b>${data[i].JudgesGroup[j].SumScore}</b></p>`;
+                str1 += `<p><b id="sumscore" value="${data[i].JudgesGroup[j].SumScore}">${data[i].JudgesGroup[j].SumScore}</b></p>`;
             }
             str1 += `</div>
                   </div>`;
         }
         str1 += `<div class="upload-btn-wrapper">
                    <a class="btn btn-primary1">העלאת מצגת</a>
-                   <input class="myfile" type="file" name="myfile" onchange="saveRR()"/>
+                   <input class="myfile" type="file" id="myfile" name="myfile" onchange="saveRR(this,${dataMeet.NumMeeting},${idg})"/>
                 </div>
                </div>
              </div>`;
 
-        dataGroupMeet.push(idMeet);
+        dataGroupMeet.push(idMeet1);
     }
     $('#allMeet').append(str1);
   
@@ -138,13 +134,16 @@ function PutError(err) {
     console.log(err);
 }
 
-function show(judgeID, numG, idDiv) {
+function show(judgeID, numG, idDiv,idDoc) {
+
     var temp = document.getElementById(idDiv);
-    var nameProj = $(temp).find("#proj").val();
 
+    var nameProj = $(temp).find("#proj").attr('value');
+    var namejudge = $(temp).find(".nameJJ").attr('value');
     document.getElementById("nameDoc").innerHTML = nameProj;
-    //document.getElementById("judgeAndProject").innerHTML = "project name, judge";
-
+    document.getElementById("judgeAndProject").innerHTML = np + " [ " + namejudge+" ]";
+    var score = $(temp).find("#sumscore").attr('value');
+    document.getElementById("viewGrade").innerHTML = "ציון השופט: "+score;
     t = {
         "NumType": 3,
         "Type": "Judge",
@@ -152,6 +151,7 @@ function show(judgeID, numG, idDiv) {
     u = {
         "Email": judgeID,
         "Type": t,
+        "NumDoc": idDoc,
     }
     ajaxCall("PUT", "./api/Criteria/Group/" + numG, JSON.stringify(u), PUTSuccessTest, PUTErrorTest);
 }
@@ -172,12 +172,12 @@ function PUTSuccessTest(dataTest1) {//all the Meet Doc
         $(".visibleElement").css('visibility', 'visible');
         dataT = dataTest1;
         listTestCrit = [];
-
+        crit1 = "";
         for (i in dataTest1.AllCrit) {
 
             count = i;
             critID = 'crit' + i;
-            crit1 += `<div id="${critID}" class="row pt-4 ">
+            crit1 += `<div id="${critID}" class="row pt-4 box">
                         <div class="col-sm-8 mx-auto text-right">
                             <h5 id="nameC" name="${dataTest1.AllCrit[i].NumCrit}">${dataTest1.AllCrit[i].NameCrit}</h5>
                             <h6>${dataTest1.AllCrit[i].DescriptionCrit}</h6>
@@ -203,48 +203,11 @@ function PUTErrorTest(err) {
 }
 
 
-//const SAddapiUrl = `http://proj.ruppin.ac.il/api/Content/AddContent`
-//function saveRR() {
-//    const AddapiUrl = `${Server_Url}Content/AddContent`
-
-//    fetch(AddapiUrl, {
-//        method: 'post',
-//        body: JSON.stringify(),
-//        headers: new Headers({
-//            'Content-Type': 'application/json; charset=UTF-8',
-//        })
-//    }).then((result) => {
-//        console.log('Success:', result.status);
-//        if (result.status < 200 && result.status > 300) {
-//            result.json().then(data => {
-//                alert(data);
-//            });
-//        }
-//        else {//שלב 2 העלאת התוכן עצמו
-//            console.log(ContentName)
-//            console.log(`${Server_Url}Content/UploadContent/${GlobalUser.Email.split("@", 1)}/${ContentName}`)
-//            const UPapiUrl = `${Server_Url}Content/UploadContent/${GlobalUser.Email.split("@", 1)}/${ContentName}`
-//            //const SUPapiUrl=`http://proj.ruppin.ac.il/igroup20/prod/api/Content/UploadContent/${GlobalUser.Email.split("@", 1)}/${ContentName}`
-//            fetch(UPapiUrl, {
-//                method: 'post',
-//                body: formData,
-//                mode: 'no-cors',
-//                contentType: false,
-//                processData: false,
-//                headers: new Headers({
-//                    'Content-Type': 'application/json; charset=UTF-8',
-//                })
-
-//            }).then((result) => {
-//                return result.json()
-//            }
-//        }
-
-//    }
-//}
 
 /////---------------------select  file--------------------------///
-function processSelectedFiles(fileInput) {
+var idg = "";
+function saveRR(fileInput, idDoc1, idGroup) {
+    idg = idGroup;
     x = fileInput;
     var files = fileInput.files;
     var filesName = "";
@@ -253,10 +216,15 @@ function processSelectedFiles(fileInput) {
     }
 
 
+
     var data = new FormData();
-    var file = $(".myfile").get(0).files[0];
-    data.append("myfile", file);
-    data.append("idG", idg);
+    var file = $(fileInput).get(0).files[0];
+
+   // let file = file[0];
+    data.append('files', file);
+    
+    data.append('IDdoc', idDoc1);
+    data.append('idGroup', idGroup);
 
     $.ajax({
         type: "POST",
@@ -264,17 +232,41 @@ function processSelectedFiles(fileInput) {
         contentType: false,
         processData: false,
         data: data,
-        success: PPSuccess,
-        error: PPError
+        success: PostDocSuccess,
+        error: PostDocError
     });
+
+  
 }
-function PPSuccess(data) {
+function PostDocSuccess(data) {
     console.log(data);
+    if (data.indexOf("wwwRoot") != -1) {
+        var url1 = data.split("wwwRoot");
+        data = "https://proj.ruppin.ac.il" + url1[1];
+    }
+    else {
+        //C:\Users\Ariel\Desktop\mashovFinal\mashovFinal\PowerPoint\33\מצגת פרויקט גמר-חלק א (1) (6).pptx
+        var url1 = data.split("mashovFinal");
+        data = "https://proj.ruppin.ac.il\\igroup15\\prod" + url1[2];
+    }
+    info = {
+        "Link": data,
+        "NumGroup":idg,
+    }
+    ajaxCall("PUT", "./api/PowerPoint/sent", JSON.stringify(info), successSent, errSent);
+    
 }
-function PPError(err) {
+function PostDocError(err) {
     console.log(err);
 }
+function successSent(data) {
+    swal("הקובץ הועלה בהצלחה");
+}
+function errSent(data) {
+    console.log(data);
+}
 //----------------------------------------------------------------------------------------------------------------------------------//
+
 function firstTimeValue() {
     for (var i = 0; i < listTestCrit.length; i++) {
 
@@ -298,23 +290,47 @@ function firstTimeValue() {
     }
 
 }
+function selectedValue(id, index) { // value of sliders
+
+
+    var idScore = 'score' + index;
+    var slider = document.getElementById(id);
+    var output = document.getElementById(idScore);
+
+    output.innerHTML = slider.value;
+
+    slider.oninput = function () {
+        output.innerHTML = this.value;
+
+    }
+    var prec;
+    if (slider.max == 10) {
+        prec = slider.value * 10;
+        var val = `linear-gradient(90deg, rgb(26, 188, 156) ${prec}%, rgb(215, 220, 223) ${prec}.1%)`;
+    } else {
+        prec = slider.value;
+        var val = `linear-gradient(90deg, rgb(26, 188, 156) ${slider.value}%, rgb(215, 220, 223) ${slider.value}.1%)`;
+    }
+    $(slider).css('background', val);
+
+}
 function scalaFunction(numScala) { //what Scala type I need
     var j = count;
     if (numScala == 1) {//בוצע או לא בוצע
 
         dataT.AllCrit[j].TypeCssName = 'customRadioInline';
-        str = `<div class="row">
+        str = `<div class="row" >
     <div class="col-2 "></div>
         <div class="custom-control custom-radio custom-control-inline">
-            <input type="radio" id="customRadioInlineNotDone" value="0" name="customRadioInline" class="custom-control-input customRadioInline">
+            <input type="radio" id="customRadioInlineNotDone" readonly value="0" name="customRadioInline" class="custom-control-input customRadioInline" disabled>
             <label class="custom-control-label text-right" for="customRadioInlineNotDone">לא בוצע</label>
         </div>
         <div class="custom-control custom-radio custom-control-inline">
-            <input type="radio" id="customRadioInlineNot" value="50" name="customRadioInline" class="custom-control-input customRadioInline">
+            <input type="radio" id="customRadioInlineNot" readonly value="50" name="customRadioInline" class="custom-control-input customRadioInline" disabled>
             <label class="custom-control-label text-right" for="customRadioInlineNot">בוצע חלקית</label>
         </div>
         <div class="custom-control custom-radio custom-control-inline">
-            <input type="radio" id="customRadioInlineDone" value="100" name="customRadioInline" class="custom-control-input customRadioInline">
+            <input type="radio" id="customRadioInlineDone" readonly value="100" name="customRadioInline" class="custom-control-input customRadioInline" disabled>
               <label class="custom-control-label text-right" for="customRadioInlineDone">בוצע</label>
         </div>
     </div>`;
@@ -327,11 +343,11 @@ function scalaFunction(numScala) { //what Scala type I need
         str = `<div class="row">
                 <div class="col-2 "></div>
                 <div class="custom-control custom-radio custom-control-inline">
-                    <input type="radio" id="customRadioInlineYes" value="100" name="customRadioInline1" class="custom-control-input customRadioInline1">
+                    <input type="radio" id="customRadioInlineYes" value="100" name="customRadioInline1" class="custom-control-input customRadioInline1" disabled>
                         <label class="custom-control-label text-right" for="customRadioInlineYes">כן</label>
                               </div>
                     <div class="custom-control custom-radio custom-control-inline">
-                        <input type="radio" id="customRadioInlineNo" value="0" name="customRadioInline1" class="custom-control-input customRadioInline1">
+                        <input type="radio" id="customRadioInlineNo" value="0" name="customRadioInline1" class="custom-control-input customRadioInline1" disabled>
                             <label class="custom-control-label text-right" for="customRadioInlineNo">לא</label>
                         </div>
                     </div>`;
@@ -343,14 +359,14 @@ function scalaFunction(numScala) { //what Scala type I need
             var tempValue = ((dataT.AllCrit[j].Score * 100) / dataT.AllCrit[j].WeightCrit);
             str = `<div class="col-sm-10 col-12">
                              <div style="direction: ltr;" class="range-slider m-auto pb-3">
-                              <input id="slider${j}" class="range-slider__range" onchange="selectedValue(this.id,${j})" type="range" value="${tempValue}" min="0" max="100">
+                              <input id="slider${j}" class="range-slider__range" onchange="selectedValue(this.id,${j})" type="range" value="${tempValue}" min="0" max="100" disabled>
                                <span id="score${j}" class="range-slider__value">${tempValue}</span>
                             </div></div>`;
         }
         else {
             str = `<div class="col-sm-10 col-12">
                              <div style="direction: ltr;" class="range-slider m-auto pb-3">
-                              <input id="slider${j}" class="range-slider__range" onchange="selectedValue(this.id,${j})" type="range" value="0" min="0" max="100">
+                              <input id="slider${j}" class="range-slider__range" onchange="selectedValue(this.id,${j})" type="range" value="0" min="0" max="100" disabled>
                                <span id="score${j}" class="range-slider__value">0</span>
                             </div></div>`;
         }
@@ -363,14 +379,14 @@ function scalaFunction(numScala) { //what Scala type I need
             prec = tempValue / 10;
             str = `<div class="col-sm-10 col-12">
                              <div style="direction: ltr;" class="range-slider m-auto pb-3">
-                               <input id="slider${j}" class="range-slider__range" onchange="selectedValue(this.id,${j})"  type="range" value="${prec}" min="0" max="10">
+                               <input id="slider${j}" class="range-slider__range" onchange="selectedValue(this.id,${j})"  type="range" value="${prec}" min="0" max="10" disabled>
                                 <span id="score${j}" class="range-slider__value">${prec}</span>
                        </div></div>`;
         }
         else {
             str = `<div class="col-sm-10 col-12">
                              <div style="direction: ltr;" class="range-slider m-auto pb-3">
-                               <input id="slider${j}" class="range-slider__range" onchange="selectedValue(this.id,${j})" type="range" value="0" min="0" max="10">
+                               <input id="slider${j}" class="range-slider__range" onchange="selectedValue(this.id,${j})" type="range" value="0" min="0" max="10" disabled>
                                 <span id="score${j}" class="range-slider__value">0</span>
                        </div></div>`;
         }
@@ -382,7 +398,7 @@ function scalaFunction(numScala) { //what Scala type I need
 
         for (var i = 1; i <= 5; i++) {
             str += `<div class="custom-control custom-radio custom-control-inline">
-                               <input type="radio" id="customRadioInline${i}" value="${i * 20}" name="customRadioInlineUpFive" class="custom-control-input customRadioInlineUpFive">
+                               <input type="radio" id="customRadioInline${i}" value="${i * 20}" name="customRadioInlineUpFive" class="custom-control-input customRadioInlineUpFive" disabled>
                                <label class="custom-control-label" for="customRadioInline${i}">${i}</label>
                               </div>`;
 
@@ -399,7 +415,7 @@ function scalaFunction(numScala) { //what Scala type I need
         for (var i = 1; i <= 10; i++) {
 
             str += `<div class="custom-control1 custom-radio custom-control-inline">
-                        <input type="radio" id="customRadioInlineT${i}" value="${i * 10}" name="customRadioInlineUptoTen" class="custom-control-input customRadioInlineUptoTen">
+                        <input type="radio" id="customRadioInlineT${i}" value="${i * 10}" name="customRadioInlineUptoTen" class="custom-control-input customRadioInlineUptoTen" disabled>
                         <label class="custom-control-label" for="customRadioInlineT${i}">${i}</label>
                      </div>`;
         }

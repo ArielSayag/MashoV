@@ -20,7 +20,9 @@ namespace mashovFinal
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-           CritRanHelper.checkDocs(); //אלמנט חכם
+          CritRanHelper.checkDocs(); //אלמנט חכם
+
+            
             //string str = StringHelper.GeneratePassword();
             //string name = "אריאל";
             //string subject = "סיסמא חדשה למערכת MASHOV , ברוך הבא";

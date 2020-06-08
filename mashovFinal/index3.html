@@ -38,350 +38,387 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
-    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-    <script src="js/judgeJS.js"></script>
+    <!--<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">-->
+ 
     <script src="//cdn.ckeditor.com/4.14.0/standard/ckeditor.js"></script>
+    <script>
+        $(document).ready(function () {
 
+
+            $("#myinput").on("keyup", function () {
+                var value = $(this).val();
+                console.log(this);
+                $('#resultJ > div').hide();
+
+                $('#resultJ > div > div > h3:contains("' + value + '")').closest('#resultJ > div').show();
+                $('#resultJ > div > div > p:contains("' + value + '")').closest('#resultJ > div').show();
+
+
+            });
+
+            $("#myInput1").on("keyup", function () {
+                var value = $(this).val();
+                console.log(this);
+                $('#addGroups > div').hide();
+
+                $('#addGroups > div > div > h3:contains("' + value + '")').closest('#addGroups > div').show();
+                $('#addGroups > div > div > p:contains("' + value + '")').closest('#addGroups > div').show();
+
+
+            });
+
+
+            $("#Department").on("change", function () {
+                var value = $(this).val();
+                console.log(this);
+                $('#resultJ > div').hide();
+
+                $('#resultJ > div > div > h3:contains("' + value + '")').closest('#resultJ > div').show();
+                $('#resultJ > div > div > p:contains("' + value + '")').closest('#resultJ > div').show();
+
+
+            });
+
+            $("#year").on("change", function () {
+                var value = $(this).val();
+                console.log(this);
+                $('#resultJ > div').hide();
+
+                $('#resultJ > div > div > h3:contains("' + value + '")').closest('#resultJ > div').show();
+                $('#resultJ > div > div > p:contains("' + value + '")').closest('#resultJ > div').show();
+
+            });
+        });
+    </script>
 </head>
 
-<body>
+<body style="font-family:FbSpacer;">
 
-            <div id="preloader">
-                <div data-loader="circle-side"></div>
-            </div>
-            <!-- /Preload -->
+    <div id="preloader">
+        <div data-loader="circle-side"></div>
+    </div>
+    <!-- /Preload -->
 
-            <div id="loader_form">
-                <div data-loader="circle-side-2"></div>
-            </div>
-            <!-- /loader_form -->
+    <div id="loader_form">
+        <div data-loader="circle-side-2"></div>
+    </div>
+    <!-- /loader_form -->
 
-            <header>
-                <div class="container-fluid">
-                    <div class="row">
-                        <div class="col-3">
-                            <div id="logo_home">
-                                <h1><a href="index.html">&nbsp</a></h1>
-                            </div>
-                        </div>
-                        <div class="col-9">
-                            <div id="social" class="m-auto">
-                                <ul>
-                                    <li><a href="index2.html">מנהל</a></li>
-                                    <li><a style="color: #89E894" href="index3.html">שופט</a></li>
-                                    <li><a href="index4.html">מנחה</a></li>
-                                    <!--<li><a href="index5.html">Student</a></li>-->
-                                </ul>
-                            </div>
-                            <!-- /social -->
-                            <nav>
-                                <ul class="cd-primary-nav">
-                                    <li><a href="javascript:void(0)" class="animated_link">Menu</a></li>
-                                    <li><a href="javascript:void(0)" class="animated_link">Menu</a></li>
-                                </ul>
-                            </nav>
-                        </div>
+    <header>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-3">
+                    <div id="logo_home">
+                        <h1><a href="index.html">&nbsp</a></h1>
                     </div>
                 </div>
-                <!-- /container -->
-            </header>
-            <!-- /Header -->
+                <div class="col-9">
+                    <div id="social" class="m-auto">
+                        <ul>
+                            <li><a href="javascript:void(0)" onclick="goNextPage(2)">מנהל</a></li>
+                            <li><a style="color: #89E894" href="javascript:void(0)" onclick="goNextPage(3)">שופט</a></li>
+                            <li><a href="javascript:void(0)" onclick="goNextPage(4)">מנחה</a></li>
+                            <!--<li><a href="index5.html">Student</a></li>-->
+                        </ul>
+                    </div>
+                    <!-- /social -->
+                    <nav>
+                        <ul class="cd-primary-nav">
+                            <li><a href="updateUser.html" class="animated_link">עדכון פרטים</a></li>
+                            <!--<li><a href="javascript:void(0)" class="animated_link">Menu</a></li>-->
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <!-- /container -->
+    </header>
+    <!-- /Header -->
 
-            <main>
-                <div class="container">
-                    <div id="wizard_container">
-                        <form name="example-1" id="wrapped" method="POST">
+    <main>
+        <div class="container">
+            <div id="wizard_container">
+                <form name="example-1" id="wrapped" method="POST">
 
-                            <!-- Leave for security protection, read docs for details -->
-                            <div id="middle-wizard">
+                    <!-- Leave for security protection, read docs for details -->
+                    <div id="middle-wizard">
 
-                                <div class="row">
-                                    <div class="col-md-12">
+                        <div class="row">
+                            <div class="col-md-12">
 
-                                        <div id="tabsJustifiedContent" class="tab-content">
-                                             <h2 id="helloAdmin" class="text-center"></h2>
+                                <div id="tabsJustifiedContent" class="tab-content">
+                                    <h2 id="helloAdmin" class="text-center"></h2>
+                                    <br />
+                                    <br />
+                                    <!-- 1st-slide start -->
+                                    <section id="first-slide" class="container py-4">
+                                        <div class="branch" id="Seo-Optimization">
+                                            <div class="step" data-state="budget">
 
-                                                <!-- 1st-slide start -->
-                                                <section id="first-slide" class="container py-4">
-                                                    <div class="branch" id="Seo-Optimization">
-                                                        <div class="step" data-state="budget">
-
-                                                            <div class="row">
-                                                                <div class="col-8 mx-auto">
-                                                                    <div class="row">
-                                                                        <div class="col-5">
-                                                                            <div class="form-group">
-                                                                                <select class="form-control" id="year">
-                                                                                    <option>2018</option>
-                                                                                    <option>2013</option>
-                                                                                    <option>2014</option>
-
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                        <div class="col-7">
-                                                                            <div class="form-group">
-                                                                                <select class="form-control" id="">
-                                                                                    <option>Industrial engineering</option>
-                                                                                    <option>Industrial engineering</option>
-                                                                                    <option>Industrial engineering</option>
-
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-
-                                                                    <!-- Search form -->
-                                                                    <div class="p-1 rounded shadow-sm mb-4">
-                                                                        <div class="input-group">
-                                                                            <div class="input-group-prepend">
-                                                                                <button id="button-addon2" type="submit" class="btn btn-link text-info">
-                                                                                    <i class="icon-search-8"></i></button>
-                                                                            </div>
-                                                                            <input type="search" placeholder="Search" aria-describedby="button-addon2" class="form-control border-0">
-                                                                        </div>
-                                                                    </div>
+                                                <div class="row">
+                                                    <div class="col-8 mx-auto">
+                                                        <div class="row">
+                                                            <div class="col-5">
+                                                                <div class="form-group">
+                                                                    <select class="form-control" id="year"></select>
                                                                 </div>
                                                             </div>
-
-                                                            <div class="row" id="resultJ">
-                                                              
-                                                            </div>
-
-                                                        </div>
-
-                                                    </div>
-                                                </section>
-                                                <!-- 1st-slide end -->
-
-                                                <!--2nd slide start-->
-                                                <section id="second-slide" class="container py-4">
-
-                                                            <div class="row">
-                                                                <div class="col-12 text-center">
-                                                                    <h3><b>הצוותים</b></h3>
-                                                                    <h4 id="meetDoc"></h4>
+                                                            <div class="col-7">
+                                                                <div class="form-group">
+                                                                    <select class="form-control" id="Department"></select>
                                                                 </div>
-                                                            </div>
-
-                                                                    <div class="row py-5">
-                                                                        <div class="col-sm-8 mx-auto">
-                                                                            <div class="form-group">
-                                                                                <select class="form-control" id="">
-                                                                                    <option>Industrial engineering</option>
-                                                                                    <option>Industrial engineering</option>
-                                                                                    <option>Industrial engineering</option>
-
-                                                                                </select>
-                                                                            </div>
-
-                                                                            <div class="p-1 rounded shadow-sm mb-4">
-                                                                                <div class="input-group">
-                                                                                    <div class="input-group-prepend">
-                                                                                        <button id="button-addon2" type="submit" class="btn btn-link text-info">
-                                                                                            <i class="icon-search-8"></i></button>
-                                                                                    </div>
-                                                                                    <input id="myInput1" type="search" placeholder="Search" aria-describedby="button-addon2" class="form-control border-0">
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
-
-                                                            <div class="row" id="addGroups">
-                                                                <!--<div class="col-md-3 col-sm-6">
-                                                                    <div class="service_box">
-                                                                        <div class="service_icon">
-                                                                        </div>
-                                                                        <h3>Project name</h3>
-                                                                        <p><b>Group name:</b> </p>
-                                                                        <p><b>Student name:</b></p>
-                                                                        <p><b>Student name:</b></p>
-                                                                        <p><b>Student name:</b></p>
-                                                                        <hr>
-                                                                        <p><b>Mentor: name</b></p>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-3 col-sm-6">
-                                                                    <div class="service_box">
-                                                                        <div class="service_icon">
-                                                                        </div>
-                                                                        <h3>Project name</h3>
-                                                                        <p><b>Group name:</b> </p>
-                                                                        <p><b>Student name:</b></p>
-                                                                        <p><b>Student name:</b></p>
-                                                                        <p><b>Student name:</b></p>
-                                                                        <hr>
-                                                                        <p><b>Mentor: name</b></p>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-3 col-sm-6">
-                                                                    <div class="service_box">
-                                                                        <div class="service_icon">
-                                                                        </div>
-                                                                        <h3>Project name</h3>
-                                                                        <p><b>Group name:</b> </p>
-                                                                        <p><b>Student name:</b></p>
-                                                                        <p><b>Student name:</b></p>
-                                                                        <p><b>Student name:</b></p>
-                                                                        <hr>
-                                                                        <p><b>Mentor: name</b></p>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="col-md-3 col-sm-6">
-                                                                    <div class="service_box">
-                                                                        <div class="service_icon">
-                                                                        </div>
-                                                                        <h3>Project name</h3>
-                                                                        <p><b>Group name:</b> </p>
-                                                                        <p><b>Student name:</b></p>
-                                                                        <p><b>Student name:</b></p>
-                                                                        <p><b>Student name:</b></p>
-                                                                        <hr>
-                                                                        <p><b>Mentor: name</b></p>
-                                                                    </div>
-                                                                </div>-->
-
-                                                            </div>
-
-                                                    <div id="bottom-wizard">
-                                                        <a class="btn btn-primary btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> חזור</a>
-                                                    </div>
-                                                </section>
-                                                <!-- 2nd-slide end -->
-
-                                                <!-- 3rd-slide start -->
-
-                                                <section id="third-slide" class="container py-4">
-
-                                                    <div class="slide3">
-                                                        <div class="row pt-5">
-                                                            <div class="col-12 text-center">
-                                                                <h3 id="meetDoc"></h3>
-                                                                <h5 id="selectedGroup"></h5>
                                                             </div>
                                                         </div>
-                                                        <div class="row pt-5">
-                                                            <div class="col-sm-8 mx-auto time-counter">
 
-                                                                <div>
-                                                                    <a href="javascript:void(0)" id="increment" class="timeControl">+</a>
-                                                                    <p id="minutes"></p>
-                                                                    <a href="javascript:void(0)" id="decrement" class="timeControl">-</a>
+                                                        <!-- Search form -->
+                                                        <div class="p-1 rounded shadow-sm mb-4">
+                                                            <div class="input-group">
+                                                                <div class="input-group-prepend">
+                                                                    <button id="button-addon2" type="submit" class="btn btn-link text-info">
+                                                                        <i class="icon-search-8"></i>
+                                                                    </button>
                                                                 </div>
-                                                                <div>
-                                                                    <i class='fa fa-play' id="start"></i>
-                                                                    <i class='fa fa-pause' id="pause"></i>
-                                                                    <br>
-                                                                    <a class="btn btn-defult text-light" href="javascript:void(0)" id="reset">אתחל מחדש</a>
-                                                                </div>
-
-                                                            </div>
-                                                        </div>
-                                                        <div id="allCrit">
-
-                                                        </div>
-                                                       
-
-                                                        <div class="row pt-3">
-                                                            <div class="col-sm-4 mx-auto text-center">
-                                                                <a class="btn btn-defult text-light m-3 prev" onclick="saveScoreToData(true)" href="javascript:void(0)"> סיים</a>
-
-                                                                <a class="btn btn-defult text-light m-3 prev" onclick="saveScoreToData(false)" href="javascript:void(0)"> שמור</a>
+                                                                <input id="myinput" type="search" placeholder="חיפוש" aria-describedby="button-addon2" class="form-control border-0">
                                                             </div>
                                                         </div>
                                                     </div>
+                                                </div>
 
-                                                    <div id="bottom-wizard">
-                                                        <a class="btn btn-primary btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> חזור</a>
-                                                    </div>
-                                                </section>
-                                                <!-- 3rd-slide end -->
-                                             <!--<section id="four-slide" class="container py-4">
+                                                <div class="row" id="resultJ">
 
-                                                    <div class="slide4">
-                                                        <div class="row pt-5">
-                                                            <div class="col-12 text-center">
-                                                                <h3 id="meetDoc"></h3>
-                                                                <h5 id="selectedGroup"></h5>
-                                                            </div>
-                                                        </div>
-                         
-                                                        <div id="allCritUpdate">
+                                                </div>
 
-                                                        </div>
-                                                
-
-                                                        <div class="row pt-3">
-                                                            <div class="col-sm-4 mx-auto text-center">
-                                                                <a class="btn btn-defult text-light m-3 prev" onclick="saveScoreToData(true)" href="javascript:void(0)"> סיים</a>
-
-                                                                <a class="btn btn-defult text-light m-3 prev" onclick="saveScoreToData(false)" href="javascript:void(0)"> שמור</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div id="bottom-wizard">
-                                                        <a class="btn btn-primary btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> חזור</a>
-                                                    </div>
-                                             </section>-->
+                                            </div>
 
                                         </div>
-                                    </div>
+                                    </section>
+                                    <!-- 1st-slide end -->
+                                    <!--2nd slide start-->
+                                    <section id="second-slide" class="container py-4">
+
+                                        <div class="row">
+                                            <div class="col-12 text-center">
+                                                <h3><b>הצוותים</b></h3>
+                                                <h4 class="meetDoc"></h4>
+                                            </div>
+                                        </div>
+
+                                        <div class="row py-5">
+                                            <div class="col-sm-8 mx-auto">
+                                                <!--<div class="form-group">
+                                                    <select class="form-control" id="">
+                                                        <option>Industrial engineering</option>
+                                                        <option>Industrial engineering</option>
+                                                        <option>Industrial engineering</option>
+
+                                                    </select>
+                                                </div>-->
+
+                                                <div class="p-1 rounded shadow-sm mb-4">
+                                                    <div class="input-group">
+                                                        <div class="input-group-prepend">
+                                                            <button id="button-addon2" type="submit" class="btn btn-link text-info">
+                                                                <i class="icon-search-8"></i>
+                                                            </button>
+                                                        </div>
+                                                        <input id="myInput1" type="search" placeholder="חיפוש" aria-describedby="button-addon2" class="form-control border-0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row" id="addGroups">
+                                            <!--<div class="col-md-3 col-sm-6">
+                                                <div class="service_box">
+                                                    <div class="service_icon">
+                                                    </div>
+                                                    <h3>Project name</h3>
+                                                    <p><b>Group name:</b> </p>
+                                                    <p><b>Student name:</b></p>
+                                                    <p><b>Student name:</b></p>
+                                                    <p><b>Student name:</b></p>
+                                                    <hr>
+                                                    <p><b>Mentor: name</b></p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-sm-6">
+                                                <div class="service_box">
+                                                    <div class="service_icon">
+                                                    </div>
+                                                    <h3>Project name</h3>
+                                                    <p><b>Group name:</b> </p>
+                                                    <p><b>Student name:</b></p>
+                                                    <p><b>Student name:</b></p>
+                                                    <p><b>Student name:</b></p>
+                                                    <hr>
+                                                    <p><b>Mentor: name</b></p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-sm-6">
+                                                <div class="service_box">
+                                                    <div class="service_icon">
+                                                    </div>
+                                                    <h3>Project name</h3>
+                                                    <p><b>Group name:</b> </p>
+                                                    <p><b>Student name:</b></p>
+                                                    <p><b>Student name:</b></p>
+                                                    <p><b>Student name:</b></p>
+                                                    <hr>
+                                                    <p><b>Mentor: name</b></p>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-3 col-sm-6">
+                                                <div class="service_box">
+                                                    <div class="service_icon">
+                                                    </div>
+                                                    <h3>Project name</h3>
+                                                    <p><b>Group name:</b> </p>
+                                                    <p><b>Student name:</b></p>
+                                                    <p><b>Student name:</b></p>
+                                                    <p><b>Student name:</b></p>
+                                                    <hr>
+                                                    <p><b>Mentor: name</b></p>
+                                                </div>
+                                            </div>-->
+
+                                        </div>
+
+                                        <div id="bottom-wizard">
+                                            <a class="btn btn-primary btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> חזור</a>
+                                        </div>
+                                    </section>
+                                    <!-- 2nd-slide end -->
+                                    <!-- 3rd-slide start -->
+
+                                    <section id="third-slide" class="container py-4">
+
+                                        <div class="slide3">
+                                            <div class="row pt-5">
+                                                <div class="col-12 text-center">
+                                                    <h3 class="meetDoc"></h3>
+                                                    <h5 id="selectedGroup"></h5>
+                                                </div>
+                                            </div>
+                                            <div class="row pt-5">
+                                                <div class="col-sm-8 mx-auto time-counter">
+
+                                                    <div>
+                                                        <a href="javascript:void(0)" id="increment" class="timeControl">+</a>
+                                                        <p id="minutes"></p>
+                                                        <a href="javascript:void(0)" id="decrement" class="timeControl">-</a>
+                                                    </div>
+                                                    <div>
+                                                        <i class='fa fa-play' id="start"></i>
+                                                        <i class='fa fa-pause' id="pause"></i>
+                                                        <br>
+                                                        <a class="btn btn-defult text-light" href="javascript:void(0)" id="reset">אתחל מחדש</a>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div id="allCrit">
+
+                                            </div>
+
+
+                                            <div class="row pt-3">
+                                                <div class="col-sm-4 mx-auto text-center">
+                                                    <a class="btn btn-defult text-light m-3 prev" onclick="saveScoreToData(true)" href="javascript:void(0)"> סיים</a>
+
+                                                    <a class="btn btn-defult text-light m-3 prev" onclick="saveScoreToData(false)" href="javascript:void(0)"> שמור</a>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div id="bottom-wizard">
+                                            <a class="btn btn-primary btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> חזור</a>
+                                        </div>
+                                    </section>
+                                    <!-- 3rd-slide end -->
+                                    <!--<section id="four-slide" class="container py-4">
+
+                                           <div class="slide4">
+                                               <div class="row pt-5">
+                                                   <div class="col-12 text-center">
+                                                       <h3 id="meetDoc"></h3>
+                                                       <h5 id="selectedGroup"></h5>
+                                                   </div>
+                                               </div>
+
+                                               <div id="allCritUpdate">
+
+                                               </div>
+
+
+                                               <div class="row pt-3">
+                                                   <div class="col-sm-4 mx-auto text-center">
+                                                       <a class="btn btn-defult text-light m-3 prev" onclick="saveScoreToData(true)" href="javascript:void(0)"> סיים</a>
+
+                                                       <a class="btn btn-defult text-light m-3 prev" onclick="saveScoreToData(false)" href="javascript:void(0)"> שמור</a>
+                                                   </div>
+                                               </div>
+                                           </div>
+
+                                           <div id="bottom-wizard">
+                                               <a class="btn btn-primary btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> חזור</a>
+                                           </div>
+                                    </section>-->
+
                                 </div>
-
                             </div>
-                            <!-- /middle-wizard -->
-                        </form>
-                    </div>
-                    <!-- /Wizard container -->
-                </div>
-                <!-- /Container -->
-            </main>
-            <!-- /main -->
-
-            <footer>
-                <div class="container clearfix">
-
-                    <p>© 2020 | Feedback System</p>
-                </div>
-            </footer>
-            <!-- /footer -->
-
-            <div class="cd-overlay-nav">
-                <span></span>
-            </div>
-            <!-- /cd-overlay-nav -->
-
-            <div class="cd-overlay-content">
-                <span></span>
-            </div>
-            <!-- /cd-overlay-content -->
-
-            <a href="#0" class="cd-nav-trigger">Menu<span class="cd-icon"></span></a>
-            <!-- /cd-nav-trigger -->
-
-            <!-- Modal terms -->
-            <div class="modal fade" id="terms-txt" tabindex="-1" role="dialog" aria-labelledby="termsLabel" aria-hidden="true">
-                <div class="modal-dialog" role="document">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title" id="termsLabel">Terms and conditions</h5>
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                            </button>
                         </div>
-                        <div class="modal-body">
-                            <p>Lorem ipsum dolor sit amet, in porro albucius qui, in <strong>nec quod novum accumsan</strong>, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
-                            <p>Lorem ipsum dolor sit amet, in porro albucius qui, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus. Lorem ipsum dolor sit amet, <strong>in porro albucius qui</strong>, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
-                            <p>Lorem ipsum dolor sit amet, in porro albucius qui, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
-                        </div>
+
                     </div>
+                    <!-- /middle-wizard -->
+                </form>
+            </div>
+            <!-- /Wizard container -->
+        </div>
+        <!-- /Container -->
+    </main>
+    <!-- /main -->
+
+    <footer>
+        <div class="container clearfix">
+
+            <p>© 2020 | Feedback System</p>
+        </div>
+    </footer>
+    <!-- /footer -->
+
+    <div class="cd-overlay-nav">
+        <span></span>
+    </div>
+    <!-- /cd-overlay-nav -->
+
+    <div class="cd-overlay-content">
+        <span></span>
+    </div>
+    <!-- /cd-overlay-content -->
+
+    <a href="#0" class="cd-nav-trigger">Menu<span class="cd-icon"></span></a>
+    <!-- /cd-nav-trigger -->
+    <!-- Modal terms -->
+    <div class="modal fade" id="terms-txt" tabindex="-1" role="dialog" aria-labelledby="termsLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="termsLabel">Terms and conditions</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Lorem ipsum dolor sit amet, in porro albucius qui, in <strong>nec quod novum accumsan</strong>, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
+                    <p>Lorem ipsum dolor sit amet, in porro albucius qui, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus. Lorem ipsum dolor sit amet, <strong>in porro albucius qui</strong>, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
+                    <p>Lorem ipsum dolor sit amet, in porro albucius qui, in nec quod novum accumsan, mei ludus tamquam dolores id. No sit debitis meliore postulant, per ex prompta alterum sanctus, pro ne quod dicunt sensibus.</p>
                 </div>
             </div>
-            <!-- /Modal terms -->
-
-            <!-- COMMON SCRIPTS -->
-            <script src="js/jquery-2.2.4.min.js"></script>
+        </div>
+    </div>
+    <!-- /Modal terms -->
+    <!-- COMMON SCRIPTS -->
+    <script src="js/jquery-2.2.4.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment-with-locales.js"></script>
     <script src="https://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js"></script>
     <script src="js/common_scripts.min.js"></script>
@@ -389,160 +426,163 @@
     <script src="js/main.js"></script>
     <script src="js/wizard_func_single_branch.js"></script>
     <script type="text/javascript">
-                $(function() {
+        $(function () {
 
-                    $('#datetimepicker3').datetimepicker({
-                        format: 'LT'
-                    });
-                    $('#datetimepicker3').datetimepicker({
-                        format: 'LT'
-                    });
-                });
+            $('#datetimepicker3').datetimepicker({
+                format: 'LT'
+            });
+            $('#datetimepicker3').datetimepicker({
+                format: 'LT'
+            });
+        });
     </script>
     <script>
-                $(document).ready(function() {
-                    $("#second-slide").hide();
-                    $("#third-slide").hide();
-                    $("#four-slide").hide();
+        $(document).ready(function () {
+            $("#second-slide").hide();
+            $("#third-slide").hide();
+            $("#four-slide").hide();
 
-                    $("#first-slide .service_box").click(function() {
-                        $("#first-slide").hide();
-                        $("#second-slide").fadeIn();
-                    });
+            $("#first-slide .service_box").click(function () {
+                $("#first-slide").hide();
+                $("#second-slide").fadeIn();
+            });
 
-                    $("#second-slide .prev").click(function() {
-                        $("#second-slide").hide();
-                        $("#first-slide").fadeIn();
-                    });
-                    $("#second-slide .service_box").click(function() {
-                        $("#second-slide").hide();
-                        $("#third-slide").fadeIn();
-                    });
+            $("#second-slide .prev").click(function () {
+                $("#second-slide").hide();
+                $("#first-slide").fadeIn();
+            });
+            $("#second-slide .service_box").click(function () {
+                $("#second-slide").hide();
+                $("#third-slide").fadeIn();
+            });
 
-                    $("#third-slide .prev").click(function() {
-                        $("#third-slide").hide();
-                        $("#second-slide").fadeIn();
-                    
-                    });
-                });
+            $("#third-slide .prev").click(function () {
+                $("#third-slide").hide();
+                $("#second-slide").fadeIn();
+
+            });
+        });
     </script>
     <script type="text/javascript">
 
-// First let's set the colors of our sliders
-const settings={
-          fill: '#1abc9c',
-          background: '#d7dcdf'
-}
+        // First let's set the colors of our sliders
+        const settings = {
+            fill: '#1abc9c',
+            background: '#d7dcdf'
+        }
 
-// First find all our sliders
-const sliders = document.querySelectorAll('.range-slider');
+        // First find all our sliders
+        const sliders = document.querySelectorAll('.range-slider');
 
 
-Array.prototype.forEach.call(sliders,(slider)=>{
+        Array.prototype.forEach.call(sliders, (slider) => {
 
-          slider.querySelector('input').addEventListener('input', (event)=>{
-            // 1. apply our value to the span
-            slider.querySelector('span').innerHTML = event.target.value;
-            // 2. apply our fill to the input
-            applyFill(event.target);
-          });
-          // Don't wait for the listener, apply it now!
-          applyFill(slider.querySelector('input'));
-});
+            slider.querySelector('input').addEventListener('input', (event) => {
+                // 1. apply our value to the span
+                slider.querySelector('span').innerHTML = event.target.value;
+                // 2. apply our fill to the input
+                applyFill(event.target);
+            });
+            // Don't wait for the listener, apply it now!
+            applyFill(slider.querySelector('input'));
+        });
 
-// This function applies the fill to our sliders by using a linear gradient background
-function applyFill(slider) {
-          // Let's turn our value into a percentage to figure out how far it is in between the min and max of our input
-          const percentage = 100*(slider.value-slider.min)/(slider.max-slider.min);
-          // now we'll create a linear gradient that separates at the above point
-          // Our background color will change here
-          const bg = `linear-gradient(90deg, ${settings.fill} ${percentage}%, ${settings.background} ${percentage+0.1}%)`;
-          slider.style.background = bg;
-}
+        // This function applies the fill to our sliders by using a linear gradient background
+        function applyFill(slider) {
+            // Let's turn our value into a percentage to figure out how far it is in between the min and max of our input
+            const percentage = 100 * (slider.value - slider.min) / (slider.max - slider.min);
+            // now we'll create a linear gradient that separates at the above point
+            // Our background color will change here
+            const bg = `linear-gradient(90deg, ${settings.fill} ${percentage}%, ${settings.background} ${percentage + 0.1}%)`;
+            slider.style.background = bg;
+        }
 
     </script>
     <script>
-                $(document).ready(function() {
-//Variables
-var seconds = 300;
-var minutes = seconds / 60;
-var clockseconds = 0;
-var interval;
-var minutesDisplay = $("#minutes");
-var timerControls = $('.timeControl');
+        $(document).ready(function () {
+            //Variables
+            var seconds = 300;
+            var minutes = seconds / 60;
+            var clockseconds = 0;
+            var interval;
+            var minutesDisplay = $("#minutes");
+            var timerControls = $('.timeControl');
 
-//Assign time display values
-minutesDisplay.text(minutes + ":00");
+            //Assign time display values
+            minutesDisplay.text(minutes + ":00");
 
-//Increase timer length
-$("#increment").click(function() {
-          seconds += 60;
-          minutes += 1;
-          minutesDisplay.text(function(_a, input) {
-            return (eval(+ minutes) + ":00");
-          });
-});
+            //Increase timer length
+            $("#increment").click(function () {
+                seconds += 60;
+                minutes += 1;
+                minutesDisplay.text(function (_a, input) {
+                    return (eval(+ minutes) + ":00");
+                });
+            });
 
-//Decrease timer length
-$("#decrement").click(function() {
-          seconds -= 60;
-          minutes -= 1;
-          minutesDisplay.text(function(_a, input) {
-            return eval(+ minutes) + ":00";
-          });
-});
+            //Decrease timer length
+            $("#decrement").click(function () {
+                seconds -= 60;
+                minutes -= 1;
+                minutesDisplay.text(function (_a, input) {
+                    return eval(+ minutes) + ":00";
+                });
+            });
 
-//Start countdown
-$("#start").click(function() {
-            timerControls.addClass('hidden');
-            var interval = setInterval(countdown, 1000);
+            //Start countdown
+            $("#start").click(function () {
+                timerControls.addClass('hidden');
+                var interval = setInterval(countdown, 1000);
 
-          //reset countdown
-          $("#reset").click(function() {
-             seconds = 300;
-             minutes = seconds / 60;
-             clockseconds = 0;
-             timerControls.removeClass('hidden');
-             minutesDisplay.text(minutes + ":00").fadeTo(0, 1);
-             clearInterval(interval);
-               });
-          //pause countdown
-          $('#pause').click(function() {
-            clearInterval(interval);
-          });
-          });
+                //reset countdown
+                $("#reset").click(function () {
+                    seconds = 300;
+                    minutes = seconds / 60;
+                    clockseconds = 0;
+                    timerControls.removeClass('hidden');
+                    minutesDisplay.text(minutes + ":00").fadeTo(0, 1);
+                    clearInterval(interval);
+                });
+                //pause countdown
+                $('#pause').click(function () {
+                    clearInterval(interval);
+                });
+            });
 
-//countdown functionality
-function countdown() {
-          //stop countdown when over
-          if (minutes === 0 && clockseconds === 0) {
-             minutesDisplay.text("Time up!");
-             $("#gong").get(0).play();
-             clearInterval(interval);
-             }
+            //countdown functionality
+            function countdown() {
+                //stop countdown when over
+                if (minutes === 0 && clockseconds === 0) {
+                    minutesDisplay.text("Time up!");
+                    $("#gong").get(0).play();
+                    clearInterval(interval);
+                }
 
-          //transition from end of one minute to new minute
-          else if (clockseconds === 0) {
-            clockseconds += 59;
-            minutes --;
-          }
+                //transition from end of one minute to new minute
+                else if (clockseconds === 0) {
+                    clockseconds += 59;
+                    minutes--;
+                }
 
-          //seconds decrement
-          else {
-            seconds--;
-            clockseconds --;
-          }
+                //seconds decrement
+                else {
+                    seconds--;
+                    clockseconds--;
+                }
 
-          //make sure display is showing correct amount of 0's
-          if (clockseconds > 9) {
-            minutesDisplay.text(minutes + ":" + clockseconds);
-          }
-          else {
-            minutesDisplay.text(minutes + ":" + "0" + clockseconds);
-          }
-}
-});
+                //make sure display is showing correct amount of 0's
+                if (clockseconds > 9) {
+                    minutesDisplay.text(minutes + ":" + clockseconds);
+                }
+                else {
+                    minutesDisplay.text(minutes + ":" + "0" + clockseconds);
+                }
+            }
+        });
     </script>
-    </body>
+    <script src="js/goNext.js"></script>
+    <script src="js/searchJS.js"></script>
+    <script src="js/judgeJS.js"></script>
+</body>
 
 </html>

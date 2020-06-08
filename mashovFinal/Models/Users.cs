@@ -15,6 +15,7 @@ namespace mashovFinal.Models
         Types type;
         List<Types> typesofuser;
         string updateemail;
+        int numDoc; //for judae_index3
 
         public string Pass { get => pass; set => pass = value; }
         public string FirstName { get => firstName; set => firstName = value; }
@@ -23,11 +24,12 @@ namespace mashovFinal.Models
         public Types Type { get => type; set => type = value; }
         public List<Types> Typesofuser { get => typesofuser; set => typesofuser = value; }
         public string Updateemail { get => updateemail; set => updateemail = value; }
+        public int NumDoc { get => numDoc; set => numDoc = value; }
 
 
 
         public Users() { }
-        public Users( string p,string first, string last, string em, Types ty ,List<Types> list,string ue)
+        public Users( string p,string first, string last, string em, Types ty ,List<Types> list,string ue,int n)
         {
             pass = p;
             firstName = first;
@@ -36,6 +38,7 @@ namespace mashovFinal.Models
             type = ty;
             typesofuser = list;
             updateemail = ue;
+            numDoc = n;
           //  numGroup = ng;
         }
         public Users ifexist()

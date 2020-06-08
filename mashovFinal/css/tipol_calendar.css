@@ -57,7 +57,7 @@ div#showGuardingPopupDiv h3, div#updatePopuppDiv h3 {
     width: 80px;
     font-size: 20px;
     font-family: FbSpacer;
-    font-weight: normal;
+    /*font-weight: normal;*/
     margin-top: 10px;
 }
 
@@ -120,13 +120,13 @@ div#FG {
 }
 
 div#NFG {
-    background: #FFC100;
+    background: #0ACD58;
 }
 
 div#NNG {
-    background: #FF0065;
+    background: #FFC100;
 }
 
 div#EV {
-    background: #3A87AD;
+    background: #FF0065;
 }

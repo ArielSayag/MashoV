@@ -86,5 +86,21 @@ namespace mashovFinal.Models
             DBservices dbs = new DBservices();
             return dbs.updateStudentDetails(this);
         }
+        public List<Users> getallmentorbystudent(string id)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.getAllMentor(id);
+        }
+        public int updateStatusT(int idT)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.updateStatust(idT);
+        }
+        public List<Groups> getGroupsMentorofS(string id)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.getAllMentorProg(id);
+        }
+
     }
 }

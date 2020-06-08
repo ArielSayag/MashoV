@@ -9,22 +9,8 @@ var getuser;
 
         $("#wrapped").submit(f1);
 
-
-
-            $("#myInput1").on("keyup", function () {
-                var value = $(this).val();
-                console.log(this);
-                $('#resultJ > div').hide();
-
-                $('#resultJ > div > div > h3:contains("' + value + '")').closest('#resultJ > div').show();
-                $('#resultJ > div > div > p:contains("' + value + '")').closest('#resultJ > div').show();
-
-
-            });
-
-
             loginUser = JSON.parse(localStorage["Login"]); //user from login page
-            //check if manager
+          
             var listTT = loginUser.Typesofuser
             for (i in listTT) {
                 if (listTT[i].NumType == 3) {
@@ -33,16 +19,15 @@ var getuser;
                         "NumType": listTT[i].NumType,
                     }
                     loginUser.Type = t;
-
+                    localStorage["update"] = JSON.stringify(loginUser);
                     getuser = loginUser;
                 }
             }
 
-console.log(loginUser);
-$("#helloAdmin").append("שלום, " + getuser.FirstName);
-dashboard(getuser);
-//ajaxCall("GET", "./api/Doc", "", GETSuccessDep, GETErrorDep); // show all Dep
-//ajaxCall("GET", "./api/Doc/Year", "", GETSuccessYear, GETErrorYear); // show all hebYear
+              console.log(loginUser);
+              $("#helloAdmin").append("שלום, " + getuser.FirstName);
+              dashboard(getuser);
+
 
          
            
@@ -61,10 +46,9 @@ function GETSuccessJ(data) {
     if (data == "") { return; }
     else {
 
-        console.log(data);
 
         for (i in data) {
-            str += '<div id="' + data[i].NumMeeting + '" class="col-md-4 col-sm-6 search" style="direction:rtl" onclick="showFeed(this.id)"><div class="service_box"><div class="service_icon">30/3</div><h3 id="nameMeet">' +
+            str += '<div id="' + data[i].NumMeeting + '" class="col-md-4 col-sm-6 search" style="direction:rtl" onclick="showFeed(this.id,' + data[i].NumDoc + ')"><div class="service_box"><div class="service_icon"></div><h3 value="' + data[i].NameMeeting + '" id="nameMeet">' +
                 data[i].NameMeeting + '</h3><p><b>תאריך הצגה :</b>' +
                 data[i].Date.split("T")[0] + '</p><p><b>שם הקורס :</b>' +
                 data[i].DetailsCourseDep.NameCourse + '</p><p><b>מחלקה :</b>' +
@@ -80,27 +64,34 @@ function GETSuccessJ(data) {
         console.log(err);
     }
 idMeet = 0;
+idD = 0;
 //-----------------------------------------step 2 show all grops--------------------------------//
-        function showFeed(id) {
-            idMeet = id;
-           
-            var tem = document.getElementById(id);
-            var named = $(tem).find("#nameMeet").attr('value');
-            document.getElementById("meetDoc").innerHTML = named;
+function showFeed(id,numD) {
+    idMeet = id;
+    idD = numD;
+
+
+    var tem = document.getElementById(idMeet);
+    var named = $(tem).find("#nameMeet").attr("value");
+    $(".meetDoc").html('');
+    $(".meetDoc").append(named);
+   
     $("#first-slide").hide();
     $("#second-slide").fadeIn();
-   
+
+ 
     document.getElementById("addGroups").innerHTML = "";
-   
-    ajaxCall("PUT", "./api/User/judge/Groups/"+id, JSON.stringify(getuser), GETSuccessG, GETErrorG);
-  
+
+    ajaxCall("PUT", "./api/User/judge/Groups/" + id, JSON.stringify(getuser), GETSuccessG, GETErrorG);
+
 
 }
 var strGroup = "";
 function GETSuccessG(data) { // all my groups that I need to judge after I selected a Meeting
-
+    strGroup = "";
     for (i in data) {
-        strGroup += `<div id="${data[i].Group.NumGroup}" class="col-md-3 col-sm-6" onclick="show(this.id)">
+        idforgroup = "group," + data[i].Group.NumGroup;
+        strGroup += `<div id="${idforgroup}" class="col-md-3 col-sm-6" onclick="show(this.id)">
                        <div class="service_boxJ">`;
         if (data[i].Sum != 0) {
             strGroup += `<div id="grade" value="${data[i].Sum}"  class="service_icon">${data[i].Sum}
@@ -110,17 +101,19 @@ function GETSuccessG(data) { // all my groups that I need to judge after I selec
             strGroup += `<div id="grade" value="none"  class="service_icon">
                                </div>`;
         }
-        strGroup += `<h3 id="projGroup">${data[i].Group.NameProject}</h3>
+        strGroup += `<h3 id="projGroup" value="${data[i].Group.NameProject}">${data[i].Group.NameProject}<br/><br/>${data[i].StartTime}-${data[i].EndTime}</h3>
                      <p><b id="proj">${data[i].Group.NameGroup}</b> </p>`;
         for (j in data[i].Group.ListStudent) {
             strGroup += `<p><b>${data[i].Group.ListStudent[j].FirstName}  ${data[i].Group.ListStudent[j].LastName}</b></p>`;
         }
         strGroup += `<hr>
         <p><b>מנחה: ${data[i].Group.Mentor.FirstName}  ${data[i].Group.Mentor.LastName}</b></p>
-          <br>
-      <a href="javascript:void(0)" class="btn btn-defult2">ראה מצגת</a>
-                          </div>
-                          </div>`;
+          <br>`;
+        var link = data[i].Group.Link;
+        if (link != "") {
+            strGroup += `<br><a href="${link}" class="btn btn-defult2">הורד מצגת</a><br><br>`;
+        }
+        strGroup += `</div></div>`;
     }
     $('#addGroups').append(strGroup);
 
@@ -134,22 +127,25 @@ function GETErrorG(err) {
 var localGroup;
 var newOrNot;
 function show(id) {
+ 
+    localGroup = id.split(",")[1];
 
-    localGroup = id;
-
-    var tem = document.getElementById(localGroup);
+    var tem = document.getElementById(id);
     newOrNot = $(tem).find("#grade").attr('value');
+    
     var nameGroupSelected = $(tem).find("#projGroup").attr('value');
     document.getElementById("selectedGroup").innerHTML = nameGroupSelected;
 
-
+    $("#allCrit").html('');
+    getuser.NumDoc = idD;
     if (newOrNot != "none") {
 
-        document.getElementById("allCrit").innerHTML = "";
-        ajaxCall("PUT", "./api/Criteria/Group/" + id, JSON.stringify(getuser), PUTSuccessTest, PUTErrorTest);
+    
+        ajaxCall("PUT", "./api/Criteria/Group/" + localGroup, JSON.stringify(getuser), PUTSuccessTest, PUTErrorTest);
        
     }
     else {
+       
         ajaxCall("GET", "./api/Criteria/judge/" + idMeet, "", GETSuccessTest, GETErrorTest);
     }
     $("#second-slide").hide();
@@ -165,11 +161,12 @@ var count;
 function GETSuccessTest(dataTest) {//all the Meet Doc 
     listTestCrit = [];
     dataT = dataTest;
-    document.getElementById("allCrit").innerHTML = "";
+    crit = "";
+    //document.getElementById("allCrit").innerHTML = "";
     for (i in dataTest.AllCrit) {
         count = i;
         critID = 'crit' + i;
-        crit += `<div id = "${critID}" class="row pt-4">
+        crit += `<div id="${critID}" class="row pt-4 box">
     <div class="col-sm-8 mx-auto text-right">
         <h5 id="nameC" name="${dataTest.AllCrit[i].NumCrit}">${dataTest.AllCrit[i].NameCrit}</h5>
         <h6>${dataTest.AllCrit[i].DescriptionCrit}</h6>
@@ -184,6 +181,7 @@ function GETSuccessTest(dataTest) {//all the Meet Doc
         listTestCrit.push(critID);
     }
     $("#allCrit").append(crit);
+   
 }
 
 function GETErrorTest(err) {
@@ -191,12 +189,12 @@ function GETErrorTest(err) {
 }
 
                     //-------------------------------if I select Group NOT at the first time----------------------------//
-                    var crit1="";
+var crit1="";
 function PUTSuccessTest(dataTest1) {//all the Meet Doc 
     console.log(dataTest1);
     dataT = dataTest1;
     listTestCrit = [];
-    //document.getElementById("allCritUpdate").innerHTML = "";
+    crit1 = "";
     for (i in dataTest1.AllCrit) {
 
         count = i;

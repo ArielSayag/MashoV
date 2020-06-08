@@ -18,11 +18,18 @@ function GETSuccessDep(data) {
 
     for (k in data) {
 
-        arrNamesDep += `<option value=${data[k].NumDepartment}>${data[k].NameDepartment} </option>`;
+        arrNamesDep += `<option value=${data[k].NameDepartment}>${data[k].NameDepartment} </option>`;
+    }
+    var arrExcel= "<option value=''>בחר מחלקה</option>";
+
+    for (k in data) {
+
+        arrExcel += `<option value=${data[k].NumDepartment}>${data[k].NameDepartment} </option>`;
     }
 
     $('#Department').append(arrNamesDep);
     $('#browsers1').append(arrNamesDep);
+    $('#DepartmentExcel').append(arrExcel);
 
 }
 function GETErrorDep(err) { console.log(err); }
@@ -71,3 +78,4 @@ function GETSuccessScala(data) {
     $('#scala1').append(arrNamesScala);
 }
 function GETErrorScala(err) { console.log(err); }
+

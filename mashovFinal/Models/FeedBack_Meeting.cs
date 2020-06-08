@@ -9,25 +9,28 @@ namespace mashovFinal.Models
     public class FeedBack_Meeting
     {
         int numMeeting;
+        int numDoc;
         string nameMeeting;
         string yearMeeting;
         string date;
         CoursesAndDepartment detailsCourseDep;
 
         public int NumMeeting { get => numMeeting; set => numMeeting = value; }
+        public int NumDoc { get => numDoc; set => numDoc = value; }
         public string NameMeeting { get => nameMeeting; set => nameMeeting = value; }
         public string YearMeeting { get => yearMeeting; set => yearMeeting = value; }
         public string Date { get => date; set => date = value; }
         public CoursesAndDepartment DetailsCourseDep { get => detailsCourseDep; set => detailsCourseDep = value; }
 
         public FeedBack_Meeting() { }
-        public FeedBack_Meeting(int n, string name,string year, string dateDay, CoursesAndDepartment candD)
+        public FeedBack_Meeting(int n, string name,string year, string dateDay, CoursesAndDepartment candD,int nd)
         {
             numMeeting = n;
             nameMeeting = name;
             yearMeeting = year;
             date = dateDay;
             detailsCourseDep = candD;
+            numDoc = nd;
         
         }
 

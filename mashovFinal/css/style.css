@@ -1628,3 +1628,40 @@ input.qtyminus {
     left: 50%;
 }
 
+.editGroup {
+    font-size:24px;
+    position:absolute;
+    top:10%;
+    color:white;
+}
+
+#updatePopupM {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30%;
+    background-color: white;
+    border: 1px solid black;
+    padding:20px;
+    border-radius:10px;
+  
+}
+
+    #updatePopupM > div {
+        display: flex;
+        margin-top:15px;
+        justify-content:space-between;
+
+    }
+    #updatePopupM input {
+        width: 60%;
+        margin-right: 15%;
+        
+    }
+.btnPopup{
+    justify-content:flex-start;
+    
+}

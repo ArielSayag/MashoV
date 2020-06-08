@@ -95,10 +95,25 @@
                 var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
                 return re.test(String(email).toLowerCase());
             }
-        
+
+        function backpage() {
+
+            if (ifStudent) {
+                window.location.href = "index5.html";
+            }
+            else if (loginUser.Type.Type == "Mentor") {
+                window.location.href = "index4.html";
+            }
+            else if (loginUser.Type.Type == "Manager") {
+                window.location.href = "index2.html";
+            }
+            else {
+                window.location.href = "index3.html";
+            }
+        }
     </script>
 </head>
-<body onload="init()">
+<body onload="init()" style="font-family:FbSpacer;">
 
     <div id="preloader">
         <div data-loader="circle-side"></div>
@@ -175,7 +190,7 @@
                                                 <input type="password" id="pas" name="lastname" class="form-control" placeholder="סיסמא">
 
                                             </div>
-                                            <input type="checkbox" onclick="myFunction()">ראה סיסמא
+                                            <input type="checkbox" onclick="myFunction()">הצג סיסמא
                                         </div>
 
                                     </div>
@@ -183,11 +198,11 @@
                                         <input type="submit" id="btn" class="button form-control" value="עדכן פרטים">
                                     </div>
                                     <div id="bottom-wizard">
-                                        <a class="btn btn-primary btn prev" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> חזור</a>
+                                        <a class="btn btn-primary btn prev" onclick="backpage()" href="javascript:void(0)"><i style="margin-right: 10px;" class="fa fa-angle-left"></i> חזור</a>
 
                                     </div>
                                 </div>
-   
+
                                 <!-- /box_general -->
                             </div>
                         </div>
@@ -246,6 +261,6 @@
     <script src="js/menu.js"></script>
     <script src="js/main.js"></script>
     <script src="js/wizard_func_multiple_branch.js"></script>
-
+    <script src="js/goNext.js"></script>
 </body>
 </html>

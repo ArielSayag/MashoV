@@ -72,15 +72,16 @@ jQuery(document).ready(function($){
 			left : -(diameterValue/2)+'px',
 		}, 0);
 
-		overlayContent.children('span').velocity({
-			scaleX: 0,
-			scaleY: 0,
-			translateZ: 0,
-		}, 50).velocity({
-			height : diameterValue+'px',
-			width : diameterValue+'px',
-			top : -(diameterValue/2)+'px',
-			left : -(diameterValue/2)+'px',
-		}, 0);
+		//overlayContent.children('span').velocity({
+		//	scaleX: 0,
+		//	scaleY: 0,
+		//	translateZ: 0,
+  //      }, 50)
+  //          .velocity({
+		//	height : diameterValue+'px',
+		//	width : diameterValue+'px',
+		//	top : -(diameterValue/2)+'px',
+		//	left : -(diameterValue/2)+'px',
+		//}, 0);
 	}
 });

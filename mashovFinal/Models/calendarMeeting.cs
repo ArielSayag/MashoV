@@ -39,6 +39,21 @@ namespace mashovFinal.Models
             DBservices dbs = new DBservices();
             return dbs.insert(this);
         }
-      
+        public int updateM()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.updateM(this);
+        }
+        public int deleteM(int id)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.deleteM(id);
+        }
+        public List<calendarMeeting> getallcalendarMeetingByStudent(string id)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.GetCalendarMeetingsStudent(id);
+        }
+        
     }
 }

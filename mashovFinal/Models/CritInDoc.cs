@@ -25,17 +25,27 @@ namespace mashovFinal.Models
             DBservices dbs = new DBservices();
             List<Criterion> critafterinsert= dbs.insert(this);
             dbs = dbs.readFromDB();
-            dbs.dt= updetFevorite(critafterinsert, dbs.dt);
+            dbs.dt = updetFevorite(critafterinsert, dbs.dt);
             dbs.update();
-            return 0;
+            return 1;
            
             
         }
-        
+
+        public int updateDocLastDoc()
+        {
+            DBservices dbs = new DBservices();
+            int num = dbs.updateDocwithLastDoc(this);
+            // List<Criterion> critafterinsert = dbs.insert(this);
+            dbs = dbs.readFromDB();
+            dbs.dt = updetFevorite(this.allCrit, dbs.dt);
+            dbs.update();
+            return num;
+        }
         private DataTable updetFevorite(List<Criterion> c, DataTable dt)
         {
             
-            bool flag = true;
+          
             foreach (DataRow dr in dt.Rows)
             {
                 int id = Convert.ToInt32(dr["NumCrit"]);
@@ -43,37 +53,29 @@ namespace mashovFinal.Models
                 {   
                     if (id == i.NumCrit)
                     {
-                        flag = false;
+                       // flag = false;
                         dr["counterScore"] = Convert.ToInt32(dr["counterScore"]) + 1;
+                       
                         break;
                     }
                 }
+
                
             }
-            //if (flag)
-            //{
-            //    DBservices dbs = new DBservices();
-            //    dbs.insert(f);
-            //}
+
             return dt;
 
         }
 
 
-        public int updateDocLastDoc()
+        public Criterion updateAndinsertCrit()
         {
             DBservices dbs = new DBservices();
-             int num=dbs.updateDocwithLastDoc(this);
-           // List<Criterion> critafterinsert = dbs.insert(this);
+            List<Criterion> idCrit= dbs.insAndUpCrit(this);
             dbs = dbs.readFromDB();
-            dbs.dt = updetFevorite(this.allCrit, dbs.dt);
+            dbs.dt = updetFevorite(idCrit, dbs.dt);
             dbs.update();
-            return num;
-        }
-        public int updateAndinsertCrit()
-        {
-            DBservices dbs = new DBservices();
-            return dbs.insAndUpCrit(this);
+            return idCrit[0];
         }
         
 

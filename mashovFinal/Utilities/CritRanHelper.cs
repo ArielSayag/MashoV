@@ -13,7 +13,9 @@ namespace mashovFinal.Utilities
         public static void checkDocs()
         {
             DBservices dbs = new DBservices();
-          int status=dbs.checkedDoc();
+            int status=dbs.checkedDoc();
+       
+            
             
         }
 
@@ -24,7 +26,7 @@ namespace mashovFinal.Utilities
             
             Dictionary<int, List<Criterion>> best = new Dictionary<int, List<Criterion>>();
             List<Criterion> win = new List<Criterion>();
-
+            double total1 = total;
             int score=0;
             foreach (var item in dataList)
             {
@@ -40,6 +42,8 @@ namespace mashovFinal.Utilities
                 {
                     best.Add(score, newc);          
                      newc = new List<Criterion>();
+                    total = total1;
+                    score = 0;
                 }
             }
 

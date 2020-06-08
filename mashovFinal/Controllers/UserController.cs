@@ -45,5 +45,13 @@ namespace mashovFinal.Controllers
 
             return u.getMentorGroup(metting);
         }
+        [HttpPut]
+        [Route("api/User/updateGroupMentor")]
+        public int PutupdateGroupMentor( [FromBody]Group_Meeting m)
+        {
+
+            return m.updateGroupDetails();
+        }
+        
     }
 }
