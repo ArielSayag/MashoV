@@ -48,9 +48,12 @@
 
             if (id == "" || password == "") {
                 swal('הכנס ערכים תקינים');
+                return false;
             }
             else if (id.length < 9 || password.length < 9) {
                 swal('שם משתמש צריך 9 תווים ומעלה וסיסמא מעל 9 תווים');
+                return false;
+        
             }
             else {
                 if (id.includes("@")) {
