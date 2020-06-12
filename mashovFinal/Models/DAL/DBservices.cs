@@ -1335,7 +1335,7 @@ public class DBservices
 
         foreach (var item in allCrit)
         {
-            if ((!(item.NumCrit != 0))&&(!existingCrit(item)))
+            if ((item.NumCrit == 0)||(!existingCrit(item)))
             {
 
 
