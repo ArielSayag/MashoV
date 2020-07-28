@@ -113,5 +113,11 @@ namespace mashovFinal.Models
             DBservices dbs = new DBservices();
             return dbs.getmentorG(this);
         }
+        public List<Users> getAllJ(int num)
+        {
+            DBservices dbs = new DBservices();
+            return dbs.getAllJ( num);
+        }
+      
     }
 }

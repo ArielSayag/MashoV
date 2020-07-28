@@ -40,26 +40,27 @@ namespace mashovFinal.Utilities
                 }
                 else if (total == 100)
                 {
-                    best.Add(score, newc);          
-                     newc = new List<Criterion>();
-                    total = total1;
-                    score = 0;
+                    return newc;
+                    //best.Add(score, newc);          
+                    // newc = new List<Criterion>();
+                    //total = total1;
+                    //score = 0;
                 }
             }
 
-            List<Criterion> selected = new List<Criterion>();
-            int  score1 = 0;
-            foreach (var item in best)
-            {
-                if (item.Key > score1)
-                {
-                    score1 = item.Key;
-                    win = item.Value;
-                }
-            }
-          
+            //List<Criterion> selected = new List<Criterion>();
+            //int  score1 = 0;
+            //foreach (var item in best)
+            //{
+            //    if (item.Key > score1)
+            //    {
+            //        score1 = item.Key;
+            //        win = item.Value;
+            //    }
+            //}
 
-                return win;
+            return null;
+               
         }
     }
 }

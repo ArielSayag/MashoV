@@ -10,7 +10,7 @@ namespace mashovFinal.Controllers
 {
     public class SettingController : ApiController
     {
-        
+        //---------------get start details---------//
         [HttpGet]
         [Route("api/Setting/Group/{name}")]
         public List<Group_Meeting> getGroup(int name)
@@ -32,33 +32,70 @@ namespace mashovFinal.Controllers
             Students s = new Students();
             return s.getAllstudents(name);
         }
+        //api/Setting/getjudge/
         [HttpGet]
-        [Route("api/Setting/Type")]
-        public List<Types> getType()
+        [Route("api/Setting/getjudge/{num}")]
+        public List<Users> getjudge(int num)
         {
-            Types s = new Types();
-            return s.getAlltypes();
+            Users u = new Users();
+            return u.getAllJ(num);
         }
+
+
+
+        //==================insert -==================//
+
+        //------new user------------//
         [HttpPost]
         [Route("api/Setting/newUser")]
         public int postnewUser([FromBody] Users u)
         { 
             return u.insertNewUser();
         }
-        
+
+        //-------new group------//
+
+
+        //===================adding =====================//
+
+        //-------------------add judge to group----------//
         [HttpPost]
         [Route("api/Setting/judgeInGroup/")]
         public int postjudgeInGroup([FromBody] Group_Meeting j)
         {
             return j.insertjudgeInGroup();
         }
-       
-        [HttpPut]
-        [Route("api/Setting/Student")]
-        public int put([FromBody] Students s)
+        //--------------------add stud to group----------//
+        [HttpPost]
+        [Route("api/Setting/studINGroup")]
+        public int poststudINGroup([FromBody] Students s)
         {
-            return s.updateGroupsOfStudent();
+            
+            return s.studINGroup();
         }
+
+        //===========delete===========================//
+
+        //-----------------delete Stud from group------------//
+
+        [HttpPut]
+        [Route("api/Setting/deleteStud")]
+        public int putdeleteStud([FromBody] Students u)
+        {
+            return u.deleteStud();
+        }
+
+        //----------------delete judge from group----------//
+
+        [HttpPut]
+        [Route("api/Setting/deletejudge")]
+        public int putdeletejudge([FromBody] Group_Meeting u)
+        {
+            return u.deletejudge();
+        }
+
+
+        //================insert new Cours || new Department============// 
         [HttpPost]
         [Route("api/Setting/Course")]
         public int postCourse([FromBody] string course_name)
@@ -73,5 +110,23 @@ namespace mashovFinal.Controllers
             Department d = new Department();
             return d.insert(dep_name);
         }
+
+
+        //[HttpPut]
+        //[Route("api/Setting/Student")]
+        //public int put([FromBody] Students s)
+        //{
+        //    return s.updateGroupsOfStudent();
+        //}
+
+
+
+        //[HttpGet]
+        //[Route("api/Setting/Type")]
+        //public List<Types> getType()
+        //{
+        //    Types s = new Types();
+        //    return s.getAlltypes();
+        //}
     }
 }

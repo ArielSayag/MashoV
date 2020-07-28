@@ -101,11 +101,11 @@
                     //מעבר לדף הבא
                 }
                 else {
-                    alert("סיסמא לא נכונה");
+                    swal("סיסמא לא נכונה")
                 }
             }
             else {
-                swal("אינך רשאי להיכנס למערכת");
+                swal("אינך רשאי להיכנס למערכת")
             }
 
 
@@ -118,7 +118,8 @@
             usersList = data;
            // user = data[0];
 
-            if (usersList.Email != "") {
+             
+            if (usersList.Email != null){
 
                 if (usersList.Pass == password) {
                     nextstep(usersList);
@@ -126,7 +127,8 @@
                     //מעבר לדף הבא
                 }
                 else {
-                    alert("סיסמא לא נכונה");
+                    swal("סיסמא לא נכונה");
+               
                 }
             }
             else {
@@ -206,7 +208,8 @@
                 swal("סיסמתך נשלחה למייל האישי");
             }
             else if (data == "0") {
-                swal("אינך קיים במערכת");
+                swal("אינך קיים במערכת")
+               
             }
             else {
                 swal("נמצא שאתה אכן רשום במערכת ,אנא הכנס מייל");
@@ -237,6 +240,7 @@
         function PUTSuccessEmail(data) {
             console.log(data);
             swal("סיסמתך נשלחה למייל ");
+            return false;
         }
         function PUTErrorEmail(err) { console.log(err); }
     </script>
@@ -257,9 +261,9 @@
 	</div>
         <!-- /Preload -->
 	
-	<div id="loader_form">
+	<!--<div id="loader_form">
 		<div data-loader="circle-side-2"></div>
-	</div> 
+	</div>--> 
     <!--/loader_form-->     
 	
 	<!--<header>

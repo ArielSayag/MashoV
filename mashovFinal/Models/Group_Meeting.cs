@@ -48,5 +48,11 @@ namespace mashovFinal.Models
             return dbs.update(this);
 
         }
+        public int deletejudge()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.deletejudge(this);
+
+        }
     }
 }

@@ -14,6 +14,7 @@ using NPOI.XSSF.UserModel;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using System.Net.Mail;
+using mashovFinal.Utilities;
 
 namespace mashovFinal.Models
 {
@@ -464,14 +465,14 @@ namespace mashovFinal.Models
             m.DetailsCourseDep = new CoursesAndDepartment();
             m.DetailsCourseDep.NumDepartment = int.Parse(path[1]);
             m.DetailsCourseDep.NumCourse = int.Parse(path[2]);
-
+            m.Date = path[4];
             var connection = new Dictionary<double, string>();
             //this will help me to find the email for judge/mentor/admin
 
             FeedBack_Doc doc = new FeedBack_Doc();
             doc.NameDoc = path[0];
             doc.Manager = new List<Users>();
-
+            int counter = 0;
             try
             {
                 FileStream fs = new FileStream(p, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
@@ -480,6 +481,7 @@ namespace mashovFinal.Models
                 // Try to read workbook as XLSX:
                 try
                 {
+
                     book = new XSSFWorkbook(fs);
                   
 
@@ -489,7 +491,7 @@ namespace mashovFinal.Models
                   
                     for (int a = 0; a < sheetCount; a++)
                     {
-
+                        counter = 0;
                         ISheet sheet = book.GetSheetAt(a);
 
                          nameSheet = book.GetSheetName(a);
@@ -506,8 +508,10 @@ namespace mashovFinal.Models
                         bool emteyTeam = false;
 
                         bool oneDate = false;
+                     
                         for (int row = 1; row <= sheet.LastRowNum; row++)
                         {
+                            counter++;
                             Students s = new Students();
                             Users u = new Users();
                             u.Type = new Types();
@@ -525,9 +529,10 @@ namespace mashovFinal.Models
                             jg.Group = new Groups();
                             DateTime thisdate = new DateTime();
 
-
+                          
                             foreach (var j in firstRow)//col
                             {
+
                                 int errRow = row + 1;
                                 string errCol = j.Key;
                                 string errMsg = " בגיליון '" + nameSheet + "', שגיאה בעמודה:  '" + errCol + "' בשורה: " + errRow;
@@ -1052,24 +1057,45 @@ namespace mashovFinal.Models
                                             }
                                             if (sheet.GetRow(row).GetCell(j.Value) == null)
                                             {
-
+                                               
                                                 break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
 
                                             }
-                                            else if (sheet.GetRow(row).GetCell(j.Value).ToString() == "")
+                                            //else if (sheet.GetRow(row).GetCell(j.Value).CellType == "")
+                                            //{
+                                              
+                                            //    break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
+                                            //}
+                                            else if (sheet.GetRow(row).GetCell(j.Value).CellType == CellType.String)
                                             {
+                                                if (sheet.GetRow(row).GetCell(j.Value).StringCellValue == "")
+                                                {
+                                                    break;
+                                                }
+                                                
+                                                Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-IL");
+                                                DateTime date = Convert.ToDateTime(sheet.GetRow(row).GetCell(j.Value).StringCellValue);
+                                                m.Date = date.ToString("MM/dd/yyyy");
+                                               // thisdate = date;
+                                                oneDate = true;
                                                 break;//החזרת שגיאה שמשהו לא תקין ולכן הקובץ אקסל לא הועלה
                                             }
                                             else
                                             {
+                                                
                                                 Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("en-IL");
-                                                DateTime date = Convert.ToDateTime(sheet.GetRow(row).GetCell(j.Value).ToString());
-                                                // DateTime date = DateTime.FromOADate(Convert.ToDouble(sheet.GetRow(row).GetCell(j.Value).ToString()));
-                                               
+                                                var s1 = sheet.GetRow(row).GetCell(j.Value) ;
+                                                // var sString = s1.ToString();
+                                                 m.Date = s1.GetFormattedCellValue();
 
-                                                m.Date = date.ToString("MM/dd/yyyy");
-                                                thisdate = date;
+                                              //   DateTime date = Convert.ToDateTime(m.Date);
+                                                //  DateTime date = DateTime.FromOADate(Convert.ToDouble(sheet.GetRow(row).GetCell(j.Value).ToString()));
+
+
+                                                // m.Date = date.ToString("MM/dd/yyyy");
+                                             //   thisdate = date;
                                                 oneDate = true;
+
                                             }
 
                                         }
@@ -1111,19 +1137,22 @@ namespace mashovFinal.Models
 
                         }
                     }
-
-
-
-
                 }
+
                 catch (NullReferenceException ex)
                 {
-                    result.Add("msg"," הקובץ אינו תקין ,אנא בדוק שאין שורות מיותרות בגיליון "+ nameSheet);
+                    result.Add("msg", ex.StackTrace + ex.Message);
+                  //  result.Add("msg", " הקובץ אינו תקין ,אנא בדוק שאין שורות מיותרות בגיליון " + nameSheet);
+                    //result.Add("msg", ex.Message);
                     return result;
-                   
+
+
                 }
                 catch (Exception ex)
                 {
+                    
+                    result.Add("msg", ex.StackTrace+ex.Message);
+                    return result;
                     throw (ex);
                     book = null;
                 }
@@ -1140,7 +1169,7 @@ namespace mashovFinal.Models
                 this.Close();
 
             }
-
+           
             int numEffected = 0;
             DBservices dbs = new DBservices();
             if (allUsers.Count > 0)
@@ -1161,8 +1190,7 @@ namespace mashovFinal.Models
             }
 
             FeedBack_Doc d = dbs.getDoc();
-          //  List<Dictionary<string, string>> msg = new List<Dictionary<string, string>>();
-
+      
             result.Add("id", d.NumDoc.ToString());
             return result;
 

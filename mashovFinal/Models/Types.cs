@@ -20,10 +20,10 @@ namespace mashovFinal.Models
             numType = num;
             type = t;
         }
-        public List<Types> getAlltypes()
-        {
-            DBservices dbs = new DBservices();
-            return dbs.getType();
-        }
+        //public List<Types> getAlltypes()
+        //{
+        //    DBservices dbs = new DBservices();
+        //    return dbs.getType();
+        //}
     }
 }

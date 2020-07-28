@@ -16,7 +16,8 @@ var arrlastDoc = [];
 var listLastCrit = [];
 function PUTSuccessLast(data) {
 
-    document.getElementById("last").innerHTML = "";
+    $('#last').html('');
+    $('#lastDoc').html('');
     $("#fifth-slide").fadeIn();
     $("#fourth-slide").hide();
     $("#third-slide").hide();
@@ -116,17 +117,10 @@ function saveLastDoc() {
                 for (i in listLastCrit) {
                     var temp = document.getElementById(listLastCrit[i]);
 
-                    //tempArr[0] = temp.querySelector("#critname").value; // find the id from all div
-                    //tempArr[1] = temp.querySelector("#description").value;
                     var weight = $(temp).find("#weight2").attr('value');
                     var idcrit = $(temp).find("#fdataname1").attr('name');
                     var scala = temp.querySelector("#scala2").value;
 
-                    //for (k in tempArr) {
-                    //    tempArr[k] = tempString(tempArr[k]);
-                    //}
-
-                    //if (weight != 0) {
 
                     crit = {
                         "NumCrit": idcrit,
@@ -135,7 +129,7 @@ function saveLastDoc() {
                     }
                     listCrit1.push(crit);
 
-                    //}
+        
 
                 }
 

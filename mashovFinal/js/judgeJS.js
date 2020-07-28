@@ -91,8 +91,8 @@ function GETSuccessG(data) { // all my groups that I need to judge after I selec
     strGroup = "";
     for (i in data) {
         idforgroup = "group," + data[i].Group.NumGroup;
-        strGroup += `<div id="${idforgroup}" class="col-md-3 col-sm-6" onclick="show(this.id)">
-                       <div class="service_boxJ">`;
+        strGroup += `<div id="${idforgroup}" class="col-md-3 col-sm-6" >
+                       <div class="service_boxJ" >`;
         if (data[i].Sum != 0) {
             strGroup += `<div id="grade" value="${data[i].Sum}"  class="service_icon">${data[i].Sum}
                                </div>`;
@@ -101,7 +101,7 @@ function GETSuccessG(data) { // all my groups that I need to judge after I selec
             strGroup += `<div id="grade" value="none"  class="service_icon">
                                </div>`;
         }
-        strGroup += `<h3 id="projGroup" value="${data[i].Group.NameProject}">${data[i].Group.NameProject}<br/><br/>${data[i].StartTime}-${data[i].EndTime}</h3>
+        strGroup += `<h3 id="projGroup" onclick="show(this.parentNode.parentNode.id)" value="${data[i].Group.NameProject}">${data[i].Group.NameProject}<br/><br/>${data[i].StartTime}-${data[i].EndTime}</h3>
                      <p><b id="proj">${data[i].Group.NameGroup}</b> </p>`;
         for (j in data[i].Group.ListStudent) {
             strGroup += `<p><b>${data[i].Group.ListStudent[j].FirstName}  ${data[i].Group.ListStudent[j].LastName}</b></p>`;

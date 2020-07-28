@@ -13,6 +13,7 @@
 //---------------------show all Dep from drop down list------------------------------------//
 
 function GETSuccessDep(data) {
+    localStorage["Department"] = JSON.stringify(data);
     console.log(data);
     var arrNamesDep = "<option value=''>בחר מחלקה</option>";
 
@@ -36,6 +37,7 @@ function GETErrorDep(err) { console.log(err); }
 //---------------------show all Courses from drop down list------------------------------------//
 
 function GETSuccessCours(data) {
+    localStorage["Cours"] = JSON.stringify(data);
     console.log(data);
     var arrNamesCours = "<option value=''>בחר קורס</option>";
 

@@ -56,11 +56,11 @@ namespace mashovFinal.Models
             DBservices dbs = new DBservices();
             return dbs.getStudent(idDoc);
         }
-        public int updateGroupsOfStudent()
-        {
-            DBservices dbs = new DBservices();
-            return dbs.updateStudentInGroup(this);
-        }
+        //public int updateGroupsOfStudent()
+        //{
+        //    DBservices dbs = new DBservices();
+        //    return dbs.updateStudentInGroup(this);
+        //}
         public List<Group_Meeting> getStudentDoc(string id)
         {
             DBservices dbs = new DBservices();
@@ -101,6 +101,16 @@ namespace mashovFinal.Models
             DBservices dbs = new DBservices();
             return dbs.getAllMentorProg(id);
         }
-
+        
+        public int studINGroup()
+        {
+            DBservices dbs = new DBservices();
+             return dbs.StudentInGroup(this);
+        }
+        public int deleteStud()
+        {
+            DBservices dbs = new DBservices();
+            return dbs.deleteStud(this);
+        }
     }
 }

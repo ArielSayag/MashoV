@@ -38,12 +38,41 @@
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.3/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
     <script>
 
         //-----------------------------------setting------------------------------------------//
         function f1() {
             return false;
         }
+
+        function updateDetails(bool) {
+
+
+            if (bool) {
+                 typeProjAusersMusersJstudents
+                group = {
+                    "NameGroup": $("#numGroup").val(),       
+                    "NameProject": $("#nameProj").val(),
+                    "NameOrganization": $("#nameOrg").val(),
+                    "ProjectType": $("#typeProj").val(),
+                    "Mentor": getuser,
+                    "BeforeLastProg": editGselected.Group.NameProject,
+                    "BeforeLastOrg": editGselected.Group.NameOrganization,
+                }
+                gm = {
+                    "Group": group,
+                    "StartTime": $("#startTime").val(),
+                    "EndTime": $("#endTime").val(),
+                }
+                ajaxCall("PUT", "./api/User/updateGroupMentor", JSON.stringify(gm), successUpdateG, errUpdateG)
+            }
+
+            $("#updatePopupMs").toggle();
+        }
+
+
+
         var listAllGroupMeet = [];
         function GETSuccessSetGroup(dataG) {
             var arryGroups = "<option value=''>בחר קבוצה</option>";
@@ -53,20 +82,22 @@
                 arryGroups += `<option value=${dataG[i].Group.NumGroup}>${dataG[i].Group.NameGroup},${dataG[i].Group.NameProject}</option>`;
             }
 
-            $('#groupList').append(arryGroups);
-            $('#groupList1').append(arryGroups);
+            $('#groupList').html(arryGroups);
+            $('#groupList1').html(arryGroups);
+            $('#groupList2').html(arryGroups);
+            $('#groupList3').html(arryGroups);
         }
         function GETErrorSetGroup(err) { console.log(err); }
-
+        var listU = [];
         function GETSuccessSetUser(dataU) {
             var arryUsers = "<option value=''>בחר מרצה</option>";
-
+            listU = dataU;
             for (i in dataU) {
 
                 arryUsers += `<option value=${dataU[i].Email}>${dataU[i].FirstName} ${dataU[i].LastName}   </option>`;
             }
             console.log(dataU);
-            $('#listType').append(arryUsers);
+            $('#listType').html(arryUsers);
             // $('#browsers1').append(arryUsers);
         }
         function GETErrorSetUser(err) { console.log(err); }
@@ -74,59 +105,82 @@
         var listStudent = [];
         function GETSuccessSetStudent(dataS) {
             var arryStudents = "<option value=''>בחר סטודנט</option>";
-             listStudent = dataS;
+            listStudent = dataS;
             for (i in dataS) {
 
                 arryStudents += `<option value=${dataS[i].Id}> ${dataS[i].FirstName}  ${dataS[i].LastName} , ${dataS[i].Id} </option>`;
             }
 
-            $('#studentList').append(arryStudents);
+            $('#studentList').html(arryStudents);
+            $('#studentList1').html(arryStudents);
             // $('#browsers1').append(arryStudents);
         }
         function GETErrorSetStudent(err) { console.log(err); }
 
-        function GETSuccessSetType(dataT) {
-            var arryTypes = "<option value=''>בחר תפקיד</option>";
+        //function GETSuccessSetType(dataT) {
+        //    var arryTypes = "<option value=''>בחר תפקיד</option>";
 
-            for (i in dataT) {
+        //    for (i in dataT) {
 
-                arryTypes += `<option value=${dataT[i].NumType}>${dataT[i].Type} </option>`;
-            }
+        //        arryTypes += `<option value=${dataT[i].NumType}>${dataT[i].Type} </option>`;
+        //    }
 
-            $('#typeList').append(arryTypes);
-            // $('#listType').append(arryTypes);
-        }
+        //    $('#typeList').append(arryTypes);
+        //    // $('#listType').append(arryTypes);
+        //}
         function GETErrorSetType(err) { console.log(err); }
 
         function GETSuccessSetMeet(dataM) {
             var arryM = "<option value=''>בחר משוב</option>";
 
             for (i in dataM) {
-
-                arryM += `<option value=${dataM[i].NumDoc}>${dataM[i].NameDoc} </option>`;
+                if (dataM[i].Status == 0)
+                    arryM += `<option value=${dataM[i].NumDoc}>${dataM[i].NameDoc} </option>`;
             }
 
-            $('#doc').append(arryM);
+            $('#doc').html(arryM);
             // $('#listType').append(arryTypes);
         }
         function GETErrorSetMeet(err) { console.log(err); }
-
+        var listExistDep = [];
+        var listExistCorse = [];
         //----------------------------end-setting-----------------------------------------------//
+        function GETSuccessCours(data) {
+            listExistCorse = data;
+          
+
+        }
+        function GETErrorCours(err) { console.log(err);}
+
+        function GETSuccessDep(data) {
+            listExistDep = data;
+            
+          
+        }
+        function GETErrorDep() { console.log(err); }
         $(document).ready(function () {
 
+           
+            $("#updatePopupM").toggle();
             $("#third").hide();
             $("#first").hide();
-            $("#second").hide();
+            // $("#second").hide();
 
             $("#wrapped").submit(f1);
-            listDoc = JSON.parse(localStorage["AllDoc"]); 
+            listDoc = JSON.parse(localStorage["AllDoc"]);
             GETSuccessSetMeet(listDoc);
 
-            ajaxCall("GET", "./api/Setting/User", "", GETSuccessSetUser, GETErrorSetUser); // show all User
+            ajaxCall("GET", "./api/Doc/Cours", "", GETSuccessCours, GETErrorCours);
+            ajaxCall("GET", "./api/Doc", "", GETSuccessDep, GETErrorDep);
+        
+            
            
-            ajaxCall("GET", "./api/Setting/Type", "", GETSuccessSetType, GETErrorSetType); // show all Type
 
-            $("#doc").click(getGroups);
+            ajaxCall("GET", "./api/Setting/User", "", GETSuccessSetUser, GETErrorSetUser); // show all User
+
+            //  ajaxCall("GET", "./api/Setting/Type", "", GETSuccessSetType, GETErrorSetType); // show all Type
+
+            //  $("#doc").click(getGroups);
 
 
             $("#showuser").click(function () {
@@ -145,23 +199,33 @@
                 $("#third").fadeIn();
                 $("#first").hide();
                 $("#second").hide();
-            
-                
-            }); 
+
+
+            });
 
             $("#addJudgetoGroup").click(addJudgetoGroup);
+            $("#addStudGroup").click(addStudGroup);
+            
 
         });
-            
+        function addnewgroup() {
+            $("#updatePopupMs").toggle();
+        }
         function getGroups() {
             var name = $("#doc").val();
             if (name != "") {
                 ajaxCall("GET", "./api/Setting/Group/" + name, "", GETSuccessSetGroup, GETErrorSetGroup); // show all Group
-                ajaxCall("GET", "./api/Setting/Student/"+name, "", GETSuccessSetStudent, GETErrorSetStudent); // show all Student
+                ajaxCall("GET", "./api/Setting/Student/" + name, "", GETSuccessSetStudent, GETErrorSetStudent); // show all Student
             }
             else return;
         }
-
+        function ValidateEmail(mail) {
+            if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(myForm.emailAddr.value)) {
+                return (true)
+            }
+            alert("You have entered an invalid email address!")
+            return (false)
+        }
         function saveUser() {
             var name = $("#fname").val();
             var lastname = $("#lname").val();
@@ -169,12 +233,15 @@
             var type = $("#typeList").val();
 
             if (name == "" || lastname == "" || email == "" || type == "") {
-                swal("אחד הפריטים לא מלאים ,אנא מלא שוב");
+                Swal.fire("אחד הפריטים לא מלאים ,אנא מלא שוב");
+            }
+            else if (!ValidateEmail(email)) {
+                Swal.fire("אימייל לא תקין");
             }
             else {
                 t = {
                     "NumType": type,
-                    "Type":"",
+                    "Type": "",
 
                 }
                 newUser = {
@@ -184,26 +251,91 @@
                     "Type": t,
                 }
 
-                ajaxCall("POST", "./api/Setting/newUser", JSON.stringify(newUser),postNewUser,postNewUserErr)
-                
+                ajaxCall("POST", "./api/Setting/newUser", JSON.stringify(newUser), postNewUser, postNewUserErr)
+
             }
 
         }
         function postNewUser(data) {
             console.log(data);
-            swal("משתמש חדש נוסף בהצלחה ");
+            Swal.fire("משתמש חדש נוסף בהצלחה ");
         }
         function postNewUserErr(err) { console.log(err); }
+
+
+        function addStudGroup() {
+
+
+            var idDoc = $("#doc").val();
+            var idGroup = $("#groupList3").val();
+            var idStud = $("#studentList").val();
+
+            if (idDoc == "") {
+                Swal.fire("חייב לבחור משוב לפני");
+
+            }
+            else if (idGroup == "" || idStud == "") {
+                Swal.fire("סטודנט/אנא בחר קבוצה");
+            }
+
+            else {
+                var flag = true;
+                for (j in listStudent) {
+                    if (listStudent[j].Id == idStud && listStudent[j].GroupS[0].NumGroup == idGroup) {
+                        flag = false;
+                        Swal.fire("משתמש כבר קיים בקבוצה זו");
+                        break;
+                    }
+                }
+
+                if (flag) {
+                    var listG = [];
+                    studINGroup = {};
+                    for (i in listAllGroupMeet) {
+                        if (listAllGroupMeet[i].Group.NumGroup == idGroup) {
+                            listG.push(listAllGroupMeet[i].Group);
+                            studINGroup = {
+                                "GroupS": listG,
+                                "Id": idStud,
+                            }
+                            break;
+                        }
+                    }
+                    ajaxCall("POST", "./api/Setting/studINGroup/", JSON.stringify(studINGroup), poststudINGroup, poststudINGroupErr)
+                }
+            }
+        }
+        function poststudINGroup(data) {
+            if (data == 0) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'שגיאה',
+                    text: 'סטודנט כבר קיים בקבוצה זו',
+
+                })
+            }
+            else {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'בוצע!',
+                    text: 'סטודנט הוסף לקבוצה',
+
+                })
+            }
+        }
+        function poststudINGroupErr(err) {
+            console.log(err);
+        }
         function addJudgetoGroup() {
             var idDoc = $("#doc").val();
             var idGroup = $("#groupList").val();
             var idEmail = $("#listType").val();
             if (idDoc == "") {
-                swal("חייב לבחור משוב לפני");
+                Swal.fire("חייב לבחור משוב לפני");
 
             }
             else if (idGroup == "" || idEmail == "") {
-                swal("ושופט/אנא בחר קבוצה")
+                Swal.fire("ושופט/אנא בחר קבוצה")
             }
             else {
                 t = {
@@ -230,7 +362,7 @@
                             "JudgesGroup": listJ,
                             "NumMeeting": "",
                             "StartTime": "",
-                            "EndTime":"",
+                            "EndTime": "",
                         }
                         break;
                     }
@@ -239,10 +371,10 @@
                 ajaxCall("POST", "./api/Setting/judgeInGroup/", JSON.stringify(judgeInGroup), postjudgeInGroup, postjudgeInGroupErr)
             }
         }
-            function postjudgeInGroup(data) {
-                console.log(data);
-                swal("שופט נוסף בהצלחה ");
-            }
+        function postjudgeInGroup(data) {
+            console.log(data);
+            Swal.fire("שופט נוסף בהצלחה ");
+        }
         function postjudgeInGroupErr(err) { console.log(err); }
 
         function addStudenttoGroup() {
@@ -250,11 +382,11 @@
             var idGroup = $("#groupList1").val();
             var idstudent = $("#studentList").val();
             if (idDoc == "") {
-                swal("חייב לבחור משוב לפני");
+                Swal.fire("חייב לבחור משוב לפני");
 
             }
             else if (idGroup == "" || idstudent == "") {
-                swal("וסטודנט/אנא בחר קבוצה")
+                Swal.fire("וסטודנט/אנא בחר קבוצה")
             }
             else {
                 var selectStudent;
@@ -282,9 +414,9 @@
                             "Id": ids,
                         }
                     }
-                       
+
                 }
-             
+
                 ajaxCall("PUT", "./api/Setting/Student", JSON.stringify(selectStudent), putselectStudent, putselectStudentErr)
 
             }
@@ -293,38 +425,191 @@
         }
         function putselectStudent(data) {
             console.log(data);
-            swal("סטודנט עודכן בהצלחה ב  "+data+ " משובים");
+            Swal.fire("סטודנט עודכן בהצלחה ב  " + data + " משובים");
         }
         function putselectStudentErr(err) { console.log(err); }
         function addCourse() {
+            var flag = false;
             var c = $("#course").val();
             if (c == "") {
-                swal("אנא הכנס שם קורס");
+                Swal.fire("אנא הכנס שם קורס");
             }
             else {
+                for (i in listExistCorse) {
+                    if (listExistCorse[i].NameCourse == c) {
+                        Swal.fire("קורס כבר קיים במערכת");
+                        flag = true;
+                    }
+
+                }
+            }
+            if (!flag) {
                 ajaxCall("POST", "./api/Setting/Course", JSON.stringify(c), postCourse, postCoursErr)
             }
         }
         function postCourse(data) {
             console.log(data);
-            swal("הקורס עודכן בהצלחה");
+            Swal.fire("הקורס עודכן בהצלחה");
         }
         function postCoursErr(err) { console.log(err); }
 
         function addDep() {
-          var d=  $("#dep").val();
+            var flag = false;
+            var d = $("#dep").val();
             if (d == "") {
-                swal("אנא הכנס שם מחלקה");
+                Swal.fire("אנא הכנס שם מחלקה");
             }
             else {
-                ajaxCall("POST", "./api/Setting/Dep", JSON.stringify(d), postDep, postDepErr)
+                for (i in listExistDep) {
+                    if (listExistDep[i].NameDepartment == d) {
+                        Swal.fire("מחלקה כבר קיים במערכת");
+                        flag = true;
+                        break;
+                    }
+
+                }
+                if (!flag) {
+                    ajaxCall("POST", "./api/Setting/Dep", JSON.stringify(d), postDep, postDepErr);
+                }
             }
+           
         }
         function postDep(data) {
             console.log(data);
-            swal("המחלקה עודכן בהצלחה");
+            Swal.fire("המחלקה עודכן בהצלחה");
         }
         function postDepErr(err) { console.log(err); }
+
+        function getStudentofGroup() {
+            var arrystusoggroup = "<option value='0'>בחר סטודנט</option>";
+
+
+            var idgroup = $("#groupList1").val();
+            for (i in listStudent) {
+                if (listStudent[i].GroupS[0].NumGroup == idgroup)
+                    arrystusoggroup += `<option value=${listStudent[i].Id}>${listStudent[i].FirstName} ${listStudent[i].LastName}</option>`;
+            }
+
+            $("#studentListfromgroup").html(arrystusoggroup);
+        }
+
+        function deleteStudenttoGroup() {
+
+            var idg = $("#groupList1").val();
+            var deleteStud = $("#studentListfromgroup").val();
+
+            if ((deleteStud == 0) || (idg == "")) {
+                Swal.fire(" קבוצה/תבחר סטודנט");
+            }
+            else {
+                var listG = [];
+                studDELGroup = {};
+                for (i in listAllGroupMeet) { 
+                    if (listAllGroupMeet[i].Group.NumGroup == idg) {
+                        listG.push(listAllGroupMeet[i].Group);
+                        studDELGroup = {
+                            "GroupS": listG,
+                            "Id": deleteStud,
+                        }
+                        break;
+                    }
+                }
+                ajaxCall("PUT", "./api/Setting/deleteStud", JSON.stringify(studDELGroup), putDeleteStud, putDeleteStudErr);
+
+            }
+        }
+        function putDeleteStud(data) {
+            Swal.fire({
+                icon: 'success',
+                title: 'בוצע!',
+                text: 'סטודנט נמחק בהצלחה',
+
+            }).then(function () {
+                location.reload(true);
+            });
+        }
+        function putDeleteStudErr(err) {
+            console.log(err);
+        }
+        function judgeofgrouplist() {
+            var g = $("#groupList2").val();
+            if (g == "") {
+                Swal.fire("בחר קבוצה");
+            }
+            else {
+                ajaxCall("GET", "./api/Setting/getjudge/" + g, "", getjudge, getjudgeerr);
+            }
+        }
+        function getjudge(dataU) {
+            var dataa = "<option value='0'>בחר שופט</option>";
+
+            for (i in dataU) {
+
+                dataa += `<option value==${dataU[i].Email}>${dataU[i].FirstName} ${dataU[i].LastName} </option>`;
+            }
+
+            $("#judgeofgroup").html(dataa);
+        }
+        function getjudgeerr(err) {
+            console.log(err);
+        }
+
+
+        function deletejudgefromgroup() {
+            var idg = $("#groupList2").val();
+            var deletejudge = $("#judgeofgroup").val();
+
+            if ((deletejudge == 0) || (idg == "")) {
+                Swal.fire(" קבוצה/תבחר שופט");
+            }
+            else {
+                t = {
+                    "NumType": 3,
+                    "Type": "",
+
+                }
+                userJ = {
+
+                    "Email": idEmail,
+                    "Type": t,
+                }
+                jg = {
+                    "Judge": userJ,
+                }
+
+                var listJ = [];
+                listJ.push(jg);
+                judgeInGroup = {};
+                for (i in listAllGroupMeet) {
+                    if (listAllGroupMeet[i].Group.NumGroup == idg) {
+                        judgeInGroup = {
+                            "Group": listAllGroupMeet[i].Group,
+                            "JudgesGroup": listJ,
+                            "NumMeeting": "",
+                            "StartTime": "",
+                            "EndTime": "",
+                        }
+                        break;
+                    }
+                }
+                ajaxCall("PUT", "./api/Setting/deletejudge", JSON.stringify(judgeInGroup), putdeletejudge, putdeletejudgeErr);
+
+            }
+            
+        }
+        function putdeletejudge() {
+            Swal.fire({
+                icon: 'success',
+                title: 'בוצע!',
+                text: 'שופט נמחק בהצלחה',
+
+            }).then(function () {
+                location.reload(true);
+            });
+        }
+        function putdeletejudgeErr(ee) {
+            console.log(err);
+        }
     </script>
 </head>
 
@@ -402,134 +687,232 @@
                                         </div>
 
                                         <div class="row">
-                                            <div class="mx-auto">
-                                                <div class="row" id="first">
-                                                    <h5 class="text-center py-2">הוסף משתמש חדש</h5>
+                                            <!--<div class="mx-auto">-->
+                                            <div style="max-width:1000px;margin:auto" id="first" class="box1">
+                                                <br />
+                                                <h2>הוסף משתמש</h2>
+                                                <div class="form-group">
+                                                    <!--<i class="fa fa-user icon"></i>-->
+                                                    <input class="form-control" id="fname" type="text" placeholder="שם פרטי" name="firstname">
+                                                </div>
+                                                <div class="form-group">
+                                                    <!--<i class="fa fa-user icon"></i>-->
+                                                    <input class="form-control" id="lname" type="text" placeholder="שם משפחה" name="lastname">
+                                                </div>
 
-                                                    <div class="col-4">
-                                                        <div class="form-group">
-                                                            <input type="text" id="fname" name="firstname" class="form-control" placeholder="שם פרטי">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <div class="form-group">
-                                                            <input type="text" id="lname" name="lastname" class="form-control" placeholder="שם משפחה">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <div class="form-group">
-                                                            <select list="browsers" typeof="text" class="form-control" id="typeList"></select>
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-8">
-                                                        <div class="form-group">
-                                                            <input type="email" id="email" name="email" class="form-control" placeholder="אימייל">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <a class="btn btn-defult px-5" onclick="saveUser()" href="javascript:void(0)">שמור</a>
+                                                <div class="form-group">
+                                                    <!--<i class="fa fa-envelope icon"></i>-->
+                                                    <input class="form-control" id="email" type="text" placeholder="אימייל" name="email">
+                                                </div>
+                                                <div class="form-group">
+
+                                                    <select list="browsers" typeof="text" class="form-control" id="typeList">
+                                                        <option value="">בחר סוג הרשאות</option>
+                                                        <option value="2">מנהל</option>
+                                                        <option value="3">שופט</option>
+                                                        <option value="4">מנחה</option>
+                                                        <option value="5">הכל</option>
+                                                        <option value="6">מנחה ושופט</option>
+                                                        <option value="7">מנחה ומנהל</option>
+                                                        <option value="8">שופט ומנהל</option>
+                                                    </select>
+                                                </div>
+
+                                                <div class="col-4">
+                                                    <a class="btn btn-defult px-5" onclick="saveUser()" href="javascript:void(0)">שמור</a>
+                                                </div>
+                                            </div>
+                                            <!--<div class="row" id="first">
+                                                <h5 class="text-center py-2">הוסף משתמש חדש</h5>
+
+                                                <div class="col-4">
+                                                    <div class="form-group">
+                                                        <input type="text" id="fname" name="firstname" class="form-control" placeholder="שם פרטי">
                                                     </div>
                                                 </div>
-                                                <!--f-->
-                                                <div class="box1" id="second" style="margin-right:200px">
-                                                    <div class="py-5">
-                                                        <div class="col-4 mx-auto">
-                                                            <div class="form-group">
-                                                                <select class="form-control" id="doc"></select>
-                                                            </div>
-                                                        </div>
-                                                        <h5 class="text-center py-2">הוסף שופט לקבוצה</h5>
-                                                        <div class="row">
-                                                            <div class="col-4">
-                                                                <div class="form-group">
-                                                                    <select class="form-control" id="listType"></select>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="col-4">
-                                                                <div class="form-group">
-                                                                    <select class="form-control" id="groupList"></select>
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-4">
-                                                                <a class="btn btn-defult px-5" id="addJudgetoGroup" href="javascript:void(0)">הוסף</a>
-                                                            </div>
+                                                <div class="col-4">
+                                                    <div class="form-group">
+                                                        <input type="text" id="lname" name="lastname" class="form-control" placeholder="שם משפחה">
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <div class="form-group">
+                                                        <select list="browsers" typeof="text" class="form-control" id="typeList"></select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-8">
+                                                    <div class="form-group">
+                                                        <input type="email" id="email" name="email" class="form-control" placeholder="אימייל">
+                                                    </div>
+                                                </div>
+                                                <div class="col-4">
+                                                    <a class="btn btn-defult px-5" onclick="saveUser()" href="javascript:void(0)">שמור</a>
+                                                </div>
+                                            </div>-->
+                                            <!--f-->
+                                            <div id="second" style="margin:auto;width:100%" class="box1">
+                                                <div class="py-5">
+                                                    <div class="col-5 mx-auto">
+                                                        <div class="form-group">
+                                                            <select class="form-control" onchange="getGroups()" id="doc"></select>
                                                         </div>
                                                     </div>
-                                                    <h5 class="text-center py-2">שנה סטודנט לקבוצה</h5>
+                                                    <!--add a new judge to group-->
+                                                    <h5 class=" py-2">הוסף שופט לקבוצה</h5>
                                                     <div class="row">
-                                                        <div class="col-4">
+                                                        <div class="col-5">
                                                             <div class="form-group">
-                                                                <select class="form-control" id="groupList1"></select>
+                                                                <select class="form-control" id="listType"></select>
                                                             </div>
                                                         </div>
-                                                        <div class="col-4">
+
+                                                        <div class="col-5">
+                                                            <div class="form-group">
+                                                                <select class="form-control" id="groupList"></select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <a class="btn btn-defult px-5" id="addJudgetoGroup" href="javascript:void(0)">הוסף</a>
+                                                        </div>
+                                                    </div>
+                                                    <!--add new student to group-->
+                                                    <h5 class=" py-2">הוסף סטודנט לקבוצה</h5>
+                                                    <div class="row">
+                                                        <div class="col-5">
                                                             <div class="form-group">
                                                                 <select class="form-control" id="studentList"></select>
                                                             </div>
                                                         </div>
-                                                        <div class="col-4">
-                                                            <a class="btn btn-defult px-5" onclick="addStudenttoGroup()" href="javascript:void(0)">הוסף</a>
+
+                                                        <div class="col-5">
+                                                            <div class="form-group">
+                                                                <select class="form-control" id="groupList3"></select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <a class="btn btn-defult px-5" id="addStudGroup" href="javascript:void(0)">הוסף</a>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <!--f-->
-                                            </div>
-                                            <div class="mx-auto">
-                                                <div id="third">
-                                                    <br />
-                                                    <br />
-                                                    <h5 class="text-center py-2">הוסף קורס חדש</h5>
+                                                    <!--delete student from group-->
+                                                    <h5 class=" py-2">מחק סטודנט מקבוצה</h5>
                                                     <div class="row">
+                                                        <div class="col-5">
+                                                            <div class="form-group">
+                                                                <select class="form-control" onchange="getStudentofGroup()" id="groupList1"></select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <div class="form-group">
+                                                                <select class="form-control" id="studentListfromgroup"></select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <a class="btn btn-defult px-5" onclick="deleteStudenttoGroup()" href="javascript:void(0)">מחק</a>
+                                                        </div>
+                                                    </div>
+                                                    <!--delete judge from group-->
+                                                    <h5 class=" py-2">מחק שופט מקבוצה</h5>
+                                                    <div class="row">
+                                                        <div class="col-5">
+                                                            <div class="form-group">
+                                                                <select class="form-control" onchange="judgeofgrouplist()" id="groupList2"></select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-5">
+                                                            <div class="form-group">
+                                                                <select class="form-control" id="judgeofgroup"></select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-2">
+                                                            <a class="btn btn-defult px-5" onclick="deletejudgefromgroup()" href="javascript:void(0)">מחק</a>
+                                                        </div>
+                                                    </div>
+                                                    <!--<div class="py-5">
+                                                        <div class="col-5 mx-auto">
+                                                            <div class="form-group">
+                                                                <a class="btn btn-defult px-5" onclick="addnewgroup()" href="javascript:void(0)">הוסף קבוצה חדשה</a>
+                                                            </div>
+                                                        </div>
+                                                    </div>-->
+                                                        <!--create a new group-->
+                                                        <!--<h5 class=" py-2">הוסף קבוצה חדשה</h5>
+        <div class="row">
+            <div class="col-5">
+                <div class="form-group">
+                    <select class="form-control" id=""></select>
+                </div>
+            </div>
+            <div class="col-5">
+                <div class="form-group">
+                    <select class="form-control" id="studentList1"></select>
+                </div>
+            </div>
+            <div class="col-2">
+                <a class="btn btn-defult px-5" onclick="addnewgroup()" href="javascript:void(0)">הוסף</a>
+            </div>
+        </div>-->
+                                                    </div>
+                                                </div>
+                                            <!--f-->
+                                            <!--</div>
+                                            <div class="mx-auto">-->
+                                            <div id="third" style="max-width:1000px;margin:auto" class="box1">
+                                                <br />
+                                                <h2 class="text-center py-2">הוסף קורס חדש</h2>
+                                                <br />
+                                                <br />
+                                                <div class="row ">
+                                                    <div class="col-8">
+                                                        <div class="form-group">
+                                                            <input type="text" id="course" name="coursename" class="form-control" placeholder="שם קורס">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <a class="btn btn-defult px-4" onclick="addCourse()" href="javascript:void(0)">שמור</a>
+                                                    </div>
+                                                </div>
+                                                <div class="py-5">
+                                                    <h2 class="text-center py-2">הוסף מחלקה חדשה</h2>
+                                                    <br />
+                                                    <br />
+                                                    <div class="row ">
                                                         <div class="col-8">
                                                             <div class="form-group">
-                                                                <input type="text" id="course" name="coursename" class="form-control" placeholder="שם קורס">
+                                                                <input type="text" id="dep" name="department" class="form-control" placeholder="שם מחלקה">
                                                             </div>
                                                         </div>
                                                         <div class="col-4">
-                                                            <a class="btn btn-defult px-5" onclick="addCourse()" href="javascript:void(0)">שמור</a>
+                                                            <a class="btn btn-defult px-4" onclick="addDep()" href="javascript:void(0)">שמור</a>
                                                         </div>
                                                     </div>
-                                                    <div class="py-5">
-                                                        <h5 class="text-center py-2">הוסף מחלקה חדשה</h5>
-                                                        <div class="row">
-                                                            <div class="col-8">
-                                                                <div class="form-group">
-                                                                    <input type="text" id="dep" name="department" class="form-control" placeholder="שם מחלקה">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-4">
-                                                                <a class="btn btn-defult px-5" onclick="addDep()" href="javascript:void(0)">שמור</a>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <!--<div class="">
-                                                        <h5 class="text-center py-2">שנה סטודנט לקבוצה</h5>
-                                                        <div class="row">
-
-                                                            <div class="col-4">
-                                                                <div class="form-group">
-                                                                    <input type="text" name="fullname" class="form-control" placeholder="שם סטודנט">
-                                                                </div>
-                                                            </div>
-                                                            <div class="col-4">
-                                                                <div class="form-group">
-                                                                    <select class="form-control" id="">
-                                                                        <option value="judge">Judge</option>
-                                                                        <option value="judge">Judge</option>
-                                                                        <option value="judge">Judge</option>
-                                                                    </select>
-                                                                </div>
-                                                            </div>
-
-                                                            <div class="col-4">
-                                                                <a class="btn btn-defult px-5" href="javascript:void(0)">Delete</a>
-                                                            </div>
-                                                        </div>
-
-                                                    </div>-->
                                                 </div>
                                             </div>
+                                            <!--<div class="">
+                                                <h5 class="text-center py-2">שנה סטודנט לקבוצה</h5>
+                                                <div class="row">
+
+                                                    <div class="col-4">
+                                                        <div class="form-group">
+                                                            <input type="text" name="fullname" class="form-control" placeholder="שם סטודנט">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4">
+                                                        <div class="form-group">
+                                                            <select class="form-control" id="">
+                                                                <option value="judge">Judge</option>
+                                                                <option value="judge">Judge</option>
+                                                                <option value="judge">Judge</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="col-4">
+                                                        <a class="btn btn-defult px-5" href="javascript:void(0)">Delete</a>
+                                                    </div>
+                                                </div>
+
+                                            </div>-->
+                                            <!--</div>-->
                                         </div>
                                         <div id="bottom-wizard" class="text-center">
 
@@ -583,6 +966,62 @@
             </div>
         </div>
     </div>
+
+    <!--<div id="updatePopupMs">
+        <div class="justify-content-center">
+            <h5 id="">קבוצה חדשה</h5>
+        </div>
+        <div>
+            שם הקבוצה
+            <input type="text" name="numGroup" id="numGroup" />
+        </div>
+        <div>
+            שם הפרויקט
+            <input type="text" name="nameProj" id="nameProj" />
+        </div>
+        <div>
+            שם הארגון
+            <input type="text" name="nameOrg" id="nameOrg" />
+        </div>
+        <div class="col-5">
+            סוג הפרויקט
+            <div class="form-group">
+                <select class="form-control" id="typeProj">
+                    <option value="ארגוני">ארגוני</option>
+                    <option value="יזמי">יזמי</option>
+                    <option value="אחר">אחר</option>
+                </select>
+            </div>
+        </div>
+        <div class="col-5">
+            <div class="form-group">
+                <select class="form-control" id="usersM"></select>
+            </div>
+        </div>
+        <div class="col-5">
+            <div class="form-group">
+                <select class="form-control" id="usersJ"></select>
+            </div>
+        </div>
+        <div class="col-5">
+            <div class="form-group">
+                <select class="form-control" id="students"></select>
+            </div>
+        </div>
+        <div>
+            שעת התחלה
+            <input name="startTime" id="startTime" type="time" step="300" />
+        </div>
+        <div>
+            שעת סיום
+            <input name="endTime" id="endTime" type="time" step="300" />
+        </div>
+        <div class="btnPopup">
+            <input type="submit" name="updateDetails" value="עדכן" onclick="newGroup(true)" />
+            <input type="submit" style="margin-right:10px;margin-left:55px" name="cancel" value="ביטול" onclick="updateDetails(false)" />
+        </div>-->
+
+    <!--</div>-->
     <!-- /Modal terms -->
     <!-- COMMON SCRIPTS -->
     <script src="js/jquery-2.2.4.min.js"></script>

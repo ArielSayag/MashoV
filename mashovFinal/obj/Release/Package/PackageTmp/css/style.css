@@ -1650,6 +1650,8 @@ input.qtyminus {
   
 }
 
+
+
     #updatePopupM > div {
         display: flex;
         margin-top:15px;
@@ -1665,3 +1667,36 @@ input.qtyminus {
     justify-content:flex-start;
     
 }
+.input-container {
+    display: -ms-flexbox; /* IE10 */
+    display: flex;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+#updatePopupMs {
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -150%);
+    width: 50%;
+    background-color: white;
+    border: 1px solid black;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+
+
+    #updatePopupMs > div {
+        display: flex;
+        margin-top: 15px;
+        justify-content: space-between;
+    }
+
+    #updatePopupMs input {
+        width: 60%;
+        margin-right: 15%;
+    }

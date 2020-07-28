@@ -35,8 +35,8 @@ namespace mashovFinal.Controllers
             if (u1.Typesofuser.Count>0)
             {
                 string body = @"סיסמתך היא: " + u1.Pass;
-                MailHelper.SendEMail(u1.Email,"שחזור סיסמא", body);
-               // MailHelper.SendEMail("arielsayag19@gmail.com", "שחזור סיסמא", body);
+               // MailHelper.SendEMail(u1.Email,"הודעה חדשה התקבלה", body);
+               MailHelper.SendEMail("arielsayag19@gmail.com", "הודעה חדשה התקבלה", body);
             }
             return "1";
         }

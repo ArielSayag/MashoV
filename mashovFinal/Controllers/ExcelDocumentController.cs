@@ -22,7 +22,7 @@ namespace mashovFinal.Controllers
             var httpRequest = HttpContext.Current.Request;
             HttpPostedFile file1 = httpRequest.Files[0];
 
-            var arr = new string[4];
+            var arr = new string[5];
             for (int i = 0; i < arr.Length; i++)            
                 arr[i] = httpRequest.Form["arr"+i];
             

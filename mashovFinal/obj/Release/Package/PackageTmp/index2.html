@@ -88,6 +88,9 @@
         var newDocFromExcel = 0;
         $(document).ready(function () {
 
+            var today = new Date().toISOString().split("T")[0];
+            dateE.min = today;
+
             $("#myInput").on("keyup", function () {
                 var value = $(this).val();
 
@@ -167,7 +170,15 @@
                 arry[1] = $("#DepartmentExcel").val();
                 arry[2] = $("#Course").val();
                 arry[3] = filesName;
+                var selecteddate = $("#dateE").val();
+              //  arry[4] =  $("#dateE").val();
 
+                var year = selecteddate.split("-")[0];
+                var mounth = selecteddate.split("-")[1];
+                var day = selecteddate.split("-")[2];
+
+                var newselecteddate = mounth + "/" + day + "/" + year;
+                arry[4] = newselecteddate;
                 selectCours = arry[2];//for exsit doc --->step 4.4
                 selectDep = arry[1];
 
@@ -340,9 +351,9 @@
                 }
 
                 Swal.fire("הנתונים הועלו בהצלחה");
-
-                document.getElementById("addHere").innerHTML = "";
-                document.getElementById("nameFeed1").innerHTML = "";
+                $('#addHere').html('');
+               // document.getElementById("addHere").innerHTML = "";
+                //document.getElementById("nameFeed1").innerHTML = "";
                 $('.nameFeed1').html(newDoc.NameDoc);
                 $("#second-slide").hide();
                 $("#third-slide").fadeIn();
@@ -470,7 +481,7 @@
 
                     tempArr[0] = temp.querySelector("#critname").value;
            
-                    var editor = "ckeditor" + index;
+                    var editor = "ckeditor" + i;
                     tempArr[1] = CKEDITOR.instances[editor].getData();
                
                   
@@ -654,6 +665,7 @@
             listDiv.pop();
             console.log(listDiv);
             $(del).remove();
+            $("select#add-criteria-btn").prop('selectedIndex', 0);
 
 
 
@@ -721,8 +733,9 @@
         }
         addCrit = [];
         var straddCrit = "";
-        var exist = false;
+        
         function add(oneCrit) {
+            var exist = false;
             var temp1 = $(oneCrit).find("#idC").attr('value');
             for (c in listCrit) {
                 var temp = document.getElementById(listDiv[c]);
@@ -1117,12 +1130,12 @@
             $("#aria-valuenow1").css({ "width": totalW + "%" });
         }
 
-
+      
     </script>
 
 </head>
 
-<body ng-app="HebrewDate" style="font-family:FbSpacer;">
+<body ng-app="HebrewDate" style="font-family:FbSpacer;" >
     <div id="preloader">
         <div data-loader="circle-side"></div>
     </div>
@@ -1247,6 +1260,11 @@
                                             <div class="col-3">
                                                 <div class="form-group">
                                                     <select class="form-control" id="Course" autocomplete="on"></select>
+                                                </div>
+                                            </div>
+                                            <div class="col-3">
+                                                <div class="form-group">
+                                                    <input type="date" class="form-control" id="dateE" min="" data-date="" data-date-format="MM dd yyyy" autocomplete="on" />
                                                 </div>
                                             </div>
                                         </div>
