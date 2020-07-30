@@ -386,6 +386,7 @@
     <Content Include="css\vendors.min.css" />
     <Content Include="dataTable.html" />
     <Content Include="DB-Script\myText.txt" />
+    <Content Include="DB-Script\users.txt" />
     <Content Include="favicon.ico" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />

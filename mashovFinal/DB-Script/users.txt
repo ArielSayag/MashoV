@@ -1,0 +1,8 @@
+﻿
+manager : 
+dizzab@ruppin.ac.il
+pass: 123456789
+
+student 
+206281743
+pass: 206281743
