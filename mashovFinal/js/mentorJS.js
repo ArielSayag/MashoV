@@ -25,7 +25,7 @@ $(document).ready(function () {
         }
     }
     
-    $("#helloMentor").append("שלום, " + getuser.FirstName);
+    $("#helloMentor").append("שלום " + getuser.FirstName + ",");
     dashboard(getuser);
     //ajaxCall("GET", "./api/Doc", "", GETSuccessDep, GETErrorDep); // show all Dep
     //ajaxCall("GET", "./api/Doc/Year", "", GETSuccessYear, GETErrorYear); // show all hebYear

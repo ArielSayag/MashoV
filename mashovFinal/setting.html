@@ -220,17 +220,15 @@
             else return;
         }
         function ValidateEmail(mail) {
-            if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(myForm.emailAddr.value)) {
-                return (true)
-            }
-            alert("You have entered an invalid email address!")
-            return (false)
+            const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+            return re.test(mail);
+         
         }
         function saveUser() {
             var name = $("#fname").val();
             var lastname = $("#lname").val();
             var email = $("#email").val();
-            var type = $("#typeList").val();
+            var type = selectedTfornewUser;
 
             if (name == "" || lastname == "" || email == "" || type == "") {
                 Swal.fire("אחד הפריטים לא מלאים ,אנא מלא שוב");
@@ -239,16 +237,12 @@
                 Swal.fire("אימייל לא תקין");
             }
             else {
-                t = {
-                    "NumType": type,
-                    "Type": "",
-
-                }
+            
                 newUser = {
                     "FirstName": name,
                     "LastName": lastname,
                     "Email": email,
-                    "Type": t,
+                    "Typesofuser": type,
                 }
 
                 ajaxCall("POST", "./api/Setting/newUser", JSON.stringify(newUser), postNewUser, postNewUserErr)
@@ -258,7 +252,10 @@
         }
         function postNewUser(data) {
             console.log(data);
-            Swal.fire("משתמש חדש נוסף בהצלחה ");
+            if (data == 0) {
+                Swal.fire("משתמש כבר קיים ");
+            }
+            else Swal.fire("משתמש חדש/עודכן נוסף בהצלחה ");
         }
         function postNewUserErr(err) { console.log(err); }
 
@@ -610,6 +607,29 @@
         function putdeletejudgeErr(ee) {
             console.log(err);
         }
+        var selectedTfornewUser = [];
+        function selectedtype() {
+            var t = $("#typeList").val();
+
+            switch (t) {
+                case '2': selectedTfornewUser = [{ "NumType": 2 }];
+                    break;
+                case '3': selectedTfornewUser = [{ "NumType": 3 }];
+                    break;
+                case '4': selectedTfornewUser = [{ "NumType": 4 }];
+                    break;
+                case '5': selectedTfornewUser = [{ "NumType": 2 }, { "NumType": 3 }, { "NumType": 4 }];
+                    break;
+                case '6': selectedTfornewUser = [{ "NumType": 3 }, { "NumType": 4 }];
+                    break;
+                case '7': selectedTfornewUser = [{ "NumType": 2 }, { "NumType": 4 }];
+                    break;
+                case '8': selectedTfornewUser = [{ "NumType": 3 }, { "NumType": 2 }];
+                    break;
+
+            }
+            
+        }
     </script>
 </head>
 
@@ -706,7 +726,7 @@
                                                 </div>
                                                 <div class="form-group">
 
-                                                    <select list="browsers" typeof="text" class="form-control" id="typeList">
+                                                    <select list="browsers" typeof="text" onchange="selectedtype()" class="form-control" id="typeList">
                                                         <option value="">בחר סוג הרשאות</option>
                                                         <option value="2">מנהל</option>
                                                         <option value="3">שופט</option>

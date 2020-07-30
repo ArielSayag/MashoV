@@ -16,7 +16,7 @@ $(document).ready(function () {
     localStorage["update"] = JSON.stringify(loginUser);
 
 
-    $("#hello").append("שלום, " + loginUser.FirstName);
+    $("#hello").append("שלום " + loginUser.FirstName+",");
     dashboard(loginUser.Id);
 
 

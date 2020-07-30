@@ -155,7 +155,7 @@
                 }
             }
             console.log(loginUser);
-            $("#helloAdmin").append("שלום, " + getuser.FirstName);
+            $("#helloAdmin").append("שלום " + getuser.FirstName+",");
 
             dashboard(getuser);
             ajaxCall("Get", "./api/Criteria", "", GETSuccessBankCrit, GETErrorBankCrit); // take all bank crit if will be necessary

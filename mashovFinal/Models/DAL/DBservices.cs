@@ -2769,6 +2769,98 @@ public class DBservices
         return numEffected;
 
     }
+
+    public int insert(Users user)
+    {
+        int numEffected = 0;
+        SqlConnection con;
+        SqlCommand cmd;
+
+
+        try
+        {
+            con = connect("con15"); // create the connection
+        }
+        catch (Exception ex)
+        {
+            // write to log
+            throw (ex);
+        }
+            user.Pass = GeneratePassword();
+            String cStr = BuildInsertCommand(user);
+            cmd = CreateCommand(cStr, con);
+
+            try
+            {
+                numEffected += cmd.ExecuteNonQuery(); // execute the command
+
+                string subject = "סיסמא חדשה למערכת MASHOV , ברוך הבא";
+                string body = "<div style='direction: rtl'>שלום , " + user.FirstName;
+                body += "<br><br>ברוך הבא למערכת MASHOV, ";
+                body += "<br>שם משתמש שלך הינו: " + user.Email + "<br> סיסמתך היא: " + user.Pass;
+                body += "<br><br>תודה , צוות MASHOV</div>";
+                SendEMail(user.Email, subject, body);
+
+            }
+
+            catch (SqlException ex)
+            {
+                if (ex.Number == 2627)
+                {
+                numEffected = 0;
+                }
+                else
+                {
+                    throw (ex);
+                }
+            }
+
+        foreach (var item in user.Typesofuser)
+        {
+            String cStr1 = BuildInsertCommandTypesofnewuserfromSetting(user.Email,item.NumType);
+            cmd = CreateCommand(cStr1, con);
+
+            try
+            {
+                numEffected += cmd.ExecuteNonQuery(); // execute the command
+
+
+            }
+
+            catch (SqlException ex)
+            {
+                if (ex.Number == 2627)
+                {
+                    continue;
+                }
+                else
+                {
+                    throw (ex);
+                }
+            }
+
+
+        }
+
+        if (con != null)
+        {
+            // close the db connection
+            con.Close();
+        }
+        return numEffected;
+    }
+    private String BuildInsertCommandTypesofnewuserfromSetting(string userEmail,int type)
+    {
+        String command;
+        StringBuilder sb = new StringBuilder();
+        // use a string builder to create the dynamic string
+        sb.AppendFormat("Values('{0}', '{1}')",
+         userEmail, type);
+        String prefix = "INSERT INTO UsersType " + "(Email,utID)";
+        command = prefix + sb.ToString();
+
+        return command;
+    }
     //-----------------------------------END Setting--------------------------------//
     //-------------------------------------------------------------------------------------//
     //-----------------------------------update Crit-------------------------//

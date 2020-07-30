@@ -25,7 +25,7 @@ var getuser;
             }
 
               console.log(loginUser);
-              $("#helloAdmin").append("שלום, " + getuser.FirstName);
+            $("#helloAdmin").append("שלום " + getuser.FirstName + ",");
               dashboard(getuser);
 
 

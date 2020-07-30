@@ -67,10 +67,9 @@ namespace mashovFinal.Models
         }
         public int insertNewUser()
         {
-            List<Users> newuser = new List<Users>();
-            newuser.Add(this);
+           
             DBservices dbs = new DBservices();
-            return dbs.insert(newuser);
+            return dbs.insert(this);
         }
         public List<FeedBack_Meeting> getJudge()
         {
